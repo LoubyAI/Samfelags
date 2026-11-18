@@ -804,7 +804,17 @@
         }
       }
       
-      const isComplete = policyAccepted && isFullName && isValidAge;
+      // Check for bad words in nickname
+      const hasNoBadWords = !containsBadWords(nickname);
+      
+      // Check attempt limits
+      const tooManyBirthdayAttempts = birthdayFailedAttempts >= 3;
+      const tooManyNameAttempts = fullNameFailedAttempts >= 3;
+      
+      // City is required
+      const citySelected = city !== '';
+      
+      const isComplete = policyAccepted && isFullName && isValidAge && hasNoBadWords && !tooManyBirthdayAttempts && !tooManyNameAttempts && citySelected;
       document.getElementById('continueButton').disabled = !isComplete;
     }
 
