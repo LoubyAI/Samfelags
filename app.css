@@ -77,26 +77,10 @@ h3,
   min-height: 100vh;
 }
 
-.login-view .sidebar {
-  display: block;
-}
-
-.login-view .side-nav {
+.login-view .sidebar,
+.login-view .topbar,
+.login-view #page-heading {
   display: none;
-}
-
-.login-view .topbar {
-  pointer-events: none;
-}
-
-.login-view .topbar button,
-.login-view .topbar a,
-.login-view .topbar input,
-.login-view .topbar select,
-.login-view #theme-toggle {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 .login-view .workspace {
@@ -107,6 +91,29 @@ h3,
   min-height: 100vh;
   padding: 0;
   border: 0;
+}
+
+/* Profile Setup Views - show sidebar but hide nav, show but disable header */
+.profile-setup-view .sidebar {
+  display: block;
+}
+
+.profile-setup-view .side-nav {
+  display: none;
+}
+
+.profile-setup-view .topbar {
+  pointer-events: none;
+}
+
+.profile-setup-view .topbar button,
+.profile-setup-view .topbar a,
+.profile-setup-view .topbar input,
+.profile-setup-view .topbar select,
+.profile-setup-view #theme-toggle {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .login-page {
