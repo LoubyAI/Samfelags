@@ -798,6 +798,24 @@
         return false;
       }
       
+      // If you abbreviate middle name, it must be Capital letter + dot (e.g., M.)
+      const hasInvalidInitial = words.some(word => {
+        // Single letter without dot: invalid (e.g., "M" without dot)
+        if (word.length === 1) {
+          return true;
+        }
+        // Single letter with dot but lowercase: invalid (e.g., "m.")
+        if (word.length === 2 && word[1] === '.' && word[0] === word[0].toLowerCase()) {
+          return true;
+        }
+      });
+      
+      if (hasInvalidInitial) {
+        errorDiv.textContent = '⚠️ Ef þú stytur millinafn, vertu að nota stóran staf og punkt (t.d. M. ekki m. eða M)';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
       errorDiv.style.display = 'none';
       return true;
     }
@@ -911,7 +929,16 @@
       const city = document.getElementById('city').value;
       
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
-      const isFullName = words.length >= 2;
+      let isValidName = words.length >= 2;
+      
+      // Check if any single letter exists without a dot, or if it's lowercase
+      if (isValidName) {
+        const hasInvalidInitial = words.some(word => {
+          if (word.length === 1) return true;
+          if (word.length === 2 && word[1] === '.' && word[0] === word[0].toLowerCase()) return true;
+        });
+        isValidName = !hasInvalidInitial;
+      }
       
       let isValidAge = false;
       if (birthday) {
@@ -940,7 +967,7 @@
       // City is required
       const citySelected = city !== '';
       
-      const isComplete = policyAccepted && isFullName && isValidAge && hasNoBadWords && citySelected;
+      const isComplete = policyAccepted && isValidName && isValidAge && hasNoBadWords && citySelected;
       document.getElementById('continueButton').disabled = !isComplete;
     }
 
@@ -993,7 +1020,19 @@
 
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
       if (words.length < 2) {
-        alert('⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð');
+        alert('⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð (t.d. Luna Jónasdóttir eða Luna M. Jónasdóttir)');
+        document.getElementById('displayName').focus();
+        return;
+      }
+
+      // Check if any single letter exists without a dot or is lowercase
+      const hasInvalidInitial = words.some(word => {
+        if (word.length === 1) return true;
+        if (word.length === 2 && word[1] === '.' && word[0] === word[0].toLowerCase()) return true;
+      });
+
+      if (hasInvalidInitial) {
+        alert('⚠️ Ef þú stytur millinafn, vertu að nota stóran staf og punkt (t.d. M. ekki m. eða M). Dæmi: Luna M. Jónasdóttir eða Luna Jónasdóttir');
         document.getElementById('displayName').focus();
         return;
       }
