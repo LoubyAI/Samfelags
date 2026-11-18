@@ -1266,7 +1266,10 @@ function setAuthMode(signingUp) {
   form.dataset.form = signingUp ? "signup" : "login";
   form.querySelectorAll("[data-auth-signup]").forEach((field) => {
     field.hidden = !signingUp;
-    if (field.matches("input")) field.required = signingUp;
+    if (field.matches("input")) {
+      field.required = signingUp;
+      if (signingUp && field.name === "displayName") field.value = "";
+    }
   });
 
   const title = screen.querySelector("[data-auth-title]");
@@ -1296,11 +1299,6 @@ async function handleEmailAuth(form) {
   const submitButton = form.querySelector('[type="submit"]');
 
   if (signingUp) {
-    const displayName = form.elements.displayName.value.trim();
-    if (!displayName) {
-      showAuthMessage("Sláðu inn nafnið þitt");
-      return;
-    }
     if (password !== form.elements.passwordConfirm.value) {
       showAuthMessage("Lykilorðin passa ekki saman");
       return;
@@ -1316,7 +1314,6 @@ async function handleEmailAuth(form) {
       await window.firebaseAuth.createAccount(
         email,
         password,
-        form.elements.displayName.value.trim(),
       );
       window.location.replace("app.html?view=profile-setup");
     } else {
