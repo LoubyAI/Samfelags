@@ -78,6 +78,10 @@ h3,
 }
 
 .login-view .sidebar {
+  display: block;
+}
+
+.login-view .side-nav {
   display: none;
 }
 
