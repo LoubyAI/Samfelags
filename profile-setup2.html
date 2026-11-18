@@ -813,6 +813,12 @@
       }
     }
 
+    // Handle checkbox change to enable/disable confirm button
+    document.getElementById('policyAcceptedCheckbox').addEventListener('change', (e) => {
+      const confirmBtn = document.getElementById('confirmPolicyBtn');
+      confirmBtn.disabled = !e.target.checked;
+    });
+
     // Allow Enter key to confirm policy
     document.getElementById('policyAcceptedCheckbox').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
