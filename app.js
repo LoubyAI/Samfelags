@@ -706,7 +706,19 @@ const renderers = {
   "calendar-month": () => renderCalendar("calendar-month"),
   messages: renderMessages,
   profile: renderProfile,
-  "profile-setup": () => window.firebaseProfile?.renderProfileSetup() || "<p>Loading profile setup...</p>",
+  "profile-setup": async () => {
+    try {
+      const response = await fetch('profile-setup-flow-demo.html');
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const container = doc.querySelector('.container');
+      return container ? container.innerHTML : "<p>Loading profile setup...</p>";
+    } catch (error) {
+      console.error('Failed to load profile setup:', error);
+      return "<p>Mistók að hlaða prófílsíðu</p>";
+    }
+  },
   "photo-policy": renderPhotoPolicy,
   login: renderLogin,
 };
