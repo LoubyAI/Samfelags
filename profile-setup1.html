@@ -1020,7 +1020,7 @@
 
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
       if (words.length < 2) {
-        alert('⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð (t.d. Luna Jónasdóttir eða Luna M. Jónasdóttir)');
+        alert('⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð (t.d. Rósa Einarsdóttir eða Rósa M. Einarsdóttir)');
         document.getElementById('displayName').focus();
         return;
       }
@@ -1032,7 +1032,7 @@
       });
 
       if (hasInvalidInitial) {
-        alert('⚠️ Ef þú stytur millinafn, vertu að nota stóran staf og punkt (t.d. M. ekki m. eða M). Dæmi: Luna M. Jónasdóttir eða Luna Jónasdóttir');
+        alert('⚠️ Ef þú stytur millinafn, vertu að nota stóran staf og punkt (t.d. M. ekki m. eða M). Dæmi: Rósa M. Einarsdóttir eða Rósa Einarsdóttir');
         document.getElementById('displayName').focus();
         return;
       }
