@@ -101,17 +101,11 @@ h3,
 .profile-setup-view .side-nav {
   display: none;
   margin: 0;
-}
-
-.profile-setup-view .sidebar {
-  position: relative;
+  flex: 0;
 }
 
 .profile-setup-view .sidebar-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  margin-top: auto;
 }
 
 .profile-setup-view .topbar {
