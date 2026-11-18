@@ -578,9 +578,11 @@
                     name="displayName"
                     placeholder="Dæmi: Rósa M. Einarsdóttir"
                     oninput="updateFormButtonState()"
+                    onblur="validateNameField()"
                     required
                   >
                   <small>Þitt alvöru nafn í opinberum skrám (Birtist eingöngu samþykktu vinum og áhugamálahólpum þínum). Millinöfn má skammstafa í einn staf með punkti.</small>
+                  <div id="nameError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
 
                 <div class="form-group">
@@ -591,8 +593,10 @@
                     name="nickname"
                     placeholder="Dæmi: Rósa"
                     oninput="updateFormButtonState()"
+                    onblur="validateNicknameField()"
                   >
                   <small>Birtist almenningi á þinni prófílsíðu.</small>
+                  <div id="nicknameError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
 
                 <div class="form-group">
@@ -602,17 +606,22 @@
                     id="birthday" 
                     name="birthday"
                     placeholder="DD.MM.YYYY"
-                    oninput="updateFormButtonState()"
+                    oninput="formatBirthdayInput(this); updateFormButtonState()"
+                    onblur="validateBirthdayField()"
+                    maxlength="10"
                     required
                   >
                   <small>Þinn afmælisdagur (Birtist eingöngu samþykktu vinum og áhugamálahópum þínum).</small>
+                  <div id="birthdayError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
 
                 <div class="form-group">
-                  <label for="city">Borg / Sveitarfélag</label>
+                  <label for="city">Borg / Sveitarfélag *</label>
                   <select 
                     id="city" 
                     name="city"
+                    oninput="updateFormButtonState()"
+                    onchange="validateCityField()"
                   >
                     <option value="">-- Veldu borg/sveitarfélag --</option>
                     <option value="Reykjavík">Reykjavík</option>
@@ -639,6 +648,7 @@
                     <option value="Höfn">Höfn</option>
                   </select>
                   <small>Hjálpar okkur að tengja þig við fólk nálægt þér.</small>
+                  <div id="cityError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
               </div>
 
@@ -770,18 +780,138 @@
       updateFormButtonState();
     }
 
+    function validateNameField() {
+      const displayName = document.getElementById('displayName').value.trim();
+      const errorDiv = document.getElementById('nameError');
+      
+      if (!displayName) {
+        errorDiv.textContent = '⚠️ Fullt nafn er áskilið';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      const words = displayName.split(/\s+/).filter(word => word.length > 0);
+      
+      if (words.length < 2) {
+        errorDiv.textContent = '⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      errorDiv.style.display = 'none';
+      return true;
+    }
+
+    function validateBirthdayField() {
+      const birthday = document.getElementById('birthday').value.trim();
+      const errorDiv = document.getElementById('birthdayError');
+      
+      if (!birthday) {
+        errorDiv.textContent = '⚠️ Fæðingardagur er áskilinn';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+      const match = birthday.match(dateRegex);
+      
+      if (!match) {
+        errorDiv.textContent = '⚠️ Ógildar dagsetning. Sláðu inn á sniðinu DD.MM.YYYY';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      const day = parseInt(match[1]);
+      const month = parseInt(match[2]);
+      const year = parseInt(match[3]);
+      
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      if (age < 15) {
+        errorDiv.textContent = '⚠️ Þú verður að vera að minnsta kosti 15 ára gömul/ur';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      errorDiv.style.display = 'none';
+      return true;
+    }
+
+    function validateNicknameField() {
+      const nickname = document.getElementById('nickname').value.trim();
+      const errorDiv = document.getElementById('nicknameError');
+      
+      if (!nickname) {
+        errorDiv.style.display = 'none';
+        return true;
+      }
+      
+      if (containsBadWords(nickname)) {
+        errorDiv.textContent = '⚠️ Gælunafnið inniheldur óheimil orð';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      errorDiv.style.display = 'none';
+      return true;
+    }
+
+    function validateCityField() {
+      const city = document.getElementById('city').value;
+      const errorDiv = document.getElementById('cityError');
+      
+      if (!city) {
+        errorDiv.textContent = '⚠️ Borg/sveitarfélag er áskilið';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
+      errorDiv.style.display = 'none';
+      return true;
+    }
+
+    // Bad words list in Icelandic
+    const badWordsList = ['fokk', 'fokka', 'fokki', 'skít', 'skítandi', 'kvendið', 'kvendir', 'rassgat', 'rassgatir', 'klámjó', 'klámjói', 'klámhæll', 'picka', 'pilli', 'stöddi', 'stödd', 'dauði'];
+
+    function containsBadWords(text) {
+      if (!text) return false;
+      const lowerText = text.toLowerCase();
+      return badWordsList.some(word => lowerText.includes(word));
+    }
+
+    let lastBirthdayLength = 0;
+
+    function formatBirthdayInput(input) {
+      let value = input.value.replace(/\D/g, '');
+      let formatted = '';
+      
+      for (let i = 0; i < value.length; i++) {
+        if (i === 2 || i === 4) {
+          formatted += '.';
+        }
+        formatted += value[i];
+      }
+      
+      input.value = formatted.substring(0, 10);
+      lastBirthdayLength = input.value.length;
+    }
+
     // Update button state based on form validation
     function updateFormButtonState() {
       const policyAccepted = document.getElementById('policyAccepted').value === 'true';
       const displayName = document.getElementById('displayName').value.trim();
       const birthday = document.getElementById('birthday').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      const city = document.getElementById('city').value;
       
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
-      const validNameParts = words.filter(word => 
-        word.length >= 2 || 
-        /^[a-záéíóúýþæö]\.$/i.test(word)
-      );
-      const isFullName = validNameParts.length >= 2;
+      const isFullName = words.length >= 2;
       
       let isValidAge = false;
       if (birthday) {
@@ -807,14 +937,10 @@
       // Check for bad words in nickname
       const hasNoBadWords = !containsBadWords(nickname);
       
-      // Check attempt limits
-      const tooManyBirthdayAttempts = birthdayFailedAttempts >= 3;
-      const tooManyNameAttempts = fullNameFailedAttempts >= 3;
-      
       // City is required
       const citySelected = city !== '';
       
-      const isComplete = policyAccepted && isFullName && isValidAge && hasNoBadWords && !tooManyBirthdayAttempts && !tooManyNameAttempts && citySelected;
+      const isComplete = policyAccepted && isFullName && isValidAge && hasNoBadWords && citySelected;
       document.getElementById('continueButton').disabled = !isComplete;
     }
 
@@ -835,11 +961,18 @@
 
     function acceptPolicyAndClose() {
       document.getElementById('policyAccepted').value = 'true';
-      updateFormButtonState();
       closePolicyModal();
+      updateFormButtonState();
     }
 
     function proceedToNextStep() {
+      // Trigger all validation functions to show errors
+      validateNameField();
+      validateBirthdayField();
+      validateNicknameField();
+      validateCityField();
+      
+      // Check all conditions
       if (document.getElementById('policyAccepted').value !== 'true') {
         alert('⚠️ Vinsamlegast samþykktu reglur New Friends áður en þú heldur áfram');
         showPolicyModal();
@@ -851,13 +984,63 @@
       const birthday = document.getElementById('birthday').value.trim();
       const city = document.getElementById('city').value;
 
+      // Validate display name
       if (!displayName) {
         alert('⚠️ Vinsamlegast sláðu inn fullt nafn');
+        document.getElementById('displayName').focus();
         return;
       }
 
+      const words = displayName.split(/\s+/).filter(word => word.length > 0);
+      if (words.length < 2) {
+        alert('⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð');
+        document.getElementById('displayName').focus();
+        return;
+      }
+
+      // Validate birthday
       if (!birthday) {
-        alert('⚠️ Vinsamlegast veldu fæðingardag');
+        alert('⚠️ Vinsamlegast sláðu inn fæðingardag');
+        document.getElementById('birthday').focus();
+        return;
+      }
+
+      const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+      const match = birthday.match(dateRegex);
+      if (!match) {
+        alert('⚠️ Ógildar dagsetning. Sláðu inn á sniðinu DD.MM.YYYY');
+        document.getElementById('birthday').focus();
+        return;
+      }
+
+      const day = parseInt(match[1]);
+      const month = parseInt(match[2]);
+      const year = parseInt(match[3]);
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      if (age < 15) {
+        alert('⚠️ Þú verður að vera að minnsta kosti 15 ára gömul/ur');
+        document.getElementById('birthday').focus();
+        return;
+      }
+
+      // Validate nickname if provided
+      if (nickname && containsBadWords(nickname)) {
+        alert('⚠️ Gælunafnið inniheldur óheimil orð');
+        document.getElementById('nickname').focus();
+        return;
+      }
+
+      // Validate city
+      if (!city) {
+        alert('⚠️ Vinsamlegast veldu borg eða sveitarfélag');
+        document.getElementById('city').focus();
         return;
       }
 
