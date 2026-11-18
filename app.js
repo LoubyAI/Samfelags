@@ -459,7 +459,12 @@ function renderMessages() {
       <section class="people-panel">
         <h2>Skilaboð</h2>
         <input class="message-search" type="search" placeholder="⌕　Leita að samtali..." aria-label="Leita að samtali">
-        <p class="message-filter">⌄</p>
+        <button class="message-filter" type="button" data-action="toggle-conversations" aria-label="Sýna vistuð samtöl" aria-expanded="false" aria-controls="saved-conversations">
+          <span class="message-filter-arrow" aria-hidden="true">⌄</span>
+        </button>
+        <div class="saved-conversations" id="saved-conversations" hidden>
+          <p>Engin vistuð samtöl ennþá.</p>
+        </div>
       </section>
       <section class="chat-panel">
         <div class="empty-chat">
@@ -589,6 +594,14 @@ screen.addEventListener("click", (event) => {
 
   if (button.dataset.action === "meeting-poll") {
     openMeetingEditor("poll");
+    return;
+  }
+
+  if (button.dataset.action === "toggle-conversations") {
+    const savedConversations = screen.querySelector("#saved-conversations");
+    const expanded = button.getAttribute("aria-expanded") !== "true";
+    button.setAttribute("aria-expanded", String(expanded));
+    savedConversations.hidden = !expanded;
     return;
   }
 

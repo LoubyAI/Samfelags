@@ -1741,6 +1741,50 @@ h3,
   font-size: 13px;
 }
 
+.message-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 36px;
+  margin-top: 8px;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.message-filter:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.message-filter-arrow {
+  display: inline-block;
+  transition: transform 120ms ease;
+}
+
+.message-filter[aria-expanded="true"] .message-filter-arrow {
+  transform: rotate(180deg);
+}
+
+.saved-conversations {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.saved-conversations p {
+  margin: 0;
+}
+
+.saved-conversations[hidden] {
+  display: none;
+}
+
 .empty-chat {
   display: grid;
   place-items: center;
