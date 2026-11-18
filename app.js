@@ -597,12 +597,7 @@ function renderLogin() {
               <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
               <button class="button button-primary login-submit" type="submit">Skrá inn</button>
             </form>
-            <dialog class="auth-dialog" data-auth-dialog aria-labelledby="auth-message-title">
-              <div class="auth-dialog-content">
-                <p class="auth-message" id="auth-message-title" data-auth-message role="alert" aria-live="assertive"></p>
-                <button class="button button-primary" type="button" data-action="close-auth-message">Loka</button>
-              </div>
-            </dialog>
+            <p class="auth-message" data-auth-message role="alert" aria-live="assertive" hidden></p>
             <div class="login-divider"><span>eða</span></div>
             <button class="login-google" type="button" data-action="google-login">
               <svg class="login-google-icon" viewBox="0 0 48 48" aria-hidden="true">
@@ -791,12 +786,6 @@ screen.addEventListener("click", (event) => {
   if (button.dataset.action === "toggle-auth-mode") {
     const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
     if (form) setAuthMode(form.dataset.form !== "signup");
-    return;
-  }
-
-  if (button.dataset.action === "close-auth-message") {
-    const dialog = screen.querySelector("[data-auth-dialog]");
-    if (dialog?.open) dialog.close();
     return;
   }
 
@@ -1134,6 +1123,7 @@ function markAllNotificationsRead() {
 }
 
 async function handleGoogleSignIn(button) {
+  clearAuthMessage();
   button.disabled = true;
   button.setAttribute("aria-busy", "true");
 
@@ -1143,18 +1133,18 @@ async function handleGoogleSignIn(button) {
     window.location.replace("app.html?view=home");
   } catch (error) {
     if (error.code === "app/firebase-config-missing") {
-      showToast("Bættu Firebase-vefstillingum við til að virkja Google-innskráningu");
+      showAuthMessage("Bættu Firebase-vefstillingum við til að virkja Google-innskráningu");
     } else if (error.code === "auth/popup-closed-by-user") {
-      showToast("Innskráningu var hætt við");
+      showAuthMessage("Innskráningu var hætt við");
     } else if (error.code === "auth/unauthorized-domain") {
-      showToast("Þetta lén þarf að vera heimilað í Firebase");
+      showAuthMessage("Þetta lén þarf að vera heimilað í Firebase");
     } else if (error.code === "auth/operation-not-allowed") {
-      showToast("Virkjaðu Google-innskráningu í Firebase");
+      showAuthMessage("Virkjaðu Google-innskráningu í Firebase");
     } else if (error.code === "auth/popup-blocked") {
-      showToast("Vafrinn lokaði innskráningarglugganum. Leyfðu sprettiglugga.");
+      showAuthMessage("Vafrinn lokaði innskráningarglugganum. Leyfðu sprettiglugga.");
     } else {
       console.error("Google sign-in failed", error);
-      showToast("Ekki tókst að skrá inn með Google");
+      showAuthMessage("Ekki tókst að skrá inn með Google");
     }
   } finally {
     button.disabled = false;
@@ -1300,24 +1290,21 @@ function getEmailAuthErrorMessage(error, signingUp) {
 
 function showAuthMessage(message, state = "error") {
   const messageElement = screen.querySelector("[data-auth-message]");
-  const dialog = screen.querySelector("[data-auth-dialog]");
-  if (!messageElement || !dialog) {
+  if (!messageElement) {
     showToast(message);
     return;
   }
   messageElement.textContent = message;
   messageElement.dataset.state = state;
-  if (!dialog.open) dialog.showModal();
-  dialog.querySelector('[data-action="close-auth-message"]').focus();
+  messageElement.hidden = !message;
 }
 
 function clearAuthMessage() {
   const messageElement = screen.querySelector("[data-auth-message]");
   if (!messageElement) return;
   messageElement.textContent = "";
+  messageElement.hidden = true;
   delete messageElement.dataset.state;
-  const dialog = screen.querySelector("[data-auth-dialog]");
-  if (dialog?.open) dialog.close();
 }
 
 async function handleFirebaseSignOut() {

@@ -267,39 +267,19 @@ h3,
 
 .auth-message {
   margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #efc3cb;
+  border-radius: 8px;
+  background: #fff1f3;
   color: #842838;
-  font-weight: 600;
   font-size: 13px;
   line-height: 1.45;
 }
 
 .auth-message[data-state="success"] {
+  border-color: #b7d9c1;
+  background: #effaf2;
   color: #245c34;
-}
-
-.auth-dialog {
-  width: min(420px, calc(100vw - 32px));
-  padding: 22px;
-  border: 0;
-  border-radius: 14px;
-  background: var(--white);
-  color: var(--ink);
-  box-shadow: 0 16px 48px rgb(0 0 0 / 24%);
-}
-
-.auth-dialog::backdrop {
-  background: rgb(31 24 30 / 48%);
-}
-
-.auth-dialog-content {
-  display: grid;
-  justify-items: center;
-  gap: 18px;
-  text-align: center;
-}
-
-.auth-dialog .button {
-  min-width: 100px;
 }
 
 .login-divider {
@@ -2080,10 +2060,14 @@ body.dark-mode {
 
 body.dark-mode .auth-message {
   color: #ffdbe2;
+  border-color: #75414b;
+  background: #4d2931;
 }
 
 body.dark-mode .auth-message[data-state="success"] {
   color: #d7f5df;
+  border-color: #3b6b47;
+  background: #203b28;
 }
 
 body.dark-mode img[src$=".svg"] {
