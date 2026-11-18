@@ -43,6 +43,9 @@ const photos = {
 let meetingDraft = { text: "", attachments: [], poll: null, event: null, location: "" };
 let meetingPosts = [];
 let editingMeetingId = null;
+const NEWS_POSTS_STORAGE_KEY = "new-friends-news-posts";
+let newsPosts = [];
+let editingNewsPostId = null;
 
 const pageInfo = {
   home: { title: "Heim", icon: icons.home, active: "home" },
@@ -148,6 +151,8 @@ function renderNotificationsDropdown() {
 }
 
 function renderNews() {
+  newsPosts = loadNewsPosts();
+  editingNewsPostId = null;
   return `
     <div class="page-stack">
       <section class="content-card composer">
@@ -157,9 +162,80 @@ function renderNews() {
           <button class="button button-primary" type="submit">Búa til færslu</button>
         </form>
       </section>
+      <div class="user-news-posts" id="user-news-posts">${newsPosts.map(renderUserNewsPost).join("")}</div>
       ${renderPost("Jólaföndur", "Stína", "Hlakka svo til að hitta ykkur á jólaföndrun! 🎄✨<br>Er einhver búin að ákveða hvað hún ætlar að föndra?", photos.largeOutdoor)}
       ${renderPost("Jólaganga", "Jónína", "Mig langar að fara í göngutúr um helgina! 🌿<br>Er einhver til í að koma með? Við gætum endað á notalegu kaffihúsi ☕", photos.largeOutdoor)}
     </div>`;
+}
+
+function loadNewsPosts() {
+  try {
+    const storedPosts = localStorage.getItem(NEWS_POSTS_STORAGE_KEY);
+    if (!storedPosts) return [];
+    const posts = JSON.parse(storedPosts);
+    if (!Array.isArray(posts) || posts.some((post) =>
+      !post || typeof post.id !== "string" || typeof post.text !== "string")) {
+      throw new TypeError("Saved news posts have an invalid format.");
+    }
+    return posts;
+  } catch (error) {
+    console.error("Unable to load saved news posts.", error);
+    showToast("Ekki tókst að hlaða vistuðum færslum");
+    return [];
+  }
+}
+
+function saveNewsPosts(posts) {
+  try {
+    localStorage.setItem(NEWS_POSTS_STORAGE_KEY, JSON.stringify(posts));
+    return true;
+  } catch (error) {
+    console.error("Unable to save news posts.", error);
+    showToast("Ekki tókst að vista færsluna");
+    return false;
+  }
+}
+
+function renderUserNewsPost(post) {
+  const postId = escapeHtml(post.id);
+  const editing = editingNewsPostId === post.id;
+  const editForm = editing ? `<form class="news-post-edit-form" data-form="edit-news-post" data-post-id="${postId}">
+      <textarea name="post" aria-label="Breyta færslu" required>${escapeHtml(post.text)}</textarea>
+      <div class="news-post-edit-actions">
+        <button class="button" type="button" data-action="cancel-edit-news-post">Hætta við</button>
+        <button class="button button-primary" type="submit">Vista</button>
+      </div>
+    </form>` : `<p class="news-post-text">${escapeHtml(post.text)}</p>`;
+  const actions = editing ? "" : `<details class="news-post-actions">
+      <summary aria-label="Opna valkosti fyrir færslu" title="Valkostir">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="5" r="1.7" fill="currentColor"></circle>
+          <circle cx="12" cy="12" r="1.7" fill="currentColor"></circle>
+          <circle cx="12" cy="19" r="1.7" fill="currentColor"></circle>
+        </svg>
+      </summary>
+      <div class="news-post-menu" role="group" aria-label="Aðgerðir á færslu">
+        <button type="button" data-action="edit-news-post" data-post-id="${postId}">Breyta</button>
+        <button class="danger-action" type="button" data-action="delete-news-post" data-post-id="${postId}">Eyða</button>
+      </div>
+    </details>`;
+
+  return `<article class="content-card post-card user-news-post" data-searchable data-news-post-id="${postId}">
+    <div class="user-news-post-heading">
+      <h2 class="panel-heading">${icon(icons.news)}Ný færsla</h2>
+      ${actions}
+    </div>
+    <div class="user-news-post-content">
+      <div class="post-author">${avatar(photos.portrait, "Luna")}<span>Luna<small>Núna</small></span></div>
+      ${editForm}
+    </div>
+    <img class="post-photo" src="${asset(photos.largeOutdoor)}" alt="Vinahópur saman úti">
+  </article>`;
+}
+
+function renderUserNewsPosts() {
+  const postList = screen.querySelector("#user-news-posts");
+  if (postList) postList.innerHTML = newsPosts.map(renderUserNewsPost).join("");
 }
 
 function renderPost(title, author, message, image) {
@@ -594,6 +670,40 @@ screen.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action]");
   if (!button) return;
 
+  if (button.dataset.action === "edit-news-post") {
+    const post = newsPosts.find((item) => item.id === button.dataset.postId);
+    if (!post) {
+      showToast("Ekki tókst að finna færsluna");
+      return;
+    }
+    editingNewsPostId = post.id;
+    renderUserNewsPosts();
+    screen.querySelector(".news-post-edit-form textarea")?.focus();
+    return;
+  }
+
+  if (button.dataset.action === "cancel-edit-news-post") {
+    editingNewsPostId = null;
+    renderUserNewsPosts();
+    return;
+  }
+
+  if (button.dataset.action === "delete-news-post") {
+    const post = newsPosts.find((item) => item.id === button.dataset.postId);
+    if (!post) {
+      showToast("Ekki tókst að finna færsluna");
+      return;
+    }
+    if (!window.confirm("Ertu viss um að þú viljir eyða þessari færslu?")) return;
+    const updatedPosts = newsPosts.filter((item) => item.id !== post.id);
+    if (!saveNewsPosts(updatedPosts)) return;
+    newsPosts = updatedPosts;
+    editingNewsPostId = null;
+    renderUserNewsPosts();
+    showToast("Færslunni hefur verið eytt");
+    return;
+  }
+
   if (button.dataset.action === "meeting-poll") {
     openMeetingEditor("poll");
     return;
@@ -903,17 +1013,38 @@ screen.addEventListener("submit", (event) => {
     return;
   }
 
+  if (form.dataset.form === "edit-news-post") {
+    const text = form.elements.post.value.trim();
+    const postIndex = newsPosts.findIndex((post) => post.id === form.dataset.postId);
+    if (postIndex < 0) {
+      showToast("Ekki tókst að finna færsluna");
+      return;
+    }
+    if (!text) {
+      showToast("Færslan má ekki vera tóm");
+      return;
+    }
+    const updatedPosts = newsPosts.map((post, index) =>
+      index === postIndex ? { ...post, text } : post);
+    if (!saveNewsPosts(updatedPosts)) return;
+    newsPosts = updatedPosts;
+    editingNewsPostId = null;
+    renderUserNewsPosts();
+    showToast("Breytingar á færslunni hafa verið vistaðar");
+    return;
+  }
+
   if (form.dataset.form === "post") {
     const text = form.elements.post.value.trim();
     if (!text) return;
-    const post = document.createElement("article");
-    post.className = "content-card post-card";
-    post.dataset.searchable = "";
-    post.innerHTML = `<div><h2 class="panel-heading">${icon(icons.news)}Ný færsla</h2>
-      <div class="post-author">${avatar(photos.portrait, "Luna")}<span>Luna<small>Núna</small></span></div>
-      <p></p></div><img class="post-photo" src="${asset(photos.largeOutdoor)}" alt="Vinahópur saman úti">`;
-    post.querySelector("p").textContent = text;
-    form.closest(".page-stack").insertBefore(post, form.closest(".content-card").nextSibling);
+    const post = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      text,
+    };
+    const updatedPosts = [post, ...newsPosts];
+    if (!saveNewsPosts(updatedPosts)) return;
+    newsPosts = updatedPosts;
+    renderUserNewsPosts();
     form.reset();
     showToast("Færslan hefur verið birt");
     return;
