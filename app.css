@@ -744,8 +744,17 @@ h3,
 }
 
 .chevron-icon {
-  width: 20px;
-  height: 20px;
+  display: block;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background-color 120ms ease;
+}
+
+.chevron-icon:hover {
+  background: var(--soft);
 }
 
 .dropdown-menu {
