@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Myndir - New Friends</title>
+  <link rel="stylesheet" href="app.css?v=36">
+</head>
+<body class="profile-setup-view">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Aðalvalmynd">
+      <div class="brand" aria-label="New Friends heim">
+        <span>New Friends</span>
+        <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="">
+      </div>
+
+      <nav class="side-nav">
+        <a href="app.html?view=home" data-view="home">
+          <img src="img/figma/8283c379-bc9c-48f5-9ef1-003d6c9de541.svg" alt="">
+          <span>Heim</span>
+        </a>
+        <a href="app.html?view=news" data-view="news">
+          <img src="img/figma/ce1e3756-44ea-48cd-8856-83b3ab98779e.svg" alt="">
+          <span>Hvað er að frétta?</span>
+        </a>
+        <a href="app.html?view=meetings" data-view="meetings">
+          <img src="img/figma/c94539bf-dd02-4721-8efc-b860d62e3666.svg" alt="">
+          <span>Hittingarspjall</span>
+        </a>
+        <a href="app.html?view=calendar-month" data-view="calendar">
+          <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
+          <span>Viðburðir &amp; dagatal</span>
+        </a>
+        <a href="app.html?view=messages" data-view="messages">
+          <img src="img/figma/b1c194ed-af27-4d13-a13a-3b35bfaf1df1.svg" alt="">
+          <span>Skilaboð</span>
+        </a>
+        <a href="app.html?view=profile" data-view="profile">
+          <img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt="">
+          <span>Prófíll</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <label class="theme-switch">
+          <span class="theme-name">
+            <img src="img/figma/35461c58-b2ea-46f8-940b-201b6aa8e1f1.svg" alt="">
+            Night mode
+          </span>
+          <input id="theme-toggle" type="checkbox" aria-label="Night mode">
+          <span class="switch-track" aria-hidden="true"></span>
+        </label>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="page-heading" id="page-heading"></div>
+        <label class="global-search">
+          <img src="img/figma/9a437b7b-4188-42a7-bb23-12738529b77e.svg" alt="">
+          <input id="global-search" type="search" placeholder="Leita..." aria-label="Leita">
+        </label>
+        <div class="notification-control">
+          <button class="icon-button notification-button" type="button" aria-label="Tilkynningar" aria-expanded="false" aria-controls="notifications-dropdown" data-action="notifications">
+            <img src="img/figma/29dfd07d-c609-4ff3-93e4-71e7708d5487.svg" alt="">
+            <span class="notification-count" aria-hidden="true">4</span>
+          </button>
+          <div class="notifications-dropdown" id="notifications-dropdown" role="region" aria-label="Tilkynningar" hidden></div>
+        </div>
+        <details class="profile-dropdown">
+          <summary aria-label="Opna prófílvalmynd">
+            <img class="top-avatar" src="img/figma/920ad6a3-93ee-456a-99c8-5db2593f3ee1.png" alt="Prófílmynd">
+            <span class="profile-chevron">
+              <img class="chevron-icon" src="img/figma/277a8d39-1495-42f4-b0e0-08e3dfcb2f50.svg" alt="">
+            </span>
+          </summary>
+          <div class="dropdown-menu">
+            <a href="app.html?view=profile">Prófíll</a>
+            <a href="app.html?view=login" data-action="sign-out">Skrá út</a>
+          </div>
+        </details>
+      </header>
+
+      <main class="app-main" id="screen" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <script src="firebase-config.js?v=2"></script>
+  <script src="owner-config.js?v=2"></script>
+  <script src="firebase-auth.js?v=2"></script>
+  <script src="firebase-firestore.js?v=2"></script>
+  <script src="firebase-profile.js?v=5"></script>
+  <script>
+    document.getElementById('page-heading').innerHTML = `<img src="img/figma/0c33a1f2-3d1b-468a-abd8-3fb2c5b87b7a.svg" alt=""><span>Myndir</span>`;
+    
+    document.getElementById('screen').innerHTML = `
+      <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div class="logo-section" style="text-align: center; margin-bottom: 40px; border-bottom: 1px solid #e0e0e0; padding-bottom: 30px;">
+          <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 12px 0; font-size: 32px; font-weight: 600; font-family: 'Poppins', Arial, sans-serif;">
+            <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="New Friends" style="width: 32px; height: 32px;">
+            New Friends
+          </h1>
+          <p class="tagline" style="color: #e5518b; font-size: 16px; font-weight: 500; margin: 0;">Connect · Meet · Build Friendships</p>
+          <p class="step-indicator" style="color: #e5518b; font-size: 12px; margin-top: 12px; font-weight: 600;">Skref 2 af 2 | Myndir</p>
+        </div>
+
+        <form id="photoForm" data-form="photo-policy">
+          <div class="form-section" style="margin-bottom: 30px;">
+            <!-- Private Photo Section -->
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label style="display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 10px;">Prófílmynd fyrir vini og áhugamálahópa (Áskilið)</label>
+              <div class="photo-upload-area" style="border: 2px dashed #e5518b; border-radius: 8px; padding: 40px; text-align: center; background: #fff1f3; cursor: pointer; margin-bottom: 12px;" onclick="this.querySelector('input').click()">
+                <svg class="upload-icon" style="width: 48px; height: 48px; margin: 0 auto 8px; color: #e5518b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <div class="upload-text" style="color: #e5518b; font-weight: 600; margin-bottom: 4px; font-size: 14px;">Dragðu mynd hingað</div>
+                <div class="upload-subtext" style="color: #999; font-size: 12px;">eða smelltu til að velja</div>
+                <input type="file" name="photoPrivate" accept="image/*" required>
+              </div>
+              <small style="display: block; color: #999; font-size: 10px; margin-top: 6px; line-height: 1.4;">Alvöru mynd af þér. JPG, PNG eða GIF (hámark 5MB)</small>
+              <div class="visibility-info" style="background: #fff1f3; border-left: 3px solid #e5518b; padding: 12px; border-radius: 6px; font-size: 12px; color: #333; margin-top: 10px; line-height: 1.6;">
+                <strong style="color: #e5518b; display: block; margin-bottom: 6px;">Hverjir sjá þessa mynd?</strong>
+                Prófílmyndir sem birtast eingöngu samþykkta vini og meðlimi í áhugamálahópa þína
+              </div>
+            </div>
+
+            <!-- Public Photo Section -->
+            <div class="form-group" style="margin-bottom: 25px;">
+              <label style="display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 10px;">Mynd fyrir almenning (Valfrjálst)</label>
+              <div class="photo-upload-area" style="border: 2px dashed #e5518b; border-radius: 8px; padding: 40px; text-align: center; background: #fff1f3; cursor: pointer; margin-bottom: 12px;" onclick="this.querySelector('input').click()">
+                <svg class="upload-icon" style="width: 48px; height: 48px; margin: 0 auto 8px; color: #e5518b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <div class="upload-text" style="color: #e5518b; font-weight: 600; margin-bottom: 4px; font-size: 14px;">Dragðu mynd hingað</div>
+                <div class="upload-subtext" style="color: #999; font-size: 12px;">eða smelltu til að velja</div>
+                <input type="file" name="photoPublic" accept="image/*">
+              </div>
+              <div class="visibility-info" style="background: #fff1f3; border-left: 3px solid #e5518b; padding: 12px; border-radius: 6px; font-size: 12px; color: #333; margin-top: 10px; line-height: 1.6;">
+                <strong style="color: #e5518b; display: block; margin-bottom: 6px;">Hverjir sjá þessa mynd?</strong>
+                Allir notendur á New Friends
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+            <a href="#" class="policy-link" onclick="showPhotoModal(); return false;" style="color: #e5518b; text-decoration: none; font-weight: 600;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#e5518b" stroke-width="2" style="display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: middle;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="11" x2="12" y2="17"></line>
+                <line x1="9" y1="14" x2="15" y2="14"></line>
+              </svg>
+              Skoðaðu reglur New Friends fyrir myndir
+            </a>
+          </div>
+
+          <div class="button-group" style="display: flex; gap: 12px; margin-top: 30px;">
+            <button type="button" class="button button-secondary" onclick="skipToHome()" style="flex: 1; padding: 12px 24px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; background: #f0f0f0; color: #333;">
+              Sleppa þessu skrefi
+            </button>
+            <button type="submit" class="button button-primary" style="flex: 1; padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; background: #e5518b; color: white;">
+              Halda áfram →
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.checked = localStorage.getItem("darkMode") === "on";
+    document.body.classList.toggle("dark-mode", themeToggle.checked);
+    themeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode", themeToggle.checked);
+      localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
+    });
+
+    document.getElementById('screen').addEventListener('submit', (e) => {
+      if (e.target.dataset.form === 'photo-policy') {
+        e.preventDefault();
+        handlePhotoSubmit(e.target);
+      }
+    });
+
+    async function handlePhotoSubmit(form) {
+      const submitButton = form.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+
+      try {
+        await import("./firebase-auth.js?v=2");
+        await import("./firebase-firestore.js?v=1");
+        
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        const user = authSdk.currentUser;
+        
+        if (!user) {
+          alert('Vertu innskráð/ur til að halda áfram');
+          return;
+        }
+
+        const photoPrivate = form.elements.photoPrivate?.files?.[0];
+        const photoPublic = form.elements.photoPublic?.files?.[0];
+        
+        const profileData = JSON.parse(localStorage.getItem('profileData') || '{}');
+        
+        if (photoPrivate) {
+          profileData.photoPrivateUrl = URL.createObjectURL(photoPrivate);
+        }
+        if (photoPublic) {
+          profileData.photoPublicUrl = URL.createObjectURL(photoPublic);
+        }
+
+        await window.firebaseFirestore.saveUserProfile(profileData);
+        
+        window.location.replace("app.html?view=home");
+      } catch (error) {
+        console.error("Photo submission failed", error);
+        alert("Ekki tókst að vista myndirnar. Reyndu aftur.");
+      } finally {
+        submitButton.disabled = false;
+      }
+    }
+
+    function skipToHome() {
+      window.location.replace("app.html?view=home");
+    }
+
+    function showPhotoModal() {
+      alert('Myndir fyrir New Friends - Nánari reglur kemur hér');
+    }
+  </script>
+</body>
+</html>

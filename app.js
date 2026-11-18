@@ -1336,14 +1336,14 @@ async function handleEmailAuth(form) {
         email,
         password,
       );
-      window.location.replace("app.html?view=profile-setup");
+      window.location.replace("profile-setup1.html");
     } else {
       await window.firebaseAuth.signInWithEmail(email, password);
       await import("./firebase-firestore.js?v=1");
       const { auth, authSdk } = await getFirebaseAuthClient();
       const user = authSdk.currentUser;
       const isComplete = await window.firebaseFirestore.hasCompletedProfile(user.uid);
-      window.location.replace(isComplete ? "app.html?view=home" : "app.html?view=profile-setup");
+      window.location.replace(isComplete ? "app.html?view=home" : "profile-setup1.html");
     }
   } catch (error) {
     const message = getEmailAuthErrorMessage(error, signingUp);
@@ -1446,7 +1446,7 @@ async function handleProfileSetupSubmit(form) {
     if (isOwner) {
       window.location.replace("app.html?view=home");
     } else {
-      window.location.replace("app.html?view=photo-policy");
+      window.location.replace("profile-setup2.html");
     }
   } catch (error) {
     console.error("Profile setup failed", error);
