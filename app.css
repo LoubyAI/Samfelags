@@ -753,14 +753,18 @@ h3,
   object-fit: cover;
 }
 
-.chevron-icon {
-  display: block;
-  box-sizing: border-box;
+.profile-chevron {
   width: 32px;
   height: 32px;
-  padding: 6px;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
   transition: background-color 120ms ease;
+}
+
+.chevron-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .dropdown-menu {
@@ -1785,7 +1789,7 @@ h3,
   transform: rotate(180deg);
 }
 
-.chevron-icon:hover,
+.profile-chevron:hover,
 .notification-button:hover,
 .message-filter:hover {
   background-color: var(--soft);
