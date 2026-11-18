@@ -786,7 +786,16 @@
     }
 
     function showPhotoModal() {
-      document.getElementById('policyModal').classList.add('active');
+      const policyModal = document.getElementById('policyModal');
+      const checkbox = document.getElementById('policyAcceptedCheckbox');
+      
+      policyModal.classList.add('active');
+      
+      // If policy was already accepted, keep the checkbox checked
+      if (policyAccepted) {
+        checkbox.checked = true;
+        document.getElementById('confirmPolicyBtn').disabled = false;
+      }
     }
 
     function closePolicyModal() {
