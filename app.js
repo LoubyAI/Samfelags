@@ -1225,6 +1225,11 @@ async function handleGoogleSignIn(button) {
     const { auth, authSdk } = await getFirebaseAuthClient();
     const user = authSdk.currentUser;
     const isComplete = await window.firebaseFirestore.hasCompletedProfile(user.uid);
+    
+    if (isComplete) {
+      showAuthMessage("Welkomin aftur!");
+    }
+    
     window.location.replace(isComplete ? "app.html?view=home" : "app.html?view=profile-setup");
   } catch (error) {
     if (error.code === "app/firebase-config-missing") {
