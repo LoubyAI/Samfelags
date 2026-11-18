@@ -20,7 +20,7 @@ const icons = {
   people: "7a078870-1969-4ab2-adbd-8107c25f9c4e.svg",
   event: "492e477f-7702-4065-ac34-585b6c460454.svg",
   photo: "d98296f8-1f07-442f-a577-ca93d33bbf45.svg",
-  heart: "81db5627-9b7a-46f7-a1c2-28bbb48f24f9.svg",
+  heart: "81db5627-9b7a-46f7-a1c2-28bbb48f24f9.svg?v=2",
   drinks: "0f9e270a-4ff4-40d4-bd25-c4148be67f62.svg",
   poll: "69d3229c-7380-4c95-950c-4d4d603f5f7f.svg",
   profileInfo: "46166371-541f-41e6-b9eb-d2806d455e69.svg",
