@@ -67,6 +67,111 @@
     </footer>
   </section>
   
-  <script src="app.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-auth.js"></script>
+  <script>
+    // Handle login form
+    const loginForm = document.querySelector('[data-form="login"]');
+    const signupForm = document.querySelector('[data-form="signup"]');
+    const authMessage = document.querySelector('[data-auth-message]');
+    const googleButton = document.querySelector('[data-action="google-login"]');
+    const toggleButton = document.querySelector('[data-action="toggle-auth-mode"]');
+    const forgotButton = document.querySelector('[data-action="forgot-password"]');
+
+    function showAuthMessage(message) {
+      authMessage.textContent = message;
+      authMessage.hidden = false;
+    }
+
+    function hideAuthMessage() {
+      authMessage.hidden = true;
+    }
+
+    if (toggleButton) {
+      toggleButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isSignup = loginForm.dataset.form === 'login';
+        loginForm.dataset.form = isSignup ? 'signup' : 'login';
+        document.querySelectorAll('[data-auth-signup]').forEach(el => {
+          el.hidden = !isSignup;
+          if (el.matches('input')) el.required = isSignup;
+        });
+        document.querySelector('[data-auth-title]').textContent = isSignup ? 'Búðu til aðgang' : 'Velkomin aftur!';
+        document.querySelector('[data-auth-subtitle]').textContent = isSignup ? 'Sláðu inn netfangið þitt og lykilorð' : 'Skráðu þig inn til að halda áfram.';
+        hideAuthMessage();
+      });
+    }
+
+    if (googleButton) {
+      googleButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        hideAuthMessage();
+        googleButton.disabled = true;
+        try {
+          const result = await window.firebaseAuth.signInWithGoogle();
+          const user = result.user;
+          showAuthMessage('Tekið! Endalaust...');
+          setTimeout(() => {
+            window.location.href = 'app.html?view=home';
+          }, 500);
+        } catch (error) {
+          console.error('Google sign-in failed:', error);
+          if (error.code === 'auth/popup-closed-by-user') {
+            showAuthMessage('Innskráningu var hætt við');
+          } else if (error.code === 'auth/unauthorized-domain') {
+            showAuthMessage('Þetta lén þarf að vera heimilað í Firebase');
+          } else if (error.code === 'auth/operation-not-allowed') {
+            showAuthMessage('Virkjaðu Google-innskráningu í Firebase');
+          } else {
+            showAuthMessage('Ekki tókst að skrá inn með Google');
+          }
+          googleButton.disabled = false;
+        }
+      });
+    }
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAuthMessage();
+        const isSignup = loginForm.dataset.form === 'signup';
+        const email = loginForm.querySelector('[name="email"]').value;
+        const password = loginForm.querySelector('[name="password"]').value;
+        const displayName = loginForm.querySelector('[name="displayName"]')?.value;
+
+        try {
+          if (isSignup) {
+            await window.firebaseAuth.createAccount(email, password, displayName);
+          } else {
+            await window.firebaseAuth.signInWithEmail(email, password);
+          }
+          showAuthMessage('Tekið! Endalaust...');
+          setTimeout(() => {
+            window.location.href = isSignup ? 'profile-setup1.html' : 'app.html?view=home';
+          }, 500);
+        } catch (error) {
+          console.error('Auth error:', error);
+          showAuthMessage(error.message || (isSignup ? 'Ekki tókst að búa til aðgang' : 'Ekki tókst að skrá inn'));
+        }
+      });
+    }
+
+    if (forgotButton) {
+      forgotButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const email = loginForm.querySelector('[name="email"]').value;
+        if (!email) {
+          showAuthMessage('Sláðu inn netfangið þitt fyrst');
+          return;
+        }
+        try {
+          await window.firebaseAuth.sendPasswordResetEmail(email);
+          showAuthMessage('Endurstillingarpóstur hefur verið sendur');
+        } catch (error) {
+          showAuthMessage('Ekki tókst að senda endurstillingarpóst');
+        }
+      });
+    }
+  </script>
 </body>
 </html>
