@@ -934,13 +934,54 @@
       const birthday = document.getElementById('birthday').value.trim();
       const city = document.getElementById('city').value;
 
-      if (!displayName) {
-        alert('⚠️ Vinsamlegast sláðu inn fullt nafn');
+      // Validate full name (2+ full words)
+      const words = displayName.split(/\s+/).filter(word => word.length > 0);
+      const fullWords = words.filter(word => word.length >= 2);
+      if (fullWords.length < 2) {
+        alert('⚠️ Vinsamlegast sláðu inn fullt nafn með að minnsta kosti tveimur orðum');
         return;
       }
 
+      // Validate birthday format
       if (!birthday) {
         alert('⚠️ Vinsamlegast veldu fæðingardag');
+        return;
+      }
+
+      const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+      const match = birthday.match(dateRegex);
+      if (!match) {
+        alert('⚠️ Ógildar dagsetning. Sláðu inn á sniðinu DD.MM.YYYY');
+        return;
+      }
+
+      // Validate age
+      const day = parseInt(match[1]);
+      const month = parseInt(match[2]);
+      const year = parseInt(match[3]);
+      
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      if (age < 15) {
+        alert('⚠️ Þú verður að vera að minnsta kosti 15 ára gömul/ur');
+        return;
+      }
+
+      // Validate city selection
+      if (!city) {
+        alert('⚠️ Vinsamlegast veldu borg eða sveitarfélag');
+        return;
+      }
+
+      // Validate nickname (no bad words)
+      if (containsBadWords(nickname)) {
+        alert('⚠️ Gælunafnið inniheldur óheimiluð orð');
         return;
       }
 
