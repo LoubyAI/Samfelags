@@ -460,7 +460,9 @@ function renderMessages() {
         <h2>Skilaboð</h2>
         <input class="message-search" type="search" placeholder="⌕　Leita að samtali..." aria-label="Leita að samtali">
         <button class="message-filter" type="button" data-action="toggle-conversations" aria-label="Sýna vistuð samtöl" aria-expanded="false" aria-controls="saved-conversations">
-          <span class="message-filter-arrow" aria-hidden="true">⌄</span>
+          <svg class="message-filter-arrow" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+          </svg>
         </button>
         <div class="saved-conversations" id="saved-conversations" hidden>
           <p>Engin vistuð samtöl ennþá.</p>
@@ -601,6 +603,7 @@ screen.addEventListener("click", (event) => {
     const savedConversations = screen.querySelector("#saved-conversations");
     const expanded = button.getAttribute("aria-expanded") !== "true";
     button.setAttribute("aria-expanded", String(expanded));
+    button.setAttribute("aria-label", expanded ? "Fela vistuð samtöl" : "Sýna vistuð samtöl");
     savedConversations.hidden = !expanded;
     return;
   }
