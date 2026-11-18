@@ -94,10 +94,10 @@ h3,
 
 .login-page {
   display: grid;
-  grid-template-rows: 72px minmax(0, 1fr) 44px;
+  grid-template-rows: clamp(64px, 8vh, 80px) minmax(0, 1fr) 44px;
   place-items: stretch;
   min-height: 100vh;
-  padding: 0;
+  padding: 0 clamp(16px, 3vw, 40px);
   background: var(--soft);
 }
 
@@ -110,11 +110,11 @@ h3,
 
 .login-layout {
   display: grid;
-  grid-template-columns: minmax(0, 59fr) minmax(0, 39fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
   align-items: stretch;
   gap: 0;
   width: min(100%, 1440px);
-  min-height: 85vh;
+  min-height: clamp(520px, 78vh, 760px);
   margin: 0 auto;
   padding: 0;
   border: 1px solid var(--white);
@@ -126,7 +126,7 @@ h3,
 
 .login-welcome,
 .login-panel {
-  min-height: 80vh;
+  min-height: 0;
   border-radius: 0;
   background: var(--white);
 }
@@ -147,7 +147,7 @@ h3,
 
 .login-intro h1 {
   margin-bottom: 16px;
-  font-size: 32px;
+  font-size: clamp(28px, 2.4vw, 36px);
 }
 
 .login-intro p,
@@ -159,7 +159,7 @@ h3,
 
 .login-photo {
   width: 100%;
-  height: min(68vh, 640px);
+  height: clamp(280px, 58vh, 640px);
   border-radius: 12px;
   object-fit: cover;
 }
@@ -167,7 +167,7 @@ h3,
 .login-panel {
   display: grid;
   place-items: center;
-  padding: 32px;
+  padding: clamp(24px, 3vw, 48px);
   text-align: center;
 }
 
@@ -344,50 +344,70 @@ h3,
 }
 
 @media (max-width: 900px) {
+  .login-page {
+    grid-template-rows: 64px minmax(0, 1fr) 44px;
+    padding-inline: clamp(16px, 4vw, 32px);
+  }
+
   .login-layout {
     grid-template-columns: 1fr;
     gap: 0;
     padding: 0;
-  }
-
-  .login-welcome {
     min-height: auto;
   }
 
+  .login-welcome {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    min-height: auto;
+    gap: clamp(16px, 3vw, 36px);
+    padding: clamp(24px, 4vw, 48px);
+  }
+
   .login-photo {
-    height: 320px;
+    height: clamp(220px, 32vw, 360px);
   }
 
   .login-panel {
-    min-height: 560px;
+    min-height: auto;
+    padding: clamp(32px, 5vw, 56px);
   }
 }
 
 @media (max-width: 600px) {
+  .login-page {
+    grid-template-rows: 64px minmax(0, 1fr) 40px;
+    padding-inline: 12px;
+  }
+
   .login-welcome {
     grid-template-columns: 1fr;
+    gap: 20px;
     padding: 20px;
   }
 
+  .login-intro {
+    padding: 0;
+  }
+
   .login-photo {
-    height: 240px;
+    height: clamp(190px, 52vw, 260px);
   }
 
   .login-panel {
-    min-height: 520px;
-    padding: 24px;
+    min-height: auto;
+    padding: 32px 20px;
   }
 
   .login-intro h1 {
-    font-size: 28px;
+    font-size: clamp(24px, 7vw, 28px);
   }
 
   .login-brand-name {
-    font-size: 21px;
+    font-size: clamp(18px, 5.6vw, 21px);
   }
 
   .login-brand-tagline {
-    font-size: 10px;
+    font-size: clamp(9px, 2.6vw, 10px);
   }
 }
 
