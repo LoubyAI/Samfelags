@@ -1244,7 +1244,7 @@ async function handleGoogleSignIn(button) {
       showAuthMessage("Vafrinn lokaði innskráningarglugganum. Leyfðu sprettiglugga.");
     } else {
       console.error("Google sign-in failed", error);
-      showAuthMessage("Ekki tókst að skrá inn. Ertu þegar með aðgang á þessari vefsíðu með þessum Google aðgangi?");
+      showAuthMessage("Þessi Google-aðgangur er þegar skráður á þessari vefsíðu. Skráðu þig inn í staðinn.");
     }
   } finally {
     button.disabled = false;
