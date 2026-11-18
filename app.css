@@ -1744,14 +1744,13 @@ h3,
 .message-filter {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  margin: 8px auto 0;
-  padding: 8px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--white);
-  color: var(--ink);
+  width: 32px;
+  height: 32px;
+  margin: 6px auto 0;
+  padding: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
   cursor: pointer;
 }
 
@@ -1762,8 +1761,8 @@ h3,
 
 .message-filter-arrow {
   display: block;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   transition: transform 120ms ease;
 }
 
