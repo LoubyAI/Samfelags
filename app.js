@@ -1331,6 +1331,10 @@ async function handleEmailAuth(form) {
     const message = getEmailAuthErrorMessage(error, signingUp);
     if (message) {
       showAuthMessage(message);
+      if (!signingUp && (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password")) {
+        const forgotPassword = form.querySelector('[data-action="forgot-password"]');
+        if (forgotPassword) forgotPassword.hidden = false;
+      }
     } else {
       console.error(signingUp ? "Account creation failed" : "Email sign-in failed", error);
       showAuthMessage(signingUp
