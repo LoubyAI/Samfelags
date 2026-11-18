@@ -635,12 +635,16 @@ h3,
 
 .notification-button {
   position: relative;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
   border-radius: 50%;
   transition: background-color 120ms ease;
 }
 
-.notification-button:hover {
-  background: var(--soft);
+.notification-button img {
+  width: 20px;
+  height: 20px;
 }
 
 .notification-count {
@@ -757,10 +761,6 @@ h3,
   padding: 6px;
   border-radius: 50%;
   transition: background-color 120ms ease;
-}
-
-.chevron-icon:hover {
-  background: var(--soft);
 }
 
 .dropdown-menu {
@@ -1785,8 +1785,10 @@ h3,
   transform: rotate(180deg);
 }
 
+.chevron-icon:hover,
+.notification-button:hover,
 .message-filter:hover {
-  background: var(--soft);
+  background-color: var(--soft);
 }
 
 .saved-conversations {
