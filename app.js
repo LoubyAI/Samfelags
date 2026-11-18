@@ -556,13 +556,47 @@ function renderProfile() {
           <a href="#friends">${icon(icons.profileConnections, "")}Tengslabönd</a>
         </nav>
       </section>
-      <section class="profile-panel profile-welcome">
+      <section class="profile-panel profile-welcome" id="profile-content">
         <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Luna A. Jónasdóttir">
         <h1>Luna A. Jónasdóttir</h1>
         <p>Byrjaðu að fylla prófílinn!</p>
         <button class="button button-primary" type="button">${icon(icons.plus, "")}Byrjaðu</button>
       </section>
-    </div>`;
+    </div>
+    
+    <script>
+      document.querySelectorAll('.profile-panel nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const hash = new URL(link.href).hash.slice(1);
+          const content = document.getElementById('profile-content');
+          
+          if (hash === 'settings') {
+            content.innerHTML = \`
+              <div style="max-width: 400px;">
+                <h2 style="margin-top: 0;">Stillingar</h2>
+                <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
+                  <h3 style="color: #e5518b; font-size: 14px; font-weight: 600; margin-bottom: 12px;">Aðgangastjórnun</h3>
+                  <button class="button button-primary" type="button" data-action="delete-account" style="background: #e5518b; width: 100%; padding: 12px 24px; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; font-size: 14px;">
+                    Eyða aðgangi
+                  </button>
+                  <small style="display: block; color: #999; font-size: 12px; margin-top: 8px; line-height: 1.4;">
+                    Allt gögn þín verða eytt og ekki mögulegt að endurheimta
+                  </small>
+                </div>
+              </div>
+            \`;
+          } else {
+            content.innerHTML = \`
+              <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Luna A. Jónasdóttir">
+              <h1>Luna A. Jónasdóttir</h1>
+              <p>Byrjaðu að fylla prófílinn!</p>
+              <button class="button button-primary" type="button">\${icon(icons.plus, "")}Byrjaðu</button>
+            \`;
+          }
+        });
+      });
+    </script>`;
 }
 
 function renderPhotoPolicy() {
@@ -642,60 +676,23 @@ function renderPhotoPolicy() {
   `;
 }
 
-function renderLogin() {
-  return `
-    <section class="login-page" aria-label="Innskráning">
-      <header class="login-header">
-        <div class="login-brand">
-          <span class="login-brand-name">New Friends</span>
-          <img src="${asset(icons.people)}" alt="">
-          <span class="login-brand-tagline">Connect · Meet · Build Friendships</span>
-        </div>
-      </header>
-      <div class="login-layout">
-        <section class="login-welcome">
-          <div class="login-intro">
-            <h1>Ný vinátta byrjar hér</h1>
-            <p>Kynnstu konum, skipuleggðu hittinga og taktu þátt í skemmtilegum viðburðum.</p>
-          </div>
-          <img class="login-photo" src="${asset(photos.largeOutdoor)}" alt="Vinahópur nýtur samveru">
-        </section>
-        <section class="login-panel">
-          <div class="login-form-card">
-            <h2 data-auth-title>Velkomin aftur!</h2>
-            <p class="login-subtitle" data-auth-subtitle>Skráðu þig inn til að halda áfram.</p>
-            <form class="login-form" data-form="login">
-              <label for="login-email">Netfang</label>
-              <input id="login-email" name="email" type="email" autocomplete="email" placeholder="Sláðu inn netfangið þitt" required>
-              <label for="login-password">Lykilorð</label>
-              <input id="login-password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Sláðu inn lykilorðið þitt" required>
-              <label for="login-password-confirm" data-auth-signup hidden>Staðfestu lykilorð</label>
-              <input id="login-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Sláðu inn lykilorðið aftur" data-auth-signup hidden>
-              <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
-              <button class="button button-primary login-submit" type="submit">Skrá inn</button>
-            </form>
-            <p class="auth-message" data-auth-message role="alert" aria-live="assertive" hidden></p>
-            <div class="login-divider"><span>eða</span></div>
-            <button class="login-google" type="button" data-action="google-login">
-              <svg class="login-google-icon" viewBox="0 0 48 48" aria-hidden="true">
-                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.27 5.47-4.79 7.16l7.73 6c4.51-4.17 7.1-10.32 7.1-17.63z"/>
-                <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.77-4.59l-7.98-6.19A23.93 23.93 0 0 0 0 24c0 3.86.92 7.5 2.56 10.78l7.97-6.19z"/>
-                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.82l-7.73-6c-2.14 1.43-4.88 2.27-8.18 2.27-6.26 0-11.57-4.22-13.47-9.9l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
-              </svg>
-              <span>Halda áfram með Google</span>
-            </button>
-            <p class="login-signup">
-              <span data-auth-toggle-prompt>Ný í New Friends?</span>
-              <button type="button" data-action="toggle-auth-mode">Búðu til aðgang</button>
-            </p>
-          </div>
-        </section>
-      </div>
-      <footer class="login-footer">
-        <p>© 2026 New Friends</p>
-      </footer>
-    </section>`;
+async function renderLogin() {
+  try {
+    const response = await fetch('login.html');
+    const html = await response.text();
+    
+    // Extract the body content (everything between <body> tags)
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const bodyContent = Array.from(doc.body.childNodes)
+      .map(node => node.outerHTML || node.textContent)
+      .join('');
+    
+    return bodyContent;
+  } catch (error) {
+    console.error('Failed to load login.html:', error);
+    return '<p>Mistók að hlaða innskráningarsíðu</p>';
+  }
 }
 
 const view = new URLSearchParams(window.location.search).get("view") || "home";
@@ -909,6 +906,14 @@ screen.addEventListener("click", (event) => {
 document.querySelector('[data-action="sign-out"]')?.addEventListener("click", (event) => {
   event.preventDefault();
   void handleFirebaseSignOut();
+});
+
+document.querySelector('body')?.addEventListener("click", (event) => {
+  const button = event.target.closest('[data-action="delete-account"]');
+  if (button) {
+    event.preventDefault();
+    void handleDeleteAccount();
+  }
 });
 
 screen.addEventListener("change", (event) => {
@@ -1545,6 +1550,48 @@ async function handleFirebaseSignOut() {
   } catch (error) {
     console.error("Firebase sign-out failed", error);
     showToast("Ekki tókst að skrá út");
+  }
+}
+
+async function handleDeleteAccount() {
+  if (!confirm("Ertu viss um að þú viljir eyða aðgangnum þínum? Þetta er óafturkræft.")) {
+    return;
+  }
+
+  if (!confirm("Allt gögn þín verða eytt. Ertu viss?")) {
+    return;
+  }
+
+  try {
+    await import("./firebase-auth.js?v=2");
+    await import("./firebase-firestore.js?v=1");
+    
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    const user = authSdk.currentUser;
+    
+    if (!user) {
+      showToast("Engin notandi innskráð");
+      return;
+    }
+
+    showToast("Eyða aðgangi...");
+
+    // Delete user profile from Firestore
+    await window.firebaseFirestore.deleteUserProfile(user.uid);
+    
+    // Delete user from Firebase Auth
+    await user.delete();
+    
+    showToast("Aðgangur eytt");
+    window.location.replace("app.html?view=login");
+  } catch (error) {
+    console.error("Failed to delete account", error);
+    if (error.code === "auth/requires-recent-login") {
+      showToast("Þú verður að skrá þig inn aftur til að eyða aðgangnum");
+      window.location.replace("app.html?view=login");
+    } else {
+      showToast("Ekki tókst að eyða aðgangnum: " + error.message);
+    }
   }
 }
 

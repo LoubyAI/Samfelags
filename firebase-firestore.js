@@ -415,4 +415,10 @@ window.firebaseFirestore = {
       return userAge >= eventMinAge && userAge <= eventMaxAge;
     });
   },
+
+  async deleteUserProfile(userId) {
+    const { db, firestoreSdk } = await getFirestoreClient();
+    const userRef = firestoreSdk.doc(db, "users", userId);
+    await firestoreSdk.deleteDoc(userRef);
+  },
 };
