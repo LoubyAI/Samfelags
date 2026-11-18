@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tvær myndir fyrir einkalíf - New Friends</title>
+  <link rel="stylesheet" href="app.css?v=35">
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--soft) 0%, var(--white) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+    }
+
+    .logo-section {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 30px;
+    }
+
+    .logo-section h1 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 0 12px 0;
+      font-size: 32px;
+      font-weight: 600;
+      font-family: 'Poppins', Arial, sans-serif;
+    }
+
+    .logo-section img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .logo-section .tagline {
+      color: #e5518b;
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .step-indicator {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #999;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .step-indicator .current {
+      color: #e5518b;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e5518b;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f5f5f5;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .photo-upload-area {
+      border: 2px dashed #e5518b;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      background: #fff1f3;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .photo-upload-area:hover {
+      border-color: #d63d7a;
+      background: #ffe8f0;
+    }
+
+    .photo-upload-area input {
+      display: none;
+    }
+
+    .photo-upload-area.has-image {
+      background: #f5f5f5;
+      border-color: #ddd;
+      padding: 20px;
+    }
+
+    .upload-icon {
+      font-size: 2em;
+      margin-bottom: 8px;
+      color: #e5518b;
+    }
+
+    .photo-upload-area.has-image .upload-icon {
+      display: none;
+    }
+
+    .upload-text {
+      color: #e5518b;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .upload-subtext {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .photo-preview {
+      display: none;
+      text-align: center;
+    }
+
+    .photo-preview.show {
+      display: block;
+    }
+
+    .photo-preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .photo-preview-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .photo-preview-actions button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-replace {
+      background: #f0f0f0;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-replace:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-remove {
+      background: #fff1f3;
+      color: #e5518b;
+      border: 1px solid #e5518b;
+    }
+
+    .btn-remove:hover {
+      background: #ffe8f0;
+    }
+
+    .form-group small {
+      display: block;
+      color: #999;
+      font-size: 10px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .visibility-info {
+      background: #fff1f3;
+      border-left: 3px solid #e5518b;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #333;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .visibility-info strong {
+      color: #e5518b;
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 40px;
+    }
+
+    .button {
+      flex: 1;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, #e5518b 0%, #d63d7a 100%);
+      color: white;
+    }
+
+    .button-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(229, 81, 139, 0.3);
+    }
+
+    .button-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .button-secondary {
+      background: white;
+      color: #333;
+      border: 1.5px solid #ddd;
+    }
+
+    .button-secondary:hover {
+      border-color: #e5518b;
+      color: #e5518b;
+    }
+
+    .info-box {
+      background: #fff5f8;
+      border-left: 3px solid #e5518b;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .info-box strong {
+      color: #e5518b;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #e5518b 0%, #d63d7a 100%);
+      color: white;
+      padding: 25px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-header h2 {
+      font-family: 'Poppins', Arial, sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .modal-body {
+      padding: 25px;
+      color: #333;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .modal-body h3 {
+      color: #333;
+      margin: 20px 0 12px 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-body h3:first-child {
+      margin-top: 0;
+    }
+
+    .modal-body p {
+      margin: 0 0 12px 0;
+      color: #666;
+    }
+
+    .modal-body ul {
+      margin: 12px 0;
+      padding-left: 20px;
+      color: #666;
+    }
+
+    .modal-body li {
+      margin-bottom: 8px;
+    }
+
+    .modal-footer {
+      padding: 25px;
+      border-top: 1px solid #e0e0e0;
+      background: #f9f9f9;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      padding: 12px;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-label input {
+      margin-top: 4px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      accent-color: #e5518b;
+      flex-shrink: 0;
+    }
+
+    .checkbox-label span {
+      color: #333;
+      line-height: 1.5;
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .modal-actions .button {
+      flex: 0;
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-section">
+      <h1>
+        <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="New Friends">
+        New Friends
+      </h1>
+      <p class="tagline">Tvær myndir fyrir einkalíf</p>
+    </div>
+
+    <div class="step-indicator">
+      Skref 2 af 4 | <span class="current">Myndir</span>
+    </div>
+
+    <div class="info-box">
+      ℹ️ <strong>Nauðsynlegt:</strong> Prófílmynd fyrir vini og áhugamálahópa. <strong>Valfrjálst:</strong> Mynd fyrir almenning.
+    </div>
+
+    <form>
+      <div class="form-section">
+        <div class="section-title">Prófílmynd fyrir vini og áhugamálahópa</div>
+
+        <div class="form-group">
+          <label for="privatePhoto">Mynd (áskilið) *</label>
+          <div class="photo-upload-area" onclick="document.getElementById('privatePhotoInput').click()">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">Dragðu mynd hingað</div>
+            <div class="upload-subtext">eða smelltu til að velja</div>
+            <div class="photo-preview" id="privatePhotoPreview">
+              <img id="privatePhotoImg" src="" alt="Preview">
+              <div class="photo-preview-actions">
+                <button type="button" class="btn-replace" onclick="document.getElementById('privatePhotoInput').click()">Skipta út</button>
+                <button type="button" class="btn-remove" onclick="removePrivatePhoto()">Fjarlægja</button>
+              </div>
+            </div>
+            <input type="file" id="privatePhotoInput" accept="image/*" onchange="handlePrivatePhotoUpload(event)">
+          </div>
+          <small>JPG, PNG eða GIF (hámark 5MB). Alvöru mynd af þér.</small>
+          <div class="visibility-info">
+            <strong>Hverjir sjá þessa mynd?</strong>
+            • Samþykkir vinir<br>
+            • Meðlimir þinna áhugamálahópa
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Mynd fyrir almenning</div>
+
+        <div class="form-group">
+          <label for="publicPhoto">Mynd (valfrjálst)</label>
+          <div class="photo-upload-area" onclick="document.getElementById('publicPhotoInput').click()">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">Dragðu mynd hingað</div>
+            <div class="upload-subtext">eða smelltu til að velja</div>
+            <div class="photo-preview" id="publicPhotoPreview">
+              <img id="publicPhotoImg" src="" alt="Preview">
+              <div class="photo-preview-actions">
+                <button type="button" class="btn-replace" onclick="document.getElementById('publicPhotoInput').click()">Skipta út</button>
+                <button type="button" class="btn-remove" onclick="removePublicPhoto()">Fjarlægja</button>
+              </div>
+            </div>
+            <input type="file" id="publicPhotoInput" accept="image/*" onchange="handlePublicPhotoUpload(event)">
+          </div>
+          <small>JPG, PNG eða GIF (hámark 5MB). Þessari mynd getur almenningur séð.</small>
+          <div class="visibility-info">
+            <strong>Hverjir sjá þessa mynd?</strong>
+            • Almenningur (engir innskráðir notendur þurfa)
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="button button-secondary" onclick="goBack()">Til baka</button>
+        <button type="button" class="button button-primary" id="continueButton" onclick="proceedToNextStep()" disabled>Halda áfram</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal for Photo Policy -->
+  <div id="policyModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Reglur um myndir</h2>
+      </div>
+      <div class="modal-body">
+        <h3>Prófílmyndir verða að vera alvöru myndir af þér</h3>
+        <p>Núverandi alvöru mynd af þér er nauðsynleg svo fólk viti hver þú ert.</p>
+        <ul>
+          <li>✅ Endalaus núverandi myndir af þér</li>
+          <li>❌ Engin listaverk eða teikningar</li>
+          <li>❌ Engar afmælisupptökur</li>
+          <li>❌ Engar gömul myndir (fleiri en 2 ár)</li>
+        </ul>
+
+        <h3>Nota ekki myndir af öðrum fólki</h3>
+        <p>Þú mátt ekki nota myndir af öðrum einstaklingum. Allar myndir verða að vera myndir af þér sjálf/um.</p>
+
+        <h3>Afleiðingar brota</h3>
+        <p>Ef myndir þínar fylgja ekki þessum reglum, verður prófílinn þinn eyður og aðgangur þinn skilið aftarlaust.</p>
+      </div>
+      <div class="modal-footer">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            id="policyPhotosCheckbox"
+            onchange="updatePhotoButtonState()"
+          >
+          <span>Ég samþykki að myndir mínar eru alvöru myndir af mér og fylgja reglum New Friends.</span>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="button button-secondary" onclick="closePhotoModal()">Hafna</button>
+          <button type="button" class="button button-primary" id="acceptPhotoPolicyButton" onclick="acceptPhotoPolicy()" disabled>Samþykkja</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let hasPrivatePhoto = false;
+    let hasPublicPhoto = false;
+    let policyAccepted = false;
+
+    function handlePrivatePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('privatePhotoImg').src = e.target.result;
+          document.getElementById('privatePhotoPreview').classList.add('show');
+          hasPrivatePhoto = true;
+          updateFormButtonState();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removePrivatePhoto() {
+      document.getElementById('privatePhotoInput').value = '';
+      document.getElementById('privatePhotoPreview').classList.remove('show');
+      hasPrivatePhoto = false;
+      updateFormButtonState();
+    }
+
+    function handlePublicPhotoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('publicPhotoImg').src = e.target.result;
+          document.getElementById('publicPhotoPreview').classList.add('show');
+          hasPublicPhoto = true;
+          updateFormButtonState();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removePublicPhoto() {
+      document.getElementById('publicPhotoInput').value = '';
+      document.getElementById('publicPhotoPreview').classList.remove('show');
+      hasPublicPhoto = false;
+      updateFormButtonState();
+    }
+
+    function updateFormButtonState() {
+      const hasPrivate = hasPrivatePhoto;
+      const isComplete = hasPrivate && policyAccepted;
+      document.getElementById('continueButton').disabled = !isComplete;
+    }
+
+    function updatePhotoButtonState() {
+      const checked = document.getElementById('policyPhotosCheckbox').checked;
+      document.getElementById('acceptPhotoPolicyButton').disabled = !checked;
+    }
+
+    function proceedToNextStep() {
+      if (!policyAccepted) {
+        document.getElementById('policyModal').classList.add('show');
+        return;
+      }
+
+      alert('✅ Myndir vistaðar! Halda áfram á næsta skref.');
+      // Here you would proceed to step 3
+    }
+
+    function closePhotoModal() {
+      document.getElementById('policyModal').classList.remove('show');
+    }
+
+    function acceptPhotoPolicy() {
+      policyAccepted = true;
+      document.getElementById('policyPhotosCheckbox').checked = false;
+      updatePhotoButtonState();
+      closePhotoModal();
+      updateFormButtonState();
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('policyModal').addEventListener('click', function(event) {
+      if (event.target === this) {
+        closePhotoModal();
+      }
+    });
+  </script>
+</body>
+</html>

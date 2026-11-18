@@ -56,6 +56,8 @@ const pageInfo = {
   "calendar-month": { title: "Viðburðir & dagatal", icon: icons.calendar, active: "calendar" },
   messages: { title: "Skilaboð", icon: icons.messages, active: "messages" },
   profile: { title: "Prófíll", icon: icons.profile, active: "profile" },
+  "profile-setup": { title: "Prófíluppsetning", icon: icons.profile, active: "profile" },
+  "photo-policy": { title: "Myndasjónarmið", icon: icons.photo, active: "profile" },
   login: { title: "Skrá inn", icon: icons.profile, active: "" },
 };
 
@@ -563,6 +565,83 @@ function renderProfile() {
     </div>`;
 }
 
+function renderPhotoPolicy() {
+  return `
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div class="logo-section" style="text-align: center; margin-bottom: 40px; border-bottom: 1px solid #e0e0e0; padding-bottom: 30px;">
+        <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 12px 0; font-size: 32px; font-weight: 600; font-family: 'Poppins', Arial, sans-serif;">
+          <img src="${asset(icons.people)}" alt="New Friends" style="width: 32px; height: 32px;">
+          New Friends
+        </h1>
+        <p class="tagline" style="color: #e5518b; font-size: 16px; font-weight: 500; margin: 0;">Connect · Meet · Build Friendships</p>
+        <p class="step-indicator" style="color: #e5518b; font-size: 12px; margin-top: 12px; font-weight: 600;">Skref 2 af 2 | Myndir</p>
+      </div>
+
+      <form id="photoForm" data-form="photo-policy">
+        <div class="form-section" style="margin-bottom: 30px;">
+          <!-- Private Photo Section -->
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 10px;">Prófílmynd fyrir vini og áhugamálahópa (Áskilið)</label>
+            <div class="photo-upload-area" style="border: 2px dashed #e5518b; border-radius: 8px; padding: 40px; text-align: center; background: #fff1f3; cursor: pointer; margin-bottom: 12px;" onclick="this.querySelector('input').click()">
+              <svg class="upload-icon" style="width: 48px; height: 48px; margin: 0 auto 8px; color: #e5518b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              <div class="upload-text" style="color: #e5518b; font-weight: 600; margin-bottom: 4px; font-size: 14px;">Dragðu mynd hingað</div>
+              <div class="upload-subtext" style="color: #999; font-size: 12px;">eða smelltu til að velja</div>
+              <input type="file" name="photoPrivate" accept="image/*" required>
+            </div>
+            <small style="display: block; color: #999; font-size: 10px; margin-top: 6px; line-height: 1.4;">Alvöru mynd af þér. JPG, PNG eða GIF (hámark 5MB)</small>
+            <div class="visibility-info" style="background: #fff1f3; border-left: 3px solid #e5518b; padding: 12px; border-radius: 6px; font-size: 12px; color: #333; margin-top: 10px; line-height: 1.6;">
+              <strong style="color: #e5518b; display: block; margin-bottom: 6px;">Hverjir sjá þessa mynd?</strong>
+              Prófílmyndir sem birtast eingöngu samþykkta vini og meðlimi í áhugamálahópa þína
+            </div>
+          </div>
+
+          <!-- Public Photo Section -->
+          <div class="form-group" style="margin-bottom: 25px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 10px;">Mynd fyrir almenning (Valfrjálst)</label>
+            <div class="photo-upload-area" style="border: 2px dashed #e5518b; border-radius: 8px; padding: 40px; text-align: center; background: #fff1f3; cursor: pointer; margin-bottom: 12px;" onclick="this.querySelector('input').click()">
+              <svg class="upload-icon" style="width: 48px; height: 48px; margin: 0 auto 8px; color: #e5518b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              <div class="upload-text" style="color: #e5518b; font-weight: 600; margin-bottom: 4px; font-size: 14px;">Dragðu mynd hingað</div>
+              <div class="upload-subtext" style="color: #999; font-size: 12px;">eða smelltu til að velja</div>
+              <input type="file" name="photoPublic" accept="image/*">
+            </div>
+            <div class="visibility-info" style="background: #fff1f3; border-left: 3px solid #e5518b; padding: 12px; border-radius: 6px; font-size: 12px; color: #333; margin-top: 10px; line-height: 1.6;">
+              <strong style="color: #e5518b; display: block; margin-bottom: 6px;">Hverjir sjá þessa mynd?</strong>
+              Allir notendur á New Friends
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+          <a href="#" class="policy-link" onclick="showPhotoModal(); return false;" style="color: #e5518b; text-decoration: none; font-weight: 600;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#e5518b" stroke-width="2" style="display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: middle;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="11" x2="12" y2="17"></line>
+              <line x1="9" y1="14" x2="15" y2="14"></line>
+            </svg>
+            Skoðaðu reglur New Friends fyrir myndir
+          </a>
+        </div>
+
+        <div class="button-group" style="display: flex; gap: 12px; margin-top: 30px;">
+          <button type="button" class="button button-secondary" onclick="skipToHome()" style="flex: 1; padding: 12px 24px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; background: #f0f0f0; color: #333;">
+            Sleppa þessu skrefi
+          </button>
+          <button type="submit" class="button button-primary" style="flex: 1; padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; background: #e5518b; color: white;">
+            Halda áfram →
+          </button>
+        </div>
+      </form>
+    </div>
+  `;
+}
+
 function renderLogin() {
   return `
     <section class="login-page" aria-label="Innskráning">
@@ -632,6 +711,8 @@ const renderers = {
   "calendar-month": () => renderCalendar("calendar-month"),
   messages: renderMessages,
   profile: renderProfile,
+  "profile-setup": () => window.firebaseProfile?.renderProfileSetup() || "<p>Loading profile setup...</p>",
+  "photo-policy": renderPhotoPolicy,
   login: renderLogin,
 };
 
@@ -884,6 +965,16 @@ screen.addEventListener("submit", (event) => {
     return;
   }
 
+  if (form.dataset.form === "profile-setup") {
+    void handleProfileSetupSubmit(form);
+    return;
+  }
+
+  if (form.dataset.form === "photo-policy") {
+    void handlePhotoPolicySubmit(form);
+    return;
+  }
+
   if (form.dataset.form === "meeting-poll") {
     const question = form.elements.question.value.trim();
     const options = Array.from(form.querySelectorAll('input[name="option"]'))
@@ -1130,7 +1221,11 @@ async function handleGoogleSignIn(button) {
   try {
     await import("./firebase-auth.js?v=2");
     await window.firebaseAuth.signInWithGoogle();
-    window.location.replace("app.html?view=home");
+    await import("./firebase-firestore.js?v=1");
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    const user = authSdk.currentUser;
+    const isComplete = await window.firebaseFirestore.hasCompletedProfile(user.uid);
+    window.location.replace(isComplete ? "app.html?view=home" : "app.html?view=profile-setup");
   } catch (error) {
     if (error.code === "app/firebase-config-missing") {
       showAuthMessage("Bættu Firebase-vefstillingum við til að virkja Google-innskráningu");
@@ -1211,10 +1306,15 @@ async function handleEmailAuth(form) {
         password,
         form.elements.displayName.value.trim(),
       );
+      window.location.replace("app.html?view=profile-setup");
     } else {
       await window.firebaseAuth.signInWithEmail(email, password);
+      await import("./firebase-firestore.js?v=1");
+      const { auth, authSdk } = await getFirebaseAuthClient();
+      const user = authSdk.currentUser;
+      const isComplete = await window.firebaseFirestore.hasCompletedProfile(user.uid);
+      window.location.replace(isComplete ? "app.html?view=home" : "app.html?view=profile-setup");
     }
-    window.location.replace("app.html?view=home");
   } catch (error) {
     const message = getEmailAuthErrorMessage(error, signingUp);
     if (message) {
@@ -1254,6 +1354,125 @@ async function handlePasswordReset(button) {
     }
   } finally {
     button.disabled = false;
+  }
+}
+
+async function handleProfileSetupSubmit(form) {
+  const submitButton = form.querySelector('[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.setAttribute("aria-busy", "true");
+
+  try {
+    await import("./firebase-auth.js?v=2");
+    await import("./firebase-firestore.js?v=1");
+    
+    const displayName = form.elements.displayName?.value.trim() || "";
+    const nickname = form.elements.nickname?.value.trim() || "";
+    const birthday = form.elements.birthday?.value || "";
+    const city = form.elements.city?.value.trim() || "";
+    const photoPrivate = form.elements.photoPrivate?.files?.[0];
+    const photoPublic = form.elements.photoPublic?.files?.[0];
+
+    // Get current user
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    const user = authSdk.currentUser;
+    const isOwner = window.ownerConfig?.isOwner(user?.email);
+
+    if (!displayName || !birthday) {
+      showToast("Vinsamlegast fylltu út nafn og fæðingardag");
+      return;
+    }
+
+    // For non-owner users, photos are required
+    if (!isOwner && !photoPrivate) {
+      showToast("Vinsamlegast bættu við mynd af þér");
+      return;
+    }
+
+    const profileData = {
+      displayName,
+      nickname,
+      birthday,
+      city,
+      photoPrivateUrl: null,
+      photoPublicUrl: null,
+      isOwner: Boolean(isOwner),
+    };
+
+    if (photoPrivate) {
+      profileData.photoPrivateUrl = URL.createObjectURL(photoPrivate);
+    }
+    if (photoPublic) {
+      profileData.photoPublicUrl = URL.createObjectURL(photoPublic);
+    }
+
+    await window.firebaseFirestore.saveUserProfile(profileData);
+
+    // Owner goes straight to home, other users go to photo policy page
+    if (isOwner) {
+      window.location.replace("app.html?view=home");
+    } else {
+      window.location.replace("app.html?view=photo-policy");
+    }
+  } catch (error) {
+    console.error("Profile setup failed", error);
+    showToast("Ekki tókst að vista prófílinn. Reyndu aftur.");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.removeAttribute("aria-busy");
+  }
+}
+
+async function getFirebaseAuthClient() {
+  const { auth, authSdk } = await Promise.all([
+    import("https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js"),
+    import("https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js"),
+  ]).then(([appSdk, authSdk]) => {
+    const app = appSdk.initializeApp(window.firebaseConfig);
+    const auth = authSdk.getAuth(app);
+    return { auth, authSdk };
+  });
+  return { auth, authSdk };
+}
+
+async function handlePhotoPolicySubmit(form) {
+  const submitButton = form.querySelector('[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.setAttribute("aria-busy", "true");
+
+  try {
+    await import("./firebase-auth.js?v=2");
+    await import("./firebase-firestore.js?v=1");
+    
+    const photoPrivate = form.elements.photoPrivate?.files?.[0];
+    const photoPublic = form.elements.photoPublic?.files?.[0];
+
+    // Photos are required at this stage (owner already skipped)
+    if (!photoPrivate) {
+      showToast("Vinsamlegast bættu við mynd af þér");
+      return;
+    }
+
+    const profileData = {
+      photoPrivateUrl: null,
+      photoPublicUrl: null,
+    };
+
+    if (photoPrivate) {
+      profileData.photoPrivateUrl = URL.createObjectURL(photoPrivate);
+    }
+    if (photoPublic) {
+      profileData.photoPublicUrl = URL.createObjectURL(photoPublic);
+    }
+
+    await window.firebaseFirestore.saveUserProfile(profileData);
+    window.location.replace("app.html?view=home");
+  } catch (error) {
+    console.error("Photo policy submission failed", error);
+    showToast("Ekki tókst að vista myndirnar. Reyndu aftur.");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.removeAttribute("aria-busy");
   }
 }
 
@@ -1326,4 +1545,8 @@ function showToast(message) {
   toast.textContent = message;
   document.body.append(toast);
   window.setTimeout(() => toast.remove(), 2600);
+}
+
+function skipToHome() {
+  window.location.replace("app.html?view=home");
 }

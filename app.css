@@ -2003,6 +2003,285 @@ h3,
   height: 20px;
 }
 
+/* ========== PROFILE SETUP PAGE ========== */
+
+.profile-setup-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--soft) 0%, var(--white) 100%);
+}
+
+.profile-setup-card {
+  width: 100%;
+  max-width: 500px;
+  background: var(--white);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.profile-setup-card h1 {
+  font-size: 28px;
+  margin: 0 0 12px;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.profile-setup-card .subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 32px;
+  line-height: 1.5;
+}
+
+.profile-setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--white);
+  transition: all 0.2s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(229, 81, 139, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-group small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.photo-upload-area {
+  position: relative;
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--soft);
+}
+
+.photo-upload-area:hover {
+  border-color: var(--pink);
+  background: rgba(229, 81, 139, 0.05);
+}
+
+.photo-upload-area input {
+  display: none;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.photo-placeholder svg {
+  width: 48px;
+  height: 48px;
+  color: var(--line);
+}
+
+.photo-placeholder span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#photo-preview img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.age-group-display {
+  padding: 12px;
+  background: var(--soft);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.age-group-label {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.interest-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.interest-checkbox:hover {
+  background: var(--soft);
+}
+
+.interest-checkbox input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.interest-checkbox input:checked + span {
+  color: var(--pink);
+  font-weight: 600;
+}
+
+.interest-checkbox:has(input:checked) {
+  border-color: var(--pink);
+  background: rgba(229, 81, 139, 0.05);
+}
+
+.error-message {
+  padding: 12px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  color: #c33;
+  font-size: 13px;
+}
+
+.button-large {
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  min-height: 48px;
+}
+
+.form-note {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+#bio-count,
+#edit-bio-count {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Profile Settings */
+
+.profile-settings-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.settings-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid var(--light);
+}
+
+.settings-card h2 {
+  margin: 0 0 24px;
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.photo-preview-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.current-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid var(--line);
+}
+
+.profile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+.age-group-info {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px;
+  background: var(--soft);
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
 .profile-welcome {
   display: grid;
   place-items: center;
@@ -2372,4 +2651,457 @@ body.dark-mode .switch-track::before {
   .profile-welcome {
     min-height: 420px;
   }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.modal-body {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.policy-modal .modal-intro {
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.policy-section {
+  margin-bottom: 24px;
+}
+
+.policy-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: var(--ink);
+}
+
+.policy-section p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.policy-item {
+  padding: 12px;
+  margin-bottom: 10px;
+  background: var(--soft);
+  border-radius: 8px;
+  border-left: 4px solid var(--pink);
+}
+
+.policy-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.policy-item p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.policy-list {
+  margin: 0 0 0 20px;
+  padding-left: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.policy-list li {
+  margin-bottom: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 2px;
+  flex: 0 0 auto;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-actions .button {
+  flex: 1;
+  max-width: 200px;
+}
+
+.button-secondary {
+  border-color: var(--line);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.button-secondary:hover {
+  background: var(--light);
+}
+
+.button-primary {
+  color: var(--white);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Profile View Styles */
+.profile-view-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--light);
+}
+
+.profile-view-card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.profile-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  border: 2px solid var(--pink);
+}
+
+.profile-photo-placeholder {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 16px;
+  border-radius: 10px;
+  background: var(--soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.profile-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 24px;
+  color: var(--ink);
+}
+
+.profile-header .nickname {
+  margin: 0 0 12px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.profile-age {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.profile-info {
+  margin: 20px 0;
+}
+
+.profile-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.profile-bio {
+  padding: 12px;
+  background: var(--soft);
+  border-radius: 8px;
+  margin: 12px 0;
+}
+
+.profile-bio strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.profile-bio p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.profile-interests {
+  margin: 12px 0;
+}
+
+.profile-interests strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.interests-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.interest-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.profile-actions .button {
+  flex: 1;
+}
+
+/* Profile Setup & Settings */
+.profile-setup-container,
+.profile-settings-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--light);
+}
+
+.profile-setup-card,
+.settings-card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-setup-container h1 {
+  margin-top: 0;
+  font-size: 28px;
+  color: var(--ink);
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.profile-setup-form,
+.profile-edit-form {
+  display: grid;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.form-group small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.form-group input[readonly] {
+  background: var(--light);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.photo-upload-area {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  border: 2px dashed var(--pink);
+  border-radius: 8px;
+  background: var(--soft);
+  cursor: pointer;
+}
+
+.photo-upload-area input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  color: var(--muted);
+  text-align: center;
+}
+
+.photo-placeholder svg {
+  color: var(--pink);
+  opacity: 0.6;
+}
+
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.interest-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.interest-checkbox:hover {
+  background: var(--soft);
+  border-color: var(--pink);
+}
+
+.interest-checkbox input {
+  margin: 0;
+  cursor: pointer;
+}
+
+.interest-checkbox span {
+  font-size: 13px;
+}
+
+.error-message {
+  padding: 12px;
+  background: #fff1f3;
+  border: 1px solid #efc3cb;
+  border-radius: 8px;
+  color: #842838;
+  font-size: 13px;
+}
+
+.form-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.visibility-info,
+.age-info {
+  padding: 10px;
+  background: #f0f8ff;
+  border-radius: 6px;
+  border-left: 4px solid #0084ff;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-actions .button {
+  flex: 1;
+}
+
+.button-large {
+  min-height: 48px;
+  font-size: 16px;
+  font-weight: 600;
 }

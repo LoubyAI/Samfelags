@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow reads/writes only for authenticated users
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isValidPost(post) {
+      return post.size() > 0 
+        && 'userId' in post
+        && 'createdAt' in post
+        && post.userId == request.auth.uid;
+    }
+    
+    // ========== NEWS POSTS ==========
+    match /newsPosts/{postId} {
+      // Anyone can read published posts
+      allow read: if isAuthenticated();
+      
+      // Only the post creator can update/delete their own posts
+      allow write: if isAuthenticated() && (
+        (!exists(/databases/(default)/documents/newsPosts/{postId})  // Creating new post
+          || resource.data.userId == request.auth.uid  // Updating own post
+        )
+        && isValidPost(request.resource.data)
+      );
+      
+      // Subcollection for comments
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && (
+          (!exists(/databases/(default)/documents/newsPosts/{postId}/comments/{commentId})
+            || resource.data.userId == request.auth.uid
+          )
+          && 'userId' in request.resource.data
+          && 'text' in request.resource.data
+          && request.resource.data.userId == request.auth.uid
+        );
+      }
+      
+      // Subcollection for reactions
+      match /reactions/{reactionId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() 
+          && request.resource.data.userId == request.auth.uid
+          && 'type' in request.resource.data
+          && 'createdAt' in request.resource.data;
+        allow delete: if isAuthenticated() 
+          && resource.data.userId == request.auth.uid;
+      }
+    }
+    
+    // ========== MEETING POSTS ==========
+    match /meetingPosts/{postId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (
+        (!exists(/databases/(default)/documents/meetingPosts/{postId})
+          || resource.data.userId == request.auth.uid
+        )
+        && isValidPost(request.resource.data)
+      );
+      
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && (
+          (!exists(/databases/(default)/documents/meetingPosts/{postId}/comments/{commentId})
+            || resource.data.userId == request.auth.uid
+          )
+          && 'userId' in request.resource.data
+          && 'text' in request.resource.data
+          && request.resource.data.userId == request.auth.uid
+        );
+      }
+      
+      match /reactions/{reactionId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() 
+          && request.resource.data.userId == request.auth.uid
+          && 'type' in request.resource.data
+          && 'createdAt' in request.resource.data;
+        allow delete: if isAuthenticated() 
+          && resource.data.userId == request.auth.uid;
+      }
+      
+      match /attendees/{attendeeId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() 
+          && request.resource.data.userId == request.auth.uid;
+        allow delete: if isAuthenticated() 
+          && resource.data.userId == request.auth.uid;
+      }
+    }
+    
+    // ========== USER PROFILES ==========
+    match /users/{userId} {
+      // Users can read all public profiles
+      allow read: if isAuthenticated();
+      
+      // Users can only update their own profile
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // ========== MESSAGES ==========
+    match /conversations/{conversationId} {
+      allow read, write: if isAuthenticated() 
+        && (
+          request.auth.uid in resource.data.participantIds 
+          || !exists(resource) // Allow creation
+        );
+      
+      match /messages/{messageId} {
+        allow read: if isAuthenticated() 
+          && request.auth.uid in get(/databases/(default)/documents/conversations/{conversationId}).data.participantIds;
+        
+        allow create: if isAuthenticated() 
+          && request.resource.data.senderId == request.auth.uid
+          && request.auth.uid in get(/databases/(default)/documents/conversations/{conversationId}).data.participantIds;
+      }
+    }
+  }
+}

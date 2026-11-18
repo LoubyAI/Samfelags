@@ -1,0 +1,126 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                 AGE GROUP SECURITY - BEFORE vs AFTER                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌─ PROFILE SETUP FORM ──────────────────────────────────────────────────────┐
+│                                                                              │
+│ BEFORE:                            AFTER:                                  │
+│ ───────                            ──────                                   │
+│ [Photo Upload]                     [Photo Upload]                          │
+│ [Name Field]                       [Name Field]                            │
+│ [Age: 28] ✓                        [Age: 28] ✓                            │
+│ ↓                                  ↓                                        │
+│ [Age Group Display]                (NO AGE GROUP DISPLAY)                  │
+│ "26-35 ára" (shown while typing)   (Calculated after submission)          │
+│ [City Dropdown]                    [City Dropdown]                         │
+│ [Bio Textarea]                     [Bio Textarea]                          │
+│ [Interests Grid]                   [Interests Grid]                        │
+│ [Submit Button]                    [Submit Button]                         │
+│                                                                              │
+│ ISSUE: User sees group before      SECURE: User doesn't know exact        │
+│        submitting, could potentially       group until form submitted      │
+│        game the system              Prevents age group manipulation         │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─ PROFILE SETTINGS PAGE ───────────────────────────────────────────────────┐
+│                                                                             │
+│ BEFORE:                            AFTER:                                 │
+│ ───────                            ──────                                  │
+│ [Photo Edit]                       [Photo Edit]                           │
+│ [Name: Anna] ✏️                    [Name: Anna] ✏️                       │
+│ [Age: 28] ✏️                       [Age: 28] 🔒 (readonly)               │
+│ (Fully editable)                   ⚠️ Warning: "Aldurinn þinn verður      │
+│                                       ekki hægt að breyta eftir           │
+│ [City Dropdown]                       skráningu..."                      │
+│ [Bio Textarea]                     🔐 Þinn aldurshópur: 26-35 ára        │
+│ [Interests Checkboxes]             [City Dropdown]                       │
+│ [Save Changes] [Cancel]            [Bio Textarea]                        │
+│                                    [Interests Checkboxes]                │
+│                                    [Save Changes] [Cancel]               │
+│                                                                            │
+│ ISSUE: Age can be changed          SECURE: Age is locked                │
+│        after signup                       Age group never changes         │
+│        User could switch groups    Shows locked group clearly            │
+│        multiple times              Explains the reason to user          │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌─ FIRESTORE DATA STRUCTURE ────────────────────────────────────────────────┐
+│                                                                             │
+│ BEFORE:                            AFTER:                                 │
+│ ───────                            ──────                                  │
+│ users/{userId}                     users/{userId}                        │
+│ {                                  {                                      │
+│   userId: "abc123",                  userId: "abc123",                   │
+│   displayName: "Anna",               displayName: "Anna",                │
+│   email: "anna@email.com",           email: "anna@email.com",            │
+│   age: 28,                           age: 28,                            │
+│   city: "reykjavik",                 ageGroup: "26-35 ára",   ← NEW      │
+│   bio: "...",                        ageGroupLockedAt: <timestamp>, ← NEW│
+│   interests: [...],                  city: "reykjavik",                  │
+│   profileCompleted: true,            bio: "...",                        │
+│   createdAt: <timestamp>,            interests: [...],                  │
+│   updatedAt: <timestamp>             profileCompleted: true,            │
+│ }                                    createdAt: <timestamp>,            │
+│                                      updatedAt: <timestamp>             │
+│ Issue: Age can be                  }                                     │
+│        freely modified              Secure: ageGroupLockedAt acts       │
+│                                             as a marker to prevent      │
+│                                             future age changes         │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘
+
+┌─ PROTECTION LAYERS ───────────────────────────────────────────────────────┐
+│                                                                            │
+│ LAYER 1: FRONTEND                                                        │
+│ ─────────────────                                                        │
+│ • Age field has readonly attribute in HTML                             │
+│ • Visual feedback: grayed out/disabled appearance                      │
+│ • Warning message explains the restriction                            │
+│ • Prevents accidental changes                                         │
+│                                                                        │
+│ LAYER 2: BACKEND                                                      │
+│ ────────────────                                                      │
+│ • updateUserProfile() function checks ageGroupLockedAt                │
+│ • Rejects age modifications if lock exists                            │
+│ • Returns error: "Aldur getur ekki verið breytt eftir skráningu..."   │
+│ • Allows other fields to be updated                                   │
+│ • Secure even if user tries to bypass frontend protection             │
+│                                                                        │
+│ LAYER 3: FIRESTORE RULES (optional)                                   │
+│ ────────────────────────────────────                                   │
+│ • Security rules can enforce age lock                                  │
+│ • Reject updates if age changed and ageGroupLockedAt exists           │
+│ • Prevents database manipulation                                      │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           KEY IMPROVEMENTS                                   ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║ ✅ PREVENTS AGE FRAUD                                                       ║
+║    Users cannot manipulate age to access younger/older groups              ║
+║                                                                              ║
+║ ✅ PROTECTS VULNERABLE USERS                                               ║
+║    Younger users protected from older predators                            ║
+║    Older users protected from younger users in age-specific groups         ║
+║                                                                              ║
+║ ✅ MAINTAINS AGE GROUP INTEGRITY                                           ║
+║    Each user stays in their assigned group permanently                     ║
+║    Groups remain authentic and trustworthy                                 ║
+║                                                                              ║
+║ ✅ TRANSPARENT TO USERS                                                    ║
+║    Clear warning message explains the restriction                          ║
+║    Users understand it's for safety, not arbitrary                        │
+║                                                                              ║
+║ ✅ SECURE BY DESIGN                                                        ║
+║    Multi-layer protection: frontend + backend + database rules             ║
+║    Cannot be bypassed even with technical knowledge                        ║
+║                                                                              ║
+║ ✅ MAINTAINS FUNCTIONALITY                                                 ║
+║    All other profile fields remain fully editable                          ║
+║    Users can update name, bio, interests, photo, city freely               ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
