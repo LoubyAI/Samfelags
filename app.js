@@ -723,8 +723,10 @@ const renderers = {
 const isSetupView = ["login", "profile-setup", "photo-policy"].includes(current);
 document.body.classList.toggle("login-view", isSetupView);
 document.title = `${pageInfo[current].title} - New Friends`;
-document.getElementById("page-heading").innerHTML =
-  `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
+const pageHeading = document.getElementById("page-heading");
+if (pageHeading) {
+  pageHeading.innerHTML = `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
+}
 
 const screenElement = document.getElementById("screen");
 const result = renderers[current]();
