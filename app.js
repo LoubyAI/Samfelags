@@ -1486,6 +1486,8 @@ async function handlePhotoPolicySubmit(form) {
     // Photos are required at this stage (owner already skipped)
     if (!photoPrivate) {
       showToast("Vinsamlegast bættu við mynd af þér");
+      submitButton.disabled = false;
+      submitButton.removeAttribute("aria-busy");
       return;
     }
 
@@ -1501,12 +1503,23 @@ async function handlePhotoPolicySubmit(form) {
       profileData.photoPublicUrl = URL.createObjectURL(photoPublic);
     }
 
-    await window.firebaseFirestore.saveUserProfile(profileData);
+    // Try to save to Firestore, but proceed to home anyway after a timeout
+    try {
+      const savePromise = window.firebaseFirestore.saveUserProfile(profileData);
+      await Promise.race([
+        savePromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Save timeout")), 5000))
+      ]);
+    } catch (saveError) {
+      console.warn("Could not save to Firestore, but proceeding to home anyway", saveError);
+      // Don't throw - we still want to proceed to home
+    }
+
+    // Always redirect to home after submission
     window.location.replace("app.html?view=home");
   } catch (error) {
     console.error("Photo policy submission failed", error);
     showToast("Ekki tókst að vista myndirnar. Reyndu aftur.");
-  } finally {
     submitButton.disabled = false;
     submitButton.removeAttribute("aria-busy");
   }
