@@ -665,8 +665,6 @@ function renderLogin() {
             <h2 data-auth-title>Velkomin aftur!</h2>
             <p class="login-subtitle" data-auth-subtitle>Skráðu þig inn til að halda áfram.</p>
             <form class="login-form" data-form="login">
-              <label for="login-name" data-auth-signup hidden>Nafn</label>
-              <input id="login-name" name="displayName" type="text" autocomplete="name" placeholder="Nafnið þitt" data-auth-signup hidden>
               <label for="login-email">Netfang</label>
               <input id="login-email" name="email" type="email" autocomplete="email" placeholder="Sláðu inn netfangið þitt" required>
               <label for="login-password">Lykilorð</label>
