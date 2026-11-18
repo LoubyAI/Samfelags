@@ -727,7 +727,15 @@ document.body.classList.toggle("login-view", current === "login");
 document.title = `${pageInfo[current].title} - New Friends`;
 document.getElementById("page-heading").innerHTML =
   `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
-document.getElementById("screen").innerHTML = renderers[current]();
+
+const screenElement = document.getElementById("screen");
+const result = renderers[current]();
+if (result instanceof Promise) {
+  result.then(html => { screenElement.innerHTML = html; }).catch(err => console.error('Render error:', err));
+} else {
+  screenElement.innerHTML = result;
+}
+
 document.querySelectorAll(".side-nav [data-view]").forEach((link) => {
   if (link.dataset.view === pageInfo[current].active) {
     link.classList.add("active");
