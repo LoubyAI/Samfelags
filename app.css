@@ -95,7 +95,8 @@ h3,
 
 /* Profile Setup Views - show sidebar but hide nav, show but disable header */
 .profile-setup-view .sidebar {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 .profile-setup-view .side-nav {
