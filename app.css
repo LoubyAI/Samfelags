@@ -635,6 +635,12 @@ h3,
 
 .notification-button {
   position: relative;
+  border-radius: 50%;
+  transition: background-color 120ms ease;
+}
+
+.notification-button:hover {
+  background: var(--soft);
 }
 
 .notification-count {
