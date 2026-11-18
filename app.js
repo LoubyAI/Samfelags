@@ -40,6 +40,10 @@ const photos = {
   meetingAvatar: "76439c70-77c3-4ec6-87d4-c727336b5039.png",
 };
 
+let meetingDraft = { text: "", attachments: [], poll: null, event: null, location: "" };
+let meetingPosts = [];
+let editingMeetingId = null;
+
 const pageInfo = {
   home: { title: "Heim", icon: icons.home, active: "home" },
   news: { title: "Hvað er að frétta?", icon: icons.news, active: "news" },
@@ -49,6 +53,7 @@ const pageInfo = {
   "calendar-month": { title: "Viðburðir & dagatal", icon: icons.calendar, active: "calendar" },
   messages: { title: "Skilaboð", icon: icons.messages, active: "messages" },
   profile: { title: "Prófíll", icon: icons.profile, active: "profile" },
+  login: { title: "Skrá inn", icon: icons.profile, active: "" },
 };
 
 const avatar = (image = photos.portrait, alt = "Prófílmynd") =>
@@ -106,7 +111,7 @@ function renderHome() {
       <section class="notifications-panel" id="notifications">
         <div class="notifications-head">
           <h2 class="panel-heading">${icon(icons.notifications)}Tilkynningar</h2>
-          <button type="button" data-action="mark-read">Skoða allar ${icon(icons.arrow, "")}</button>
+          <button type="button" data-action="mark-read">Merkja allar sem lesnar</button>
         </div>
         ${renderNotification("Hvað er að frétta?", "Ný viðburður, skráðu þig ef þú vilt taka þátt í jólaföndrun.", "1 klst. síðan", photos.avatar)}
         ${renderNotification("Dagatal", "Ný viðburður, skráðu þig ef þú vilt taka þátt í jólaföndrun.", "2 klst. síðan", photos.avatar)}
@@ -121,6 +126,25 @@ function renderNotification(title, description, time, image) {
     <img src="${asset(image)}" alt="">
     <div><small>${title}　${time}</small><span>${description}</span></div>
   </article>`;
+}
+
+function renderNotificationsDropdown() {
+  const notifications = [
+    ["Hvað er að frétta?", "Ný færsla í vinahópnum þínum.", "1 klst. síðan"],
+    ["Dagatal", "Nýr viðburður: Jólaföndur, snarl og spjall.", "2 klst. síðan"],
+    ["Skilaboð", "Anna sendi þér skilaboð.", "5 klst. síðan"],
+    ["Hittingarspjall", "Ný könnun bíður eftir svarinu þínu.", "8 klst. síðan"],
+  ];
+
+  return `<div class="notifications-head">
+      <h2 class="panel-heading">${icon(icons.notifications)}Tilkynningar</h2>
+      <button type="button" data-action="mark-read">Merkja allar sem lesnar</button>
+    </div>
+    <div class="notifications-list">
+      ${notifications.map(([title, description, time]) =>
+        renderNotification(title, description, time, photos.avatar)).join("")}
+    </div>
+    <a class="notifications-all" href="app.html?view=home#notifications">Skoða allar tilkynningar</a>`;
 }
 
 function renderNews() {
@@ -162,16 +186,20 @@ function renderMeetings() {
       <section class="content-card meeting-compose">
         <div class="composer-top">${avatar(photos.portrait, "Luna")}<strong>Búa til hitting</strong></div>
         <form class="composer-form" data-form="meeting">
-          <input name="meeting" placeholder="Skrifaðu hér..." aria-label="Skrifaðu um hitting" required>
+          <textarea name="post" placeholder="Skrifaðu hér..." aria-label="Skrifaðu um hitting"></textarea>
+          <div class="meeting-draft-preview" id="meeting-draft-preview"></div>
           <div class="composer-actions">
-            <button class="button" type="button">${icon(icons.poll, "")}Könnun</button>
-            <button class="button" type="button">${icon(icons.photo, "")}Mynd/Myndband</button>
-            <button class="button" type="button">${icon(icons.calendar, "")}Hittingur</button>
-            <button class="button" type="button">${icon(icons.pin, "")}Staðsetning</button>
-            <button class="button button-primary" type="submit">${icon(icons.heart, "")}Birta</button>
+            <button class="button" type="button" data-action="meeting-poll">${icon(icons.poll, "")}Könnun</button>
+            <button class="button" type="button" data-action="meeting-media">${icon(icons.photo, "")}Mynd/Myndband</button>
+            <button class="button" type="button" data-action="meeting-event">${icon(icons.calendar, "")}Hittingur</button>
+            <button class="button" type="button" data-action="meeting-location">${icon(icons.pin, "")}Staðsetning</button>
+            <button class="button button-primary" type="submit">${icon(icons.heart, "")}${editingMeetingId ? "Vista breytingar" : "Birta"}</button>
           </div>
+          <input class="meeting-file-input" id="meeting-media-input" type="file" accept="image/*,video/*" multiple aria-label="Velja myndir eða myndbönd" hidden>
         </form>
+        <section class="meeting-editor" id="meeting-editor" hidden></section>
       </section>
+      <div class="meeting-post-list" id="meeting-post-list">${meetingPosts.map(renderMeetingPost).join("")}</div>
       <article class="content-card meeting-poll" data-searchable>
         <div class="post-author">${avatar(photos.meetingAvatar, "Luna")}<span>Luna<small>2 klst. síðan</small></span></div>
         <h2>Skipuleggjum jólaföndur 🎄</h2>
@@ -188,6 +216,182 @@ function renderMeetings() {
         <div class="poll-footer"><button class="button" type="button" data-action="comment">${icon(icons.messages, "")}Athugasemd</button></div>
       </article>
     </div>`;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[character]);
+}
+
+function renderMeetingDraftPreview() {
+  const parts = [];
+
+  if (meetingDraft.attachments.length) {
+    parts.push(`<div class="meeting-attachments">
+      ${meetingDraft.attachments.map((attachment, index) => {
+        const preview = attachment.type.startsWith("video/")
+          ? `<video src="${escapeHtml(attachment.url)}" controls preload="metadata" aria-label="${escapeHtml(attachment.name)}"></video>`
+          : `<img src="${escapeHtml(attachment.url)}" alt="${escapeHtml(attachment.name)}">`;
+        return `<div class="meeting-attachment">
+          ${preview}
+          <button class="attachment-remove" type="button" data-action="remove-meeting-attachment" data-attachment-index="${index}" aria-label="Fjarlægja ${escapeHtml(attachment.name)}">×</button>
+        </div>`;
+      }).join("")}
+    </div>`);
+  }
+
+  if (meetingDraft.poll) {
+    parts.push(`<section class="meeting-draft-card">
+      <strong>${escapeHtml(meetingDraft.poll.question)}</strong>
+      <ul>${meetingDraft.poll.options.map((option) => `<li>${escapeHtml(option)}</li>`).join("")}</ul>
+    </section>`);
+  }
+
+  if (meetingDraft.event) {
+    const details = [
+      meetingDraft.event.date ? formatMeetingDate(meetingDraft.event.date) : "",
+      meetingDraft.event.time,
+      meetingDraft.event.location,
+    ].filter(Boolean).map(escapeHtml).join(" · ");
+    parts.push(`<section class="meeting-draft-card">
+      <strong>${escapeHtml(meetingDraft.event.title)}</strong>
+      ${details ? `<span>${details}</span>` : ""}
+      ${meetingDraft.event.description ? `<p>${escapeHtml(meetingDraft.event.description)}</p>` : ""}
+    </section>`);
+  }
+
+  if (meetingDraft.location) {
+    parts.push(`<section class="meeting-draft-card meeting-location-draft">${icon(icons.pin, "")}${escapeHtml(meetingDraft.location)}</section>`);
+  }
+
+  return parts.join("");
+}
+
+function renderPollOptionInput(value, index) {
+  return `<label class="meeting-editor-field">
+    <span>Valkostur ${index}</span>
+    <input name="option" value="${escapeHtml(value)}" placeholder="Skrifaðu valkost">
+  </label>`;
+}
+
+function renderMeetingEditor(type) {
+  if (type === "poll") {
+    const poll = meetingDraft.poll || { question: "", options: ["", ""] };
+    return `<div class="meeting-editor-head">
+        <h3>Búa til könnun</h3>
+        <button class="editor-close" type="button" data-action="close-meeting-editor" aria-label="Loka">×</button>
+      </div>
+      <form data-form="meeting-poll">
+        <label class="meeting-editor-field">Spurning<input name="question" value="${escapeHtml(poll.question)}" placeholder="Hvað viltu spyrja?"></label>
+        <div class="meeting-poll-options" id="meeting-poll-options">
+          ${poll.options.map((option, index) => renderPollOptionInput(option, index + 1)).join("")}
+        </div>
+        <button class="button add-poll-option" type="button" data-action="add-poll-option">${icon(icons.plus, "")}Bæta við valkosti</button>
+        <div class="meeting-editor-actions">
+          <button class="button" type="button" data-action="close-meeting-editor">Hætta við</button>
+          <button class="button button-primary" type="submit">Vista könnun</button>
+        </div>
+      </form>`;
+  }
+
+  if (type === "event") {
+    const meetingEvent = meetingDraft.event || { title: "", date: "", time: "", location: "", description: "" };
+    return `<div class="meeting-editor-head">
+        <h3>Búa til hitting</h3>
+        <button class="editor-close" type="button" data-action="close-meeting-editor" aria-label="Loka">×</button>
+      </div>
+      <form data-form="meeting-event">
+        <label class="meeting-editor-field">Heiti<input name="title" value="${escapeHtml(meetingEvent.title)}" placeholder="Heiti hittings"></label>
+        <div class="meeting-event-fields">
+          <label class="meeting-editor-field">Dagsetning<input name="date" type="date" value="${escapeHtml(meetingEvent.date)}"></label>
+          <label class="meeting-editor-field">Tími<input name="time" type="time" value="${escapeHtml(meetingEvent.time)}"></label>
+        </div>
+        <label class="meeting-editor-field">Staðsetning<input name="location" value="${escapeHtml(meetingEvent.location)}" placeholder="Hvar hittumst við?"></label>
+        <label class="meeting-editor-field">Lýsing<textarea name="description" placeholder="Nánari upplýsingar">${escapeHtml(meetingEvent.description)}</textarea></label>
+        <div class="meeting-editor-actions">
+          <button class="button" type="button" data-action="close-meeting-editor">Hætta við</button>
+          <button class="button button-primary" type="submit">Vista hitting</button>
+        </div>
+      </form>`;
+  }
+
+  return `<div class="meeting-editor-head">
+      <h3>Bæta við staðsetningu</h3>
+      <button class="editor-close" type="button" data-action="close-meeting-editor" aria-label="Loka">×</button>
+    </div>
+    <form data-form="meeting-location">
+      <label class="meeting-editor-field">Staðsetning<input name="location" value="${escapeHtml(meetingDraft.location)}" placeholder="Sláðu inn staðsetningu"></label>
+      <div class="meeting-editor-actions">
+        <button class="button" type="button" data-action="close-meeting-editor">Hætta við</button>
+        <button class="button button-primary" type="submit">Vista staðsetningu</button>
+      </div>
+    </form>`;
+}
+
+function formatMeetingDate(value) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Intl.DateTimeFormat("is-IS", { dateStyle: "long" }).format(new Date(year, month - 1, day));
+}
+
+function renderMeetingPost(post) {
+  const postId = escapeHtml(post.id);
+  const media = post.attachments.map((attachment) => {
+    const source = escapeHtml(attachment.url);
+    return attachment.type.startsWith("video/")
+      ? `<video src="${source}" controls preload="metadata" aria-label="${escapeHtml(attachment.name)}"></video>`
+      : `<img src="${source}" alt="${escapeHtml(attachment.name)}">`;
+  }).join("");
+  const poll = post.poll ? (() => {
+    const votes = post.poll.votes || [];
+    const total = votes.reduce((sum, count) => sum + count, 0);
+    const options = post.poll.options.map((option, index) => {
+      const count = Number(votes[index]) || 0;
+      const percentage = total ? Math.round((count / total) * 100) : 0;
+      return post.poll.voted
+        ? `<div class="meeting-vote-result">
+            <div><span>${escapeHtml(option)}</span><strong>${count}</strong></div>
+            <div class="meeting-vote-track"><span style="width: ${percentage}%"></span></div>
+          </div>`
+        : `<label class="meeting-vote-option"><input type="radio" name="vote" value="${index}">${escapeHtml(option)}</label>`;
+    }).join("");
+    const voteForm = post.poll.voted
+      ? `<p class="meeting-vote-count">${total} atkvæði</p>`
+      : `<form data-form="meeting-vote" data-post-id="${postId}">
+          <div class="meeting-vote-options">${options}</div>
+          <button class="button button-primary" type="submit">Kjósa</button>
+        </form>`;
+    return `<section class="meeting-post-section">
+      <h3>${escapeHtml(post.poll.question)}</h3>
+      ${voteForm}
+    </section>`;
+  })() : "";
+  const event = post.event ? `<section class="meeting-post-section">
+      <h3>${escapeHtml(post.event.title)}</h3>
+      <p>${[
+        post.event.date ? formatMeetingDate(post.event.date) : "",
+        post.event.time,
+        post.event.location,
+      ].filter(Boolean).map(escapeHtml).join(" · ")}</p>
+      ${post.event.description ? `<p>${escapeHtml(post.event.description)}</p>` : ""}
+    </section>` : "";
+  const location = post.location ? `<p class="meeting-post-location">${icon(icons.pin, "")}${escapeHtml(post.location)}</p>` : "";
+
+  return `<article class="content-card meeting-created-post" data-searchable>
+    <div class="meeting-created-head">
+      <div class="post-author">${avatar(photos.portrait, "Luna")}<span>Luna<small>Núna</small></span></div>
+      <button class="button" type="button" data-action="edit-meeting-post" data-post-id="${postId}">Breyta</button>
+    </div>
+    ${post.text ? `<p class="meeting-post-text">${escapeHtml(post.text)}</p>` : ""}
+    ${media ? `<div class="meeting-post-media">${media}</div>` : ""}
+    ${poll}
+    ${event}
+    ${location}
+  </article>`;
 }
 
 function renderCalendar(mode) {
@@ -284,9 +488,59 @@ function renderProfile() {
         <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Luna A. Jónasdóttir">
         <h1>Luna A. Jónasdóttir</h1>
         <p>Byrjaðu að fylla prófílinn!</p>
-        <button class="button button-primary" type="button" data-action="start-profile">${icon(icons.plus, "")}Byrjaðu</button>
+        <button class="button button-primary" type="button">${icon(icons.plus, "")}Byrjaðu</button>
       </section>
     </div>`;
+}
+
+function renderLogin() {
+  return `
+    <section class="login-page" aria-label="Innskráning">
+      <header class="login-header">
+        <div class="login-brand">
+          <span class="login-brand-name">New Friends</span>
+          <img src="${asset(icons.people)}" alt="">
+          <span class="login-brand-tagline">Connect · Meet · Build Friendships</span>
+        </div>
+      </header>
+      <div class="login-layout">
+        <section class="login-welcome">
+          <div class="login-intro">
+            <h1>Ný vinátta byrjar hér</h1>
+            <p>Kynnstu konum, skipuleggðu hittinga og taktu þátt í skemmtilegum viðburðum.</p>
+          </div>
+          <img class="login-photo" src="${asset(photos.largeOutdoor)}" alt="Vinahópur nýtur samveru">
+        </section>
+        <section class="login-panel">
+          <div class="login-form-card">
+            <h2>Velkomin aftur!</h2>
+            <p class="login-subtitle">Skráðu þig inn til að halda áfram.</p>
+            <form class="login-form" data-form="login">
+              <label for="login-email">Netfang</label>
+              <input id="login-email" name="email" type="email" autocomplete="email" placeholder="Sláðu inn netfangið þitt" required>
+              <label for="login-password">Lykilorð</label>
+              <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sláðu inn lykilorðið þitt" required>
+              <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
+              <button class="button button-primary login-submit" type="submit">Skrá inn</button>
+            </form>
+            <div class="login-divider"><span>eða</span></div>
+            <button class="login-google" type="button" data-action="google-login">
+              <svg class="login-google-icon" viewBox="0 0 48 48" aria-hidden="true">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.27 5.47-4.79 7.16l7.73 6c4.51-4.17 7.1-10.32 7.1-17.63z"/>
+                <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.77-4.59l-7.98-6.19A23.93 23.93 0 0 0 0 24c0 3.86.92 7.5 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.82l-7.73-6c-2.14 1.43-4.88 2.27-8.18 2.27-6.26 0-11.57-4.22-13.47-9.9l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+              <span>Halda áfram með Google</span>
+            </button>
+            <p class="login-signup">Ný í New Friends? <button type="button" data-action="create-account">Búðu til aðgang</button></p>
+          </div>
+        </section>
+      </div>
+      <footer class="login-footer">
+        <p>© 2026 New Friends</p>
+      </footer>
+    </section>`;
 }
 
 const view = new URLSearchParams(window.location.search).get("view") || "home";
@@ -300,8 +554,10 @@ const renderers = {
   "calendar-month": () => renderCalendar("calendar-month"),
   messages: renderMessages,
   profile: renderProfile,
+  login: renderLogin,
 };
 
+document.body.classList.toggle("login-view", current === "login");
 document.title = `${pageInfo[current].title} - New Friends`;
 document.getElementById("page-heading").innerHTML =
   `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
@@ -314,7 +570,7 @@ document.querySelectorAll(".side-nav [data-view]").forEach((link) => {
 });
 
 const themeToggle = document.getElementById("theme-toggle");
-themeToggle.checked = localStorage.getItem("darkMode") === "on";
+themeToggle.checked = current !== "login" && localStorage.getItem("darkMode") === "on";
 document.body.classList.toggle("dark-mode", themeToggle.checked);
 themeToggle.addEventListener("change", () => {
   document.body.classList.toggle("dark-mode", themeToggle.checked);
@@ -322,9 +578,94 @@ themeToggle.addEventListener("change", () => {
 });
 
 const screen = document.getElementById("screen");
+const notificationButton = document.querySelector(".notification-button");
+const notificationDropdown = document.getElementById("notifications-dropdown");
+notificationDropdown.innerHTML = renderNotificationsDropdown();
+updateNotificationCount();
+
 screen.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action]");
   if (!button) return;
+
+  if (button.dataset.action === "meeting-poll") {
+    openMeetingEditor("poll");
+    return;
+  }
+
+  if (button.dataset.action === "meeting-event") {
+    openMeetingEditor("event");
+    return;
+  }
+
+  if (button.dataset.action === "meeting-location") {
+    openMeetingEditor("location");
+    return;
+  }
+
+  if (button.dataset.action === "meeting-media") {
+    screen.querySelector("#meeting-media-input").click();
+    return;
+  }
+
+  if (button.dataset.action === "add-poll-option") {
+    const options = screen.querySelector("#meeting-poll-options");
+    options.insertAdjacentHTML("beforeend", renderPollOptionInput("", options.children.length + 1));
+    options.lastElementChild.querySelector("input").focus();
+    return;
+  }
+
+  if (button.dataset.action === "close-meeting-editor") {
+    closeMeetingEditor();
+    return;
+  }
+
+  if (button.dataset.action === "remove-meeting-attachment") {
+    const index = Number(button.dataset.attachmentIndex);
+    meetingDraft.attachments.splice(index, 1);
+    updateMeetingComposer();
+    return;
+  }
+
+  if (button.dataset.action === "edit-meeting-post") {
+    const post = meetingPosts.find((item) => item.id === button.dataset.postId);
+    if (!post) {
+      showToast("Ekki tókst að finna færsluna");
+      return;
+    }
+
+    editingMeetingId = post.id;
+    meetingDraft = {
+      text: post.text,
+      attachments: [...post.attachments],
+      poll: post.poll ? {
+        ...post.poll,
+        options: [...post.poll.options],
+        votes: [...(post.poll.votes || [])],
+      } : null,
+      event: post.event ? { ...post.event } : null,
+      location: post.location,
+    };
+    screen.querySelector('[data-form="meeting"] textarea[name="post"]').value = post.text;
+    closeMeetingEditor();
+    updateMeetingComposer();
+    screen.querySelector(".meeting-compose").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  if (button.dataset.action === "forgot-password") {
+    showToast("Endurstilling lykilorðs er ekki tengd ennþá");
+    return;
+  }
+
+  if (button.dataset.action === "google-login") {
+    showToast("Innskráning með Google er ekki tengd ennþá");
+    return;
+  }
+
+  if (button.dataset.action === "create-account") {
+    showToast("Nýskráning er ekki tengd ennþá");
+    return;
+  }
 
   if (button.dataset.action === "attend" || button.dataset.action === "decline") {
     const selected = !button.classList.contains("is-selected");
@@ -349,16 +690,6 @@ screen.addEventListener("click", (event) => {
     </form>`;
   }
 
-  if (button.dataset.action === "start-profile") {
-    const panel = screen.querySelector(".profile-welcome");
-    panel.innerHTML = `<form class="profile-form" data-form="profile">
-      <h2>Uppfærðu prófílinn þinn</h2>
-      <label>Nafn<input name="name" value="Luna A. Jónasdóttir" required></label>
-      <label>Um mig<textarea name="about" placeholder="Segðu okkur aðeins frá þér"></textarea></label>
-      <button class="button button-primary" type="submit">Vista prófíl</button>
-    </form>`;
-  }
-
   if (button.dataset.action === "comment") {
     const footer = button.parentElement;
     footer.innerHTML = `<form class="composer-form comment-form" data-form="comment">
@@ -368,17 +699,188 @@ screen.addEventListener("click", (event) => {
   }
 
   if (button.dataset.action === "mark-read") {
-    screen.querySelectorAll(".notification-item").forEach((item) => item.classList.add("read"));
-    showToast("Allar tilkynningar skoðaðar");
+    markAllNotificationsRead();
   }
 
   if (button.dataset.action === "create-calendar") showToast("Dagatalið þitt er tilbúið");
+});
+
+screen.addEventListener("change", (event) => {
+  if (event.target.id !== "meeting-media-input") return;
+
+  const files = Array.from(event.target.files || []);
+  const supportedFiles = files.filter((file) => file.type.startsWith("image/") || file.type.startsWith("video/"));
+  if (supportedFiles.length !== files.length) {
+    showToast("Aðeins er hægt að bæta við myndum eða myndböndum");
+  }
+  supportedFiles.forEach((file) => {
+    meetingDraft.attachments.push({
+      name: file.name,
+      type: file.type,
+      url: URL.createObjectURL(file),
+    });
+  });
+  event.target.value = "";
+  updateMeetingComposer();
+});
+
+notificationButton.addEventListener("click", () => {
+  setNotificationsOpen(notificationDropdown.hidden);
+});
+
+notificationDropdown.addEventListener("click", (event) => {
+  if (event.target.closest('[data-action="mark-read"]')) {
+    markAllNotificationsRead();
+  }
+});
+
+document.addEventListener("click", (event) => {
+  if (!notificationDropdown.hidden && !event.target.closest(".notification-control")) {
+    setNotificationsOpen(false);
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !notificationDropdown.hidden) {
+    setNotificationsOpen(false);
+    notificationButton.focus();
+  }
 });
 
 screen.addEventListener("submit", (event) => {
   const form = event.target.closest("[data-form]");
   if (!form) return;
   event.preventDefault();
+
+  if (form.dataset.form === "login") {
+    showToast("Innskráning er ekki tengd aðgangakerfi");
+    return;
+  }
+
+  if (form.dataset.form === "meeting-poll") {
+    const question = form.elements.question.value.trim();
+    const options = Array.from(form.querySelectorAll('input[name="option"]'))
+      .map((input) => input.value.trim())
+      .filter(Boolean);
+    if (!question || options.length < 2) {
+      showToast("Skrifaðu spurningu og að minnsta kosti tvo valkosti");
+      return;
+    }
+
+    const previousPoll = meetingDraft.poll;
+    const sameOptions = previousPoll
+      && previousPoll.options.length === options.length
+      && previousPoll.options.every((option, index) => option === options[index]);
+    meetingDraft.poll = {
+      question,
+      options,
+      votes: sameOptions ? [...(previousPoll.votes || [])] : Array(options.length).fill(0),
+      voted: Boolean(sameOptions && previousPoll.voted),
+    };
+    closeMeetingEditor();
+    updateMeetingComposer();
+    showToast("Könnun bætt við færsluna");
+    return;
+  }
+
+  if (form.dataset.form === "meeting-event") {
+    const title = form.elements.title.value.trim();
+    const date = form.elements.date.value;
+    if (!title || !date) {
+      showToast("Skrifaðu heiti og veldu dagsetningu hittingsins");
+      return;
+    }
+
+    meetingDraft.event = {
+      title,
+      date,
+      time: form.elements.time.value,
+      location: form.elements.location.value.trim(),
+      description: form.elements.description.value.trim(),
+    };
+    closeMeetingEditor();
+    updateMeetingComposer();
+    showToast("Hittingi bætt við færsluna");
+    return;
+  }
+
+  if (form.dataset.form === "meeting-location") {
+    const location = form.elements.location.value.trim();
+    if (!location) {
+      showToast("Skrifaðu staðsetningu");
+      return;
+    }
+    meetingDraft.location = location;
+    closeMeetingEditor();
+    updateMeetingComposer();
+    showToast("Staðsetningu bætt við færsluna");
+    return;
+  }
+
+  if (form.dataset.form === "meeting") {
+    const text = form.elements.post.value.trim();
+    const hasContent = text
+      || meetingDraft.attachments.length
+      || meetingDraft.poll
+      || meetingDraft.event
+      || meetingDraft.location;
+    if (!hasContent) {
+      showToast("Skrifaðu færslu eða bættu við mynd, könnun eða hittingi");
+      return;
+    }
+
+    const post = {
+      id: editingMeetingId || String(Date.now()),
+      text,
+      attachments: [...meetingDraft.attachments],
+      poll: meetingDraft.poll ? {
+        ...meetingDraft.poll,
+        options: [...meetingDraft.poll.options],
+        votes: [...(meetingDraft.poll.votes || [])],
+      } : null,
+      event: meetingDraft.event ? { ...meetingDraft.event } : null,
+      location: meetingDraft.location,
+    };
+    const existingIndex = meetingPosts.findIndex((item) => item.id === post.id);
+    if (existingIndex >= 0) {
+      meetingPosts[existingIndex] = post;
+    } else {
+      meetingPosts.unshift(post);
+    }
+
+    meetingDraft = { text: "", attachments: [], poll: null, event: null, location: "" };
+    editingMeetingId = null;
+    form.reset();
+    closeMeetingEditor();
+    updateMeetingComposer();
+    renderMeetingPosts();
+    showToast(existingIndex >= 0 ? "Breytingar á færslunni hafa verið vistaðar" : "Færslan hefur verið birt");
+    return;
+  }
+
+  if (form.dataset.form === "meeting-vote") {
+    const post = meetingPosts.find((item) => item.id === form.dataset.postId);
+    const selectedOption = form.querySelector('input[name="vote"]:checked');
+    if (!post || !post.poll) {
+      showToast("Ekki tókst að finna könnunina");
+      return;
+    }
+    if (!selectedOption) {
+      showToast("Veldu svarmöguleika");
+      return;
+    }
+    const optionIndex = Number(selectedOption.value);
+    if (optionIndex < 0 || optionIndex >= post.poll.options.length) {
+      showToast("Ógildur svarmöguleiki");
+      return;
+    }
+    post.poll.votes = post.poll.votes || Array(post.poll.options.length).fill(0);
+    post.poll.votes[optionIndex] = (Number(post.poll.votes[optionIndex]) || 0) + 1;
+    post.poll.voted = true;
+    renderMeetingPosts();
+    showToast("Atkvæði skráð");
+    return;
+  }
 
   if (form.dataset.form === "post") {
     const text = form.elements.post.value.trim();
@@ -408,10 +910,6 @@ screen.addEventListener("submit", (event) => {
     return;
   }
 
-  if (form.dataset.form === "profile") {
-    showToast("Prófíllinn hefur verið vistaður");
-  }
-
   if (form.dataset.form === "comment") {
     showToast("Athugasemdin hefur verið send");
     form.reset();
@@ -425,9 +923,56 @@ document.getElementById("global-search").addEventListener("input", (event) => {
   });
 });
 
-document.querySelector('[data-action="notifications"]').addEventListener("click", () => {
-  window.location.href = "app.html?view=home#notifications";
-});
+function openMeetingEditor(type) {
+  const editor = screen.querySelector("#meeting-editor");
+  editor.innerHTML = renderMeetingEditor(type);
+  editor.hidden = false;
+  editor.querySelector("input, textarea")?.focus();
+}
+
+function closeMeetingEditor() {
+  const editor = screen.querySelector("#meeting-editor");
+  if (!editor) return;
+  editor.hidden = true;
+  editor.innerHTML = "";
+}
+
+function updateMeetingComposer() {
+  const preview = screen.querySelector("#meeting-draft-preview");
+  if (preview) preview.innerHTML = renderMeetingDraftPreview();
+
+  const submitButton = screen.querySelector('[data-form="meeting"] [type="submit"]');
+  if (submitButton) {
+    submitButton.innerHTML = `${icon(icons.heart, "")}${editingMeetingId ? "Vista breytingar" : "Birta"}`;
+  }
+}
+
+function renderMeetingPosts() {
+  const list = screen.querySelector("#meeting-post-list");
+  if (list) list.innerHTML = meetingPosts.map(renderMeetingPost).join("");
+}
+
+function updateNotificationCount() {
+  const count = notificationDropdown.querySelectorAll(".notification-item:not(.read)").length;
+  const badge = notificationButton.querySelector(".notification-count");
+  badge.textContent = count > 9 ? "9+" : String(count);
+  badge.hidden = count === 0;
+  notificationButton.setAttribute(
+    "aria-label",
+    count ? `Tilkynningar, ${count} ólesnar` : "Tilkynningar",
+  );
+}
+
+function setNotificationsOpen(open) {
+  notificationDropdown.hidden = !open;
+  notificationButton.setAttribute("aria-expanded", String(open));
+}
+
+function markAllNotificationsRead() {
+  document.querySelectorAll(".notification-item").forEach((item) => item.classList.add("read"));
+  updateNotificationCount();
+  showToast("Allar tilkynningar skoðaðar");
+}
 
 function showToast(message) {
   document.querySelector(".toast")?.remove();
