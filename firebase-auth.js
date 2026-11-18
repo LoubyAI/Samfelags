@@ -45,6 +45,30 @@ window.firebaseAuth = {
     return authSdk.signInWithPopup(auth, provider);
   },
 
+  async signInWithEmail(email, password) {
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    return authSdk.signInWithEmailAndPassword(auth, email, password);
+  },
+
+  async createAccount(email, password, displayName) {
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    const credential = await authSdk.createUserWithEmailAndPassword(auth, email, password);
+    try {
+      await authSdk.updateProfile(credential.user, { displayName });
+    } catch (error) {
+      console.error("Account was created, but the display name could not be saved.", error);
+      const profileError = new Error("Account created, but profile update failed.");
+      profileError.code = "app/profile-update-failed";
+      throw profileError;
+    }
+    return credential;
+  },
+
+  async sendPasswordResetEmail(email) {
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    return authSdk.sendPasswordResetEmail(auth, email);
+  },
+
   async signOut() {
     if (!hasFirebaseConfig()) return;
 

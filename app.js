@@ -583,13 +583,17 @@ function renderLogin() {
         </section>
         <section class="login-panel">
           <div class="login-form-card">
-            <h2>Velkomin aftur!</h2>
-            <p class="login-subtitle">Skráðu þig inn til að halda áfram.</p>
+            <h2 data-auth-title>Velkomin aftur!</h2>
+            <p class="login-subtitle" data-auth-subtitle>Skráðu þig inn til að halda áfram.</p>
             <form class="login-form" data-form="login">
+              <label for="login-name" data-auth-signup hidden>Nafn</label>
+              <input id="login-name" name="displayName" type="text" autocomplete="name" placeholder="Nafnið þitt" data-auth-signup hidden>
               <label for="login-email">Netfang</label>
               <input id="login-email" name="email" type="email" autocomplete="email" placeholder="Sláðu inn netfangið þitt" required>
               <label for="login-password">Lykilorð</label>
-              <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sláðu inn lykilorðið þitt" required>
+              <input id="login-password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Sláðu inn lykilorðið þitt" required>
+              <label for="login-password-confirm" data-auth-signup hidden>Staðfestu lykilorð</label>
+              <input id="login-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Sláðu inn lykilorðið aftur" data-auth-signup hidden>
               <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
               <button class="button button-primary login-submit" type="submit">Skrá inn</button>
             </form>
@@ -603,7 +607,10 @@ function renderLogin() {
               </svg>
               <span>Halda áfram með Google</span>
             </button>
-            <p class="login-signup">Ný í New Friends? <button type="button" data-action="create-account">Búðu til aðgang</button></p>
+            <p class="login-signup">
+              <span data-auth-toggle-prompt>Ný í New Friends?</span>
+              <button type="button" data-action="toggle-auth-mode">Búðu til aðgang</button>
+            </p>
           </div>
         </section>
       </div>
@@ -766,7 +773,7 @@ screen.addEventListener("click", (event) => {
   }
 
   if (button.dataset.action === "forgot-password") {
-    showToast("Endurstilling lykilorðs er ekki tengd ennþá");
+    void handlePasswordReset(button);
     return;
   }
 
@@ -775,8 +782,9 @@ screen.addEventListener("click", (event) => {
     return;
   }
 
-  if (button.dataset.action === "create-account") {
-    showToast("Nýskráning er ekki tengd ennþá");
+  if (button.dataset.action === "toggle-auth-mode") {
+    const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
+    if (form) setAuthMode(form.dataset.form !== "signup");
     return;
   }
 
@@ -870,8 +878,8 @@ screen.addEventListener("submit", (event) => {
   if (!form) return;
   event.preventDefault();
 
-  if (form.dataset.form === "login") {
-    showToast("Innskráning er ekki tengd aðgangakerfi");
+  if (form.dataset.form === "login" || form.dataset.form === "signup") {
+    void handleEmailAuth(form);
     return;
   }
 
@@ -1118,7 +1126,7 @@ async function handleGoogleSignIn(button) {
   button.setAttribute("aria-busy", "true");
 
   try {
-    await import("./firebase-auth.js?v=1");
+    await import("./firebase-auth.js?v=2");
     await window.firebaseAuth.signInWithGoogle();
     window.location.replace("app.html?view=home");
   } catch (error) {
@@ -1142,9 +1150,142 @@ async function handleGoogleSignIn(button) {
   }
 }
 
+function setAuthMode(signingUp) {
+  const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
+  if (!form) return;
+
+  form.dataset.form = signingUp ? "signup" : "login";
+  form.querySelectorAll("[data-auth-signup]").forEach((field) => {
+    field.hidden = !signingUp;
+    if (field.matches("input")) field.required = signingUp;
+  });
+
+  const title = screen.querySelector("[data-auth-title]");
+  const subtitle = screen.querySelector("[data-auth-subtitle]");
+  const forgotPassword = form.querySelector('[data-action="forgot-password"]');
+  const submitButton = form.querySelector('[type="submit"]');
+  const togglePrompt = screen.querySelector("[data-auth-toggle-prompt]");
+  const toggleButton = screen.querySelector('[data-action="toggle-auth-mode"]');
+  const passwordInput = form.elements.password;
+
+  title.textContent = signingUp ? "Búðu til aðgang" : "Velkomin aftur!";
+  subtitle.textContent = signingUp
+    ? "Skráðu þig til að taka þátt í New Friends."
+    : "Skráðu þig inn til að halda áfram.";
+  forgotPassword.hidden = signingUp;
+  submitButton.textContent = signingUp ? "Búa til aðgang" : "Skrá inn";
+  togglePrompt.textContent = signingUp ? "Ertu nú þegar með aðgang?" : "Ný í New Friends?";
+  toggleButton.textContent = signingUp ? "Skrá inn" : "Búðu til aðgang";
+  passwordInput.autocomplete = signingUp ? "new-password" : "current-password";
+}
+
+async function handleEmailAuth(form) {
+  const signingUp = form.dataset.form === "signup";
+  const email = form.elements.email.value.trim();
+  const password = form.elements.password.value;
+  const submitButton = form.querySelector('[type="submit"]');
+
+  if (signingUp) {
+    const displayName = form.elements.displayName.value.trim();
+    if (!displayName) {
+      showToast("Sláðu inn nafnið þitt");
+      return;
+    }
+    if (password !== form.elements.passwordConfirm.value) {
+      showToast("Lykilorðin passa ekki saman");
+      return;
+    }
+  }
+
+  submitButton.disabled = true;
+  submitButton.setAttribute("aria-busy", "true");
+  try {
+    await import("./firebase-auth.js?v=2");
+    if (signingUp) {
+      await window.firebaseAuth.createAccount(
+        email,
+        password,
+        form.elements.displayName.value.trim(),
+      );
+    } else {
+      await window.firebaseAuth.signInWithEmail(email, password);
+    }
+    window.location.replace("app.html?view=home");
+  } catch (error) {
+    const message = getEmailAuthErrorMessage(error, signingUp);
+    if (message) {
+      showToast(message);
+    } else {
+      console.error(signingUp ? "Account creation failed" : "Email sign-in failed", error);
+      showToast(signingUp
+        ? "Ekki tókst að búa til aðgang"
+        : "Ekki tókst að skrá inn");
+    }
+  } finally {
+    submitButton.disabled = false;
+    submitButton.removeAttribute("aria-busy");
+  }
+}
+
+async function handlePasswordReset(button) {
+  const email = screen.querySelector("#login-email").value.trim();
+  if (!email) {
+    showToast("Sláðu inn netfangið þitt fyrst");
+    return;
+  }
+
+  button.disabled = true;
+  try {
+    await import("./firebase-auth.js?v=2");
+    await window.firebaseAuth.sendPasswordResetEmail(email);
+    showToast("Leiðbeiningar um endurstillingu voru sendar í tölvupósti");
+  } catch (error) {
+    const message = getEmailAuthErrorMessage(error, false);
+    if (message) {
+      showToast(message);
+    } else {
+      console.error("Password reset failed", error);
+      showToast("Ekki tókst að senda endurstillingarpóst");
+    }
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function getEmailAuthErrorMessage(error, signingUp) {
+  switch (error.code) {
+    case "app/firebase-config-missing":
+      return "Bættu Firebase-vefstillingum við til að virkja innskráningu";
+    case "app/profile-update-failed":
+      return "Aðgangur var stofnaður en ekki tókst að vista nafnið. Skráðu þig inn aftur.";
+    case "auth/email-already-in-use":
+      return "Netfangið er þegar skráð";
+    case "auth/invalid-email":
+      return "Netfangið er ekki gilt";
+    case "auth/weak-password":
+      return "Lykilorðið þarf að vera að minnsta kosti 6 stafir";
+    case "auth/invalid-credential":
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+      return signingUp ? "Ekki tókst að búa til aðgang" : "Netfang eða lykilorð er rangt";
+    case "auth/operation-not-allowed":
+      return "Virkjaðu Email/Password innskráningu í Firebase";
+    case "auth/unauthorized-domain":
+      return "Þetta lén þarf að vera heimilað í Firebase";
+    case "auth/too-many-requests":
+      return "Of margar tilraunir. Reyndu aftur síðar";
+    case "auth/network-request-failed":
+      return "Tengingin mistókst. Athugaðu nettenginguna";
+    case "auth/missing-email":
+      return "Sláðu inn netfangið þitt";
+    default:
+      return null;
+  }
+}
+
 async function handleFirebaseSignOut() {
   try {
-    await import("./firebase-auth.js?v=1");
+    await import("./firebase-auth.js?v=2");
     await window.firebaseAuth.signOut();
     window.location.replace("app.html?view=login");
   } catch (error) {
