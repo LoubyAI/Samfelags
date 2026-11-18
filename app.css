@@ -103,8 +103,15 @@ h3,
   margin: 0;
 }
 
+.profile-setup-view .sidebar {
+  position: relative;
+}
+
 .profile-setup-view .sidebar-bottom {
-  margin-top: auto;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .profile-setup-view .topbar {
