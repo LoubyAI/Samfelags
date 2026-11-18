@@ -847,11 +847,15 @@
       submitButton.disabled = true;
 
       try {
-        await import("./firebase-auth.js?v=2");
-        await import("./firebase-firestore.js?v=1");
-        
         const { auth, authSdk } = await getFirebaseAuthClient();
-        const user = authSdk.currentUser;
+        
+        // Wait for auth state to be ready
+        const user = await new Promise((resolve) => {
+          const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+            unsubscribe();
+            resolve(user);
+          });
+        });
         
         if (!user) {
           alert('Vertu innskráð/ur til að halda áfram');
