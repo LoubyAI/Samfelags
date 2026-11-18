@@ -229,6 +229,258 @@
       background: #f06da3;
     }
 
+    /* Policy Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      display: none;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.dark-mode .modal-content {
+      background: var(--white);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #e5518b 0%, #d63d7a 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 32px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    body.dark-mode .modal-body {
+      background: var(--white);
+      color: var(--ink);
+    }
+
+    .modal-intro {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    body.dark-mode .modal-intro {
+      color: var(--ink);
+    }
+
+    .policy-section {
+      margin-bottom: 32px;
+    }
+
+    .policy-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e5518b;
+      margin-bottom: 10px;
+    }
+
+    .policy-section > p {
+      color: #666;
+      margin-bottom: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    body.dark-mode .policy-section > p {
+      color: var(--muted);
+    }
+
+    .policy-item {
+      margin-bottom: 20px;
+      padding-left: 16px;
+      border-left: 3px solid #e5518b;
+    }
+
+    .policy-item strong {
+      display: block;
+      color: #333;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    body.dark-mode .policy-item strong {
+      color: var(--ink);
+    }
+
+    .policy-item p {
+      color: #666;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    body.dark-mode .policy-item p {
+      color: var(--muted);
+    }
+
+    .modal-footer {
+      padding: 16px 32px 32px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    body.dark-mode .modal-footer {
+      border-top-color: var(--line);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    body.dark-mode .checkbox-label {
+      color: var(--ink);
+    }
+
+    .checkbox-label input {
+      margin-top: 4px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      accent-color: #e5518b;
+      flex-shrink: 0;
+    }
+
+    .checkbox-label span {
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .modal-actions button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .modal-actions .button-secondary {
+      background: #f5f5f5;
+      color: #666;
+      border: 1px solid #ddd;
+    }
+
+    .modal-actions .button-secondary:hover {
+      background: #e8e8e8;
+    }
+
+    body.dark-mode .modal-actions .button-secondary {
+      background: var(--soft);
+      color: var(--muted);
+      border-color: var(--line);
+    }
+
+    .modal-actions .button-primary {
+      width: auto;
+      flex: 0;
+      background: #e5518b;
+      color: white;
+    }
+
+    .modal-actions .button-primary:hover:not(:disabled) {
+      background: #d63d7a;
+    }
+
+    /* Photo preview */
+    .photo-preview {
+      display: none;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .photo-preview.show {
+      display: block;
+    }
+
+    .photo-preview-image {
+      width: 100%;
+      max-width: 300px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #e5518b;
+    }
+
+    .photo-preview-delete {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(214, 61, 122, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+      transition: background 0.2s ease;
+    }
+
+    .photo-preview-delete:hover {
+      background: #d63d7a;
+    }
+
+    body.dark-mode .photo-preview-delete {
+      background: rgba(214, 61, 122, 0.8);
+    }
+
+    .photo-preview-delete:hover:dark-mode {
+      background: rgba(240, 109, 163, 0.9);
+    }
+
     .photo-error-message {
       color: #d63d7a;
       font-size: 12px;
@@ -348,7 +600,12 @@
               <div class="photo-section">
                 <label class="photo-section-label">Prófílmynd fyrir vini og áhugamálahópa (Áskilið)</label>
                 
-                <div class="photo-upload-area" onclick="this.querySelector('input').click()">
+                <div class="photo-preview" id="photoPrivatePreview">
+                  <img id="photoPrivateImg" class="photo-preview-image" src="" alt="Prófílmynd">
+                  <button type="button" class="photo-preview-delete" onclick="clearPhotoPrivate()">×</button>
+                </div>
+                
+                <div class="photo-upload-area" id="photoPrivateUploadArea" onclick="this.querySelector('input').click()">
                   <svg class="photo-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                     <circle cx="12" cy="13" r="4"></circle>
@@ -405,7 +662,7 @@
 
               <!-- Buttons -->
               <div class="photo-button-group">
-                <button type="submit" class="button-primary" style="flex: 1;">
+                <button type="submit" class="button-primary" id="submitButton" disabled>
                   Halda áfram →
                 </button>
               </div>
@@ -413,6 +670,49 @@
           </div>
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- Policy Modal -->
+  <div id="policyModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Reglur New Friends fyrir myndir</h2>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro"><strong>Við treystum á þér að vera heiðarleg/ur</strong></p>
+        
+        <div class="policy-section">
+          <h3>Myndir þínar</h3>
+          <div class="policy-item">
+            <strong>Prófílmynd</strong>
+            <p>Myndin þarf að vera alvöru mynd af þér. Við vildum sjá andlitið þitt til að halda þessari samfélaginu öruggu og einlægu.</p>
+          </div>
+          <div class="policy-item">
+            <strong>Engin óviðeigandi efni</strong>
+            <p>Engar nakin myndir, kynferðisbundið efni, ofbeld eða hatfull orðasambönd.</p>
+          </div>
+        </div>
+
+        <div class="policy-section">
+          <h3>Vernd persónuupplýsinga</h3>
+          <ul class="policy-list">
+            <li>Myndir þínar eru geymdar örugglega á okkar þjónum</li>
+            <li>Aðeins samþykkta vini og meðlimir áhugamálahópa sjá prófílmyndina þína</li>
+            <li>Öll myndir er hægt að eyða hvenær sem er úr stillingum þínum</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <label class="checkbox-label">
+          <input type="checkbox" id="policyAcceptedCheckbox" onchange="updateButtonState()">
+          <span>Ég samþykki reglur New Friends fyrir myndir</span>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="button-secondary" onclick="closePolicyModal()">Loka</button>
+          <button type="button" class="button-primary" onclick="confirmPolicy()" id="confirmPolicyBtn" disabled>Samþykkja</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -425,6 +725,10 @@
     // Set page heading
     document.getElementById('page-heading').innerHTML = `<img src="img/figma/d98296f8-1f07-442f-a577-ca93d33bbf45.svg" alt=""><span>Myndir</span>`;
     
+    // State management
+    let policyAccepted = false;
+    let photoPrivateSelected = false;
+
     // Theme toggle
     const themeToggle = document.getElementById("theme-toggle");
     themeToggle.checked = localStorage.getItem("darkMode") === "on";
@@ -440,11 +744,80 @@
       await handlePhotoSubmit(e.target);
     });
 
-    // Clear error when photo is selected
+    // Photo input change handler
     const photoPrivateInput = document.querySelector('input[name="photoPrivate"]');
     photoPrivateInput.addEventListener('change', () => {
+      handlePhotoPrivateChange();
+    });
+
+    function handlePhotoPrivateChange() {
+      const photoPrivateInput = document.querySelector('input[name="photoPrivate"]');
       const photoPrivateError = document.getElementById('photoPrivateError');
-      photoPrivateError.classList.remove('show');
+      const photoPrivatePreview = document.getElementById('photoPrivatePreview');
+      const photoPrivateImg = document.getElementById('photoPrivateImg');
+      
+      if (photoPrivateInput.files && photoPrivateInput.files.length > 0) {
+        const file = photoPrivateInput.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          photoPrivateImg.src = e.target.result;
+          photoPrivatePreview.classList.add('show');
+          photoPrivateError.classList.remove('show');
+          photoPrivateSelected = true;
+          updateButtonState();
+        };
+        
+        reader.readAsDataURL(file);
+      } else {
+        photoPrivateSelected = false;
+        updateButtonState();
+      }
+    }
+
+    function clearPhotoPrivate() {
+      const photoPrivateInput = document.querySelector('input[name="photoPrivate"]');
+      const photoPrivatePreview = document.getElementById('photoPrivatePreview');
+      
+      photoPrivateInput.value = '';
+      photoPrivatePreview.classList.remove('show');
+      photoPrivateSelected = false;
+      updateButtonState();
+    }
+
+    function showPhotoModal() {
+      document.getElementById('policyModal').classList.add('active');
+    }
+
+    function closePolicyModal() {
+      document.getElementById('policyModal').classList.remove('active');
+    }
+
+    function updateButtonState() {
+      const submitButton = document.getElementById('submitButton');
+      
+      // Button is enabled only if both photo is selected and policy is accepted
+      if (photoPrivateSelected && policyAccepted) {
+        submitButton.disabled = false;
+      } else {
+        submitButton.disabled = true;
+      }
+    }
+
+    function confirmPolicy() {
+      const checkbox = document.getElementById('policyAcceptedCheckbox');
+      if (checkbox.checked) {
+        policyAccepted = true;
+        closePolicyModal();
+        updateButtonState();
+      }
+    }
+
+    // Allow Enter key to confirm policy
+    document.getElementById('policyAcceptedCheckbox').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        confirmPolicy();
+      }
     });
 
     async function handlePhotoSubmit(form) {
@@ -458,9 +831,13 @@
         return;
       }
       
-      // Hide error if photo was provided
-      photoPrivateError.classList.remove('show');
+      // Validate that policy is accepted
+      if (!policyAccepted) {
+        alert('Þú verður að samþykkja reglur New Friends fyrir myndir');
+        return;
+      }
       
+      photoPrivateError.classList.remove('show');
       submitButton.disabled = true;
 
       try {
@@ -496,14 +873,6 @@
       } finally {
         submitButton.disabled = false;
       }
-    }
-
-    function skipToHome() {
-      window.location.replace("app.html?view=home");
-    }
-
-    function showPhotoModal() {
-      alert('Myndir fyrir New Friends - Nánari reglur kemur hér');
     }
   </script>
 </body>
