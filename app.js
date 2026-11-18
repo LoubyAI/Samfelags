@@ -61,6 +61,15 @@ const pageInfo = {
   login: { title: "Skrá inn", icon: icons.profile, active: "" },
 };
 
+function goToHomeIfAllowed(event) {
+  event.preventDefault();
+  const setupViews = ["login", "profile-setup", "photo-policy"];
+  const current = new URLSearchParams(window.location.search).get("view") || "home";
+  if (!setupViews.includes(current)) {
+    window.location.href = "app.html?view=home";
+  }
+}
+
 const avatar = (image = photos.portrait, alt = "Prófílmynd") =>
   `<img src="${asset(image)}" alt="${alt}">`;
 
@@ -711,7 +720,8 @@ const renderers = {
   login: renderLogin,
 };
 
-document.body.classList.toggle("login-view", current === "login");
+const isSetupView = ["login", "profile-setup", "photo-policy"].includes(current);
+document.body.classList.toggle("login-view", isSetupView);
 document.title = `${pageInfo[current].title} - New Friends`;
 document.getElementById("page-heading").innerHTML =
   `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
