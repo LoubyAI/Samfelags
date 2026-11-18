@@ -265,6 +265,43 @@ h3,
   min-height: 48px;
 }
 
+.auth-message {
+  margin: 0;
+  color: #842838;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.auth-message[data-state="success"] {
+  color: #245c34;
+}
+
+.auth-dialog {
+  width: min(420px, calc(100vw - 32px));
+  padding: 22px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 24%);
+}
+
+.auth-dialog::backdrop {
+  background: rgb(31 24 30 / 48%);
+}
+
+.auth-dialog-content {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.auth-dialog .button {
+  min-width: 100px;
+}
+
 .login-divider {
   display: flex;
   align-items: center;
@@ -2039,6 +2076,14 @@ body.dark-mode {
   --soft: #302830;
   --light: #3a3a3a;
   --white: #1d1b1d;
+}
+
+body.dark-mode .auth-message {
+  color: #ffdbe2;
+}
+
+body.dark-mode .auth-message[data-state="success"] {
+  color: #d7f5df;
 }
 
 body.dark-mode img[src$=".svg"] {

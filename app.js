@@ -597,6 +597,12 @@ function renderLogin() {
               <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
               <button class="button button-primary login-submit" type="submit">Skrá inn</button>
             </form>
+            <dialog class="auth-dialog" data-auth-dialog aria-labelledby="auth-message-title">
+              <div class="auth-dialog-content">
+                <p class="auth-message" id="auth-message-title" data-auth-message role="alert" aria-live="assertive"></p>
+                <button class="button button-primary" type="button" data-action="close-auth-message">Loka</button>
+              </div>
+            </dialog>
             <div class="login-divider"><span>eða</span></div>
             <button class="login-google" type="button" data-action="google-login">
               <svg class="login-google-icon" viewBox="0 0 48 48" aria-hidden="true">
@@ -785,6 +791,12 @@ screen.addEventListener("click", (event) => {
   if (button.dataset.action === "toggle-auth-mode") {
     const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
     if (form) setAuthMode(form.dataset.form !== "signup");
+    return;
+  }
+
+  if (button.dataset.action === "close-auth-message") {
+    const dialog = screen.querySelector("[data-auth-dialog]");
+    if (dialog?.open) dialog.close();
     return;
   }
 
@@ -1168,6 +1180,7 @@ function setAuthMode(signingUp) {
   const toggleButton = screen.querySelector('[data-action="toggle-auth-mode"]');
   const passwordInput = form.elements.password;
 
+  clearAuthMessage();
   title.textContent = signingUp ? "Búðu til aðgang" : "Velkomin aftur!";
   subtitle.textContent = signingUp
     ? "Skráðu þig til að taka þátt í New Friends."
@@ -1188,15 +1201,16 @@ async function handleEmailAuth(form) {
   if (signingUp) {
     const displayName = form.elements.displayName.value.trim();
     if (!displayName) {
-      showToast("Sláðu inn nafnið þitt");
+      showAuthMessage("Sláðu inn nafnið þitt");
       return;
     }
     if (password !== form.elements.passwordConfirm.value) {
-      showToast("Lykilorðin passa ekki saman");
+      showAuthMessage("Lykilorðin passa ekki saman");
       return;
     }
   }
 
+  clearAuthMessage();
   submitButton.disabled = true;
   submitButton.setAttribute("aria-busy", "true");
   try {
@@ -1214,10 +1228,10 @@ async function handleEmailAuth(form) {
   } catch (error) {
     const message = getEmailAuthErrorMessage(error, signingUp);
     if (message) {
-      showToast(message);
+      showAuthMessage(message);
     } else {
       console.error(signingUp ? "Account creation failed" : "Email sign-in failed", error);
-      showToast(signingUp
+      showAuthMessage(signingUp
         ? "Ekki tókst að búa til aðgang"
         : "Ekki tókst að skrá inn");
     }
@@ -1230,22 +1244,23 @@ async function handleEmailAuth(form) {
 async function handlePasswordReset(button) {
   const email = screen.querySelector("#login-email").value.trim();
   if (!email) {
-    showToast("Sláðu inn netfangið þitt fyrst");
+    showAuthMessage("Sláðu inn netfangið þitt fyrst");
     return;
   }
 
   button.disabled = true;
+  clearAuthMessage();
   try {
     await import("./firebase-auth.js?v=2");
     await window.firebaseAuth.sendPasswordResetEmail(email);
-    showToast("Leiðbeiningar um endurstillingu voru sendar í tölvupósti");
+    showAuthMessage("Leiðbeiningar um endurstillingu voru sendar í tölvupósti", "success");
   } catch (error) {
     const message = getEmailAuthErrorMessage(error, false);
     if (message) {
-      showToast(message);
+      showAuthMessage(message);
     } else {
       console.error("Password reset failed", error);
-      showToast("Ekki tókst að senda endurstillingarpóst");
+      showAuthMessage("Ekki tókst að senda endurstillingarpóst");
     }
   } finally {
     button.disabled = false;
@@ -1281,6 +1296,28 @@ function getEmailAuthErrorMessage(error, signingUp) {
     default:
       return null;
   }
+}
+
+function showAuthMessage(message, state = "error") {
+  const messageElement = screen.querySelector("[data-auth-message]");
+  const dialog = screen.querySelector("[data-auth-dialog]");
+  if (!messageElement || !dialog) {
+    showToast(message);
+    return;
+  }
+  messageElement.textContent = message;
+  messageElement.dataset.state = state;
+  if (!dialog.open) dialog.showModal();
+  dialog.querySelector('[data-action="close-auth-message"]').focus();
+}
+
+function clearAuthMessage() {
+  const messageElement = screen.querySelector("[data-auth-message]");
+  if (!messageElement) return;
+  messageElement.textContent = "";
+  delete messageElement.dataset.state;
+  const dialog = screen.querySelector("[data-auth-dialog]");
+  if (dialog?.open) dialog.close();
 }
 
 async function handleFirebaseSignOut() {
