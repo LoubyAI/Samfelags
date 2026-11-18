@@ -229,20 +229,21 @@ h3,
 
 .login-form {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   text-align: left;
 }
 
 .login-form label {
-  margin-top: 4px;
+  margin-top: 2px;
   font-weight: 700;
+  font-size: 13px;
 }
 
 .login-form input {
   width: 100%;
-  min-height: 48px;
-  padding: 12px;
+  min-height: 44px;
+  padding: 10px;
   border: 1px solid #d2cdd7;
   border-radius: 8px;
   background: var(--white);

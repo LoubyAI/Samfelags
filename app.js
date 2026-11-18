@@ -1244,7 +1244,7 @@ async function handleGoogleSignIn(button) {
       showAuthMessage("Vafrinn lokaði innskráningarglugganum. Leyfðu sprettiglugga.");
     } else {
       console.error("Google sign-in failed", error);
-      showAuthMessage("Ekki tókst að skrá inn með Google");
+      showAuthMessage("Ekki tókst að skrá inn. Ertu þegar með aðgang á þessari vefsíðu með þessum Google aðgangi?");
     }
   } finally {
     button.disabled = false;
@@ -1488,7 +1488,7 @@ function getEmailAuthErrorMessage(error, signingUp) {
     case "app/profile-update-failed":
       return "Aðgangur var stofnaður en ekki tókst að vista nafnið. Skráðu þig inn aftur.";
     case "auth/email-already-in-use":
-      return "Netfangið er þegar skráð";
+      return signingUp ? "Þú ert nú þegar með aðgang á þessari vefsíðu með þessu netfangi. Skráðu þig inn í staðinn." : "Ekki tókst að búa til aðgang";
     case "auth/invalid-email":
       return "Netfangið er ekki gilt";
     case "auth/weak-password":
