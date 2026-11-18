@@ -1232,6 +1232,9 @@ async function handleGoogleSignIn(button) {
     
     window.location.replace(isComplete ? "app.html?view=home" : "app.html?view=profile-setup");
   } catch (error) {
+    const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
+    const isSignupMode = form && form.dataset.form === "signup";
+    
     if (error.code === "app/firebase-config-missing") {
       showAuthMessage("Bættu Firebase-vefstillingum við til að virkja Google-innskráningu");
     } else if (error.code === "auth/popup-closed-by-user") {
@@ -1244,7 +1247,11 @@ async function handleGoogleSignIn(button) {
       showAuthMessage("Vafrinn lokaði innskráningarglugganum. Leyfðu sprettiglugga.");
     } else {
       console.error("Google sign-in failed", error);
-      showAuthMessage("Þessi google aðgangur er nú þegar skráður");
+      if (isSignupMode) {
+        showAuthMessage("Þessi google aðgangur er nú þegar skráður");
+      } else {
+        showAuthMessage("Ekki tókst að skrá inn með Google");
+      }
     }
   } finally {
     button.disabled = false;
