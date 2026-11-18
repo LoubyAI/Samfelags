@@ -635,16 +635,16 @@ h3,
 
 .notification-button {
   position: relative;
-  width: 32px;
-  height: 32px;
-  padding: 6px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
   border-radius: 50%;
   transition: background-color 120ms ease;
 }
 
 .notification-button img {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .notification-count {
@@ -754,8 +754,8 @@ h3,
 }
 
 .profile-chevron {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -1763,10 +1763,10 @@ h3,
 .message-filter {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   margin: 16px auto 0;
-  padding: 4px;
+  padding: 8px;
   border: 0;
   border-radius: 50%;
   background: transparent;
