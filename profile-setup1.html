@@ -799,7 +799,7 @@
       }
       
       // Each word must be either:
-      // 1. 2+ characters (normal word)
+      // 1. 2+ characters starting with capital (normal word)
       // 2. Exactly 2 chars: Capital letter + dot (e.g., "M.")
       const hasInvalidWord = words.some(word => {
         // Single letter: invalid
@@ -811,7 +811,15 @@
           const isValidInitial = /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word);
           return !isValidInitial;
         }
-        // 3+ characters: allow (normal word)
+        // 3+ characters: must be proper word (no multiple dots, starts with capital)
+        if (word.length >= 3) {
+          // Reject if contains dots (unless it's a proper abbreviation with ONE dot at the end)
+          if (word.includes('.') && !word.endsWith('.')) return true;
+          if (word.match(/\..*\./)) return true; // Multiple dots
+          // Must start with capital letter for proper names
+          const startsWithCapital = /^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
+          return !startsWithCapital;
+        }
         return false;
       });
       
@@ -939,10 +947,20 @@
       // Check each word format
       if (isValidName) {
         const hasInvalidWord = words.some(word => {
-          if (word.length === 1) return true;
+          if (word.length === 1) return true; // Single letter invalid
           if (word.length === 2) {
+            // Must be Capital letter + dot
             const isValidInitial = /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word);
             return !isValidInitial;
+          }
+          // 3+ characters: must be a proper word (no multiple dots, start with capital)
+          if (word.length >= 3) {
+            // Reject if contains dots (unless it's a proper abbreviation with ONE dot at the end)
+            if (word.includes('.') && !word.endsWith('.')) return true;
+            if (word.match(/\..*\./)) return true; // Multiple dots
+            // Must start with capital letter for proper names
+            const startsWithCapital = /^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
+            return !startsWithCapital;
           }
           return false;
         });
