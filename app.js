@@ -1251,7 +1251,7 @@ async function handleGoogleSignIn(button) {
       showAuthMessage("Welkomin aftur!");
     }
     
-    window.location.replace(isComplete ? "app.html?view=home" : "app.html?view=profile-setup");
+    window.location.replace(isComplete ? "app.html?view=home" : "profile-setup1.html");
   } catch (error) {
     const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
     const isSignupMode = form && form.dataset.form === "signup";
