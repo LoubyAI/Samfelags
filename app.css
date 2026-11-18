@@ -77,9 +77,22 @@ h3,
   min-height: 100vh;
 }
 
-.login-view .sidebar,
-.login-view .topbar {
+.login-view .sidebar {
   display: none;
+}
+
+.login-view .topbar {
+  pointer-events: none;
+}
+
+.login-view .topbar button,
+.login-view .topbar a,
+.login-view .topbar input,
+.login-view .topbar select,
+.login-view #theme-toggle {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .login-view .workspace {

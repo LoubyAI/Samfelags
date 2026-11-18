@@ -1,30 +1,28 @@
 /**
  * User Profile Management Module
- * Handles first-time profile setup (Skref 1) with improved form design
- * Loads HTML from profile-setup-flow-demo.html
+ * Handles first-time profile setup (Skref 1) with form design
  */
 
 window.firebaseProfile = {
   renderProfileSetup() {
-    // Return the HTML from profile-setup-flow-demo.html inline
     return `
-    <div class="profile-setup-container" style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <div class="profile-setup-container" style="max-width: 700px; margin: 0 auto; padding: 20px;">
       <!-- Logo Section -->
-      <div style="text-align: center; margin-bottom: 40px; border-bottom: 1px solid #e0e0e0; padding-bottom: 30px;">
-        <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 12px 0; font-size: 32px; font-weight: 600; font-family: 'Poppins', Arial, sans-serif;">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 8px 0; font-size: 32px; font-weight: 600; font-family: 'Poppins', Arial, sans-serif;">
           <span>New Friends</span>
           <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="New Friends" style="width: 32px; height: 32px;">
         </h1>
-        <p style="color: #e5518b; font-size: 16px; font-weight: 500; margin: 0;">Connect · Meet · Build Friendships</p>
+        <p style="color: #e5518b; font-size: 14px; font-weight: 500; margin: 0; letter-spacing: 0.5px;">Connect · Meet · Build Friendships</p>
       </div>
 
       <!-- Step Indicator -->
-      <div style="text-align: center; color: #e5518b; font-size: 12px; margin-bottom: 20px; font-weight: 600;">
-        SKREF 1 AF 2: PERSÓNUUPPLÝSINGAR
+      <div style="text-align: center; color: #e5518b; font-size: 11px; margin-bottom: 35px; font-weight: 700; letter-spacing: 1px;">
+        SKREF 1 AF 2 — PERSÓNUUPPLÝSINGAR
       </div>
 
       <!-- Form -->
-      <form class="profile-setup-form" data-form="profile-setup" style="margin-top: 30px;">
+      <form class="profile-setup-form" data-form="profile-setup">
         <!-- Personal Information Section -->
         <div style="margin-bottom: 30px;">
           <div style="font-size: 15px; font-weight: 600; color: #e5518b; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #f5f5f5;">
@@ -46,7 +44,7 @@ window.firebaseProfile = {
               required
               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; box-sizing: border-box;"
             >
-            <small style="display: block; color: #999; font-size: 10px; margin-top: 4px;">Þitt alvöru nafn í opinberum skrám (Birtist eingöngu samþykktu vinum og áhugamálahólpum þínum). Millinöfn má skammstafa í einn staf með punkti.</small>
+            <small style="display: block; color: #999; font-size: 10px; margin-top: 4px;">Þitt alvöru nafn í opinberum skrám (Birtist einungis samþykktu vinum og áhugamálahópum þínum). Millinöfn má skammstafa í einn staf með punkti.</small>
           </div>
 
           <!-- Nickname -->
@@ -73,7 +71,7 @@ window.firebaseProfile = {
               required
               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; box-sizing: border-box;"
             >
-            <small style="display: block; color: #999; font-size: 10px; margin-top: 4px;">Þinn afmælisdagur (Birtist eingöngu samþykktu vinum og áhugamálahópum þínum).</small>
+            <small style="display: block; color: #999; font-size: 10px; margin-top: 4px;">Þinn afmælisdagur (Birtist einungis samþykktu vinum og áhugamálahópum þínum).</small>
           </div>
 
           <!-- City -->
@@ -98,45 +96,17 @@ window.firebaseProfile = {
               <option value="Vík">Vík</option>
               <option value="Ísafjörður">Ísafjörður</option>
               <option value="Stykkishólmur">Stykkishólmur</option>
-              <option value="Húsavík">Húsavík</option>
-              <option value="Mývatn">Mývatn</option>
-              <option value="Egilsstaðir">Egilsstaðir</option>
               <option value="Akranes">Akranes</option>
-              <option value="Westman Islands">Vestmannaeyjar</option>
-              <option value="Dalvík">Dalvík</option>
-              <option value="Ólafsfjörður">Ólafsfjörður</option>
-              <option value="Seyðisfjörður">Seyðisfjörður</option>
-              <option value="Höfn">Höfn</option>
             </select>
-            <small style="display: block; color: #999; font-size: 10px; margin-top: 4px;">Þar sem þú býrð.</small>
+            <small style="display: block; color: #999; font-size: 10px; margin-top: 4px;">Hjálpar okkur að tengja þig við fólk nálægt þér.</small>
           </div>
         </div>
 
-        <!-- Privacy Reminder Box -->
-        <div style="background: #f9f1f5; border: 1px solid #e5d6e0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e5518b" stroke-width="2" style="display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          <strong style="color: #e5518b;">Persónuvernd:</strong> <span style="font-size: 12px; color: #555;">Fæðingardagur og nafn þitt eru geymd á okkar tryggðu netþjónum og notuð eingöngu til að staðfesta aldur og auðkenna þig. Almenningur getur ekki séð nákvæman aldur þinn - aðeins aldursflokk.</span>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="display: flex; gap: 10px; margin-top: 30px;">
-          <button 
-            type="button" 
-            class="button button-secondary"
-            onclick="skipProfileSetup()"
-            style="flex: 1; padding: 12px; background: #f5f5f5; color: #333; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-          >
+        <div class="button-group" style="display: flex; gap: 12px; margin-top: 30px;">
+          <button type="button" class="button button-secondary" onclick="skipProfileSetup()" style="flex: 1; padding: 12px 24px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; background: #f0f0f0; color: #333;">
             Sleppa þessu skrefi
           </button>
-          <button 
-            type="submit" 
-            class="button button-primary"
-            onclick="submitProfileSetup(event)"
-            style="flex: 1; padding: 12px; background: #e5518b; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-          >
+          <button type="submit" class="button button-primary" onclick="submitProfileSetup(event)" style="flex: 1; padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; background: #e5518b; color: white;">
             Halda áfram →
           </button>
         </div>
@@ -149,19 +119,14 @@ window.firebaseProfile = {
 function submitProfileSetup(event) {
   event.preventDefault();
   
-  const displayName = document.getElementById('displayName').value.trim();
-  const birthday = document.getElementById('birthday').value.trim();
-  const city = document.getElementById('city').value;
-  const nickname = document.getElementById('nickname').value.trim();
-
-  if (!displayName || !birthday) {
-    alert('Vinsamlegast fylltu út alla áskilin svæði');
-    return;
-  }
+  const displayName = document.getElementById('displayName')?.value?.trim() || '';
+  const nickname = document.getElementById('nickname')?.value?.trim() || '';
+  const birthday = document.getElementById('birthday')?.value?.trim() || '';
+  const city = document.getElementById('city')?.value || '';
 
   if (displayName) {
-    const words = displayName.split(/\s+/).filter(word => word.length > 0);
-    const validNameParts = words.filter(word => 
+    const nameParts = displayName.split(/\s+/);
+    const validNameParts = nameParts.filter(word => 
       word.length >= 2 || 
       /^[a-záéíóúýþæö]\.$/i.test(word)
     );
