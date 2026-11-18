@@ -1241,10 +1241,10 @@ async function handleGoogleSignIn(button) {
 
   try {
     await import("./firebase-auth.js?v=2");
-    await window.firebaseAuth.signInWithGoogle();
+    const result = await window.firebaseAuth.signInWithGoogle();
+    const user = result.user;
+    
     await import("./firebase-firestore.js?v=1");
-    const { auth, authSdk } = await getFirebaseAuthClient();
-    const user = authSdk.currentUser;
     const isComplete = await window.firebaseFirestore.hasCompletedProfile(user.uid);
     
     if (isComplete) {
