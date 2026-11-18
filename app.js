@@ -658,7 +658,7 @@ screen.addEventListener("click", (event) => {
   }
 
   if (button.dataset.action === "google-login") {
-    showToast("Innskráning með Google er ekki tengd ennþá");
+    void handleGoogleSignIn(button);
     return;
   }
 
@@ -703,6 +703,11 @@ screen.addEventListener("click", (event) => {
   }
 
   if (button.dataset.action === "create-calendar") showToast("Dagatalið þitt er tilbúið");
+});
+
+document.querySelector('[data-action="sign-out"]')?.addEventListener("click", (event) => {
+  event.preventDefault();
+  void handleFirebaseSignOut();
 });
 
 screen.addEventListener("change", (event) => {
@@ -972,6 +977,46 @@ function markAllNotificationsRead() {
   document.querySelectorAll(".notification-item").forEach((item) => item.classList.add("read"));
   updateNotificationCount();
   showToast("Allar tilkynningar skoðaðar");
+}
+
+async function handleGoogleSignIn(button) {
+  button.disabled = true;
+  button.setAttribute("aria-busy", "true");
+
+  try {
+    await import("./firebase-auth.js?v=1");
+    await window.firebaseAuth.signInWithGoogle();
+    window.location.replace("app.html?view=home");
+  } catch (error) {
+    if (error.code === "app/firebase-config-missing") {
+      showToast("Bættu Firebase-vefstillingum við til að virkja Google-innskráningu");
+    } else if (error.code === "auth/popup-closed-by-user") {
+      showToast("Innskráningu var hætt við");
+    } else if (error.code === "auth/unauthorized-domain") {
+      showToast("Þetta lén þarf að vera heimilað í Firebase");
+    } else if (error.code === "auth/operation-not-allowed") {
+      showToast("Virkjaðu Google-innskráningu í Firebase");
+    } else if (error.code === "auth/popup-blocked") {
+      showToast("Vafrinn lokaði innskráningarglugganum. Leyfðu sprettiglugga.");
+    } else {
+      console.error("Google sign-in failed", error);
+      showToast("Ekki tókst að skrá inn með Google");
+    }
+  } finally {
+    button.disabled = false;
+    button.removeAttribute("aria-busy");
+  }
+}
+
+async function handleFirebaseSignOut() {
+  try {
+    await import("./firebase-auth.js?v=1");
+    await window.firebaseAuth.signOut();
+    window.location.replace("app.html?view=login");
+  } catch (error) {
+    console.error("Firebase sign-out failed", error);
+    showToast("Ekki tókst að skrá út");
+  }
 }
 
 function showToast(message) {

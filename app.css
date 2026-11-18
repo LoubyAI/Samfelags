@@ -306,6 +306,16 @@ h3,
   background: #f2e7ef;
 }
 
+.login-google:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.login-google:disabled:hover {
+  border-color: #eadde5;
+  background: var(--soft);
+}
+
 .login-google:focus-visible {
   outline: 2px solid var(--pink);
   outline-offset: 3px;

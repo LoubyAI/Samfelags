@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#ffffff">
   <title>New Friends</title>
-  <link rel="stylesheet" href="app.css?v=15">
+  <link rel="stylesheet" href="app.css?v=16">
 </head>
 <body>
   <div class="app-shell">
@@ -75,7 +75,7 @@
           </summary>
           <div class="dropdown-menu">
             <a href="app.html?view=profile">Prófíll</a>
-            <a href="app.html?view=login">Skrá út</a>
+            <a href="app.html?view=login" data-action="sign-out">Skrá út</a>
           </div>
         </details>
       </header>
@@ -83,6 +83,7 @@
       <main class="app-main" id="screen" tabindex="-1"></main>
     </div>
   </div>
-  <script src="app.js?v=10"></script>
+  <script src="firebase-config.js?v=1"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
