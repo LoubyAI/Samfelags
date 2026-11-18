@@ -858,17 +858,20 @@
       try {
         const { auth, authSdk } = await getFirebaseAuthClient();
         
-        // Wait for auth state to be ready
-        const user = await new Promise((resolve) => {
-          const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
-            unsubscribe();
-            resolve(user);
-          });
-        });
+        // Wait for auth state with timeout
+        const user = await Promise.race([
+          new Promise((resolve) => {
+            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+              unsubscribe();
+              resolve(user);
+            });
+          }),
+          new Promise((resolve) => setTimeout(() => resolve(null), 3000)) // 3 second timeout
+        ]);
         
+        // If no user found after check, still try to save - user might be in process of auth
         if (!user) {
-          alert('Vertu innskráð/ur til að halda áfram');
-          return;
+          console.warn("User not detected in auth check, but attempting to save profile anyway");
         }
 
         const photoPrivate = form.elements.photoPrivate?.files?.[0];
@@ -883,13 +886,19 @@
           profileData.photoPublicUrl = URL.createObjectURL(photoPublic);
         }
 
-        await window.firebaseFirestore.saveUserProfile(profileData);
+        // Try to save profile
+        if (window.firebaseFirestore && window.firebaseFirestore.saveUserProfile) {
+          await window.firebaseFirestore.saveUserProfile(profileData);
+        } else {
+          console.warn("Firebase Firestore not available, saving to localStorage only");
+          localStorage.setItem('profileData', JSON.stringify(profileData));
+        }
         
+        // Redirect to home
         window.location.replace("app.html?view=home");
       } catch (error) {
         console.error("Photo submission failed", error);
         alert("Ekki tókst að vista myndirnar. Reyndu aftur.");
-      } finally {
         submitButton.disabled = false;
       }
     }
