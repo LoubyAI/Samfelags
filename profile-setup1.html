@@ -673,6 +673,7 @@
                   Skoðaðu reglur New Friends
                 </a>
               </div>
+              <div id="policyError" style="color: #d63d7a; font-size: 12px; margin-top: 12px; text-align: center; display: none; padding: 12px; background: rgba(214, 61, 122, 0.1); border: 2px solid #d63d7a; border-radius: 8px; box-shadow: 0 0 12px rgba(214, 61, 122, 0.3);"></div>
 
               <div class="button-group">
                 <button type="button" class="button button-primary" id="continueButton" onclick="proceedToNextStep()" disabled>Halda áfram →</button>
@@ -1030,6 +1031,7 @@
 
     function acceptPolicyAndClose() {
       document.getElementById('policyAccepted').value = 'true';
+      document.getElementById('policyError').style.display = 'none';
       closePolicyModal();
       updateFormButtonState();
     }
@@ -1041,12 +1043,16 @@
       validateNicknameField();
       validateCityField();
       
-      // Check all conditions
+      // Check policy acceptance and show error if not accepted
       if (document.getElementById('policyAccepted').value !== 'true') {
-        alert('⚠️ Vinsamlegast samþykktu reglur New Friends áður en þú heldur áfram');
-        showPolicyModal();
+        const policyError = document.getElementById('policyError');
+        policyError.textContent = '⚠️ Þú verður að samþykkja reglur New Friends áður en þú heldur áfram';
+        policyError.style.display = 'block';
         return;
       }
+      
+      // Hide policy error if accepted
+      document.getElementById('policyError').style.display = 'none';
 
       const displayName = document.getElementById('displayName').value.trim();
       const nickname = document.getElementById('nickname').value.trim();
