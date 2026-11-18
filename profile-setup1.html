@@ -183,10 +183,30 @@
       box-shadow: 0 4px 12px rgba(229, 81, 139, 0.3);
     }
 
+    .button-primary.glow-error {
+      box-shadow: 0 0 20px rgba(214, 61, 122, 0.6), inset 0 0 0 2px #d63d7a;
+      animation: glow-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(214, 61, 122, 0.6), inset 0 0 0 2px #d63d7a;
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(214, 61, 122, 0.8), inset 0 0 0 2px #d63d7a;
+      }
+    }
+
     .button-primary:disabled {
       background: #ccc;
       cursor: not-allowed;
       opacity: 0.6;
+    }
+
+    .button-primary.glow-error:disabled {
+      box-shadow: 0 0 20px rgba(214, 61, 122, 0.6), inset 0 0 0 2px #d63d7a !important;
+      animation: glow-pulse 1.5s ease-in-out infinite;
+      opacity: 0.8;
     }
 
     .button-secondary {
@@ -1048,11 +1068,13 @@
         const policyError = document.getElementById('policyError');
         policyError.textContent = '⚠️ Þú verður að samþykkja reglur New Friends áður en þú heldur áfram';
         policyError.style.display = 'block';
+        document.getElementById('continueButton').classList.add('glow-error');
         return;
       }
       
       // Hide policy error if accepted
       document.getElementById('policyError').style.display = 'none';
+      document.getElementById('continueButton').classList.remove('glow-error');
 
       const displayName = document.getElementById('displayName').value.trim();
       const nickname = document.getElementById('nickname').value.trim();
