@@ -163,8 +163,6 @@ function renderNews() {
         </form>
       </section>
       <div class="user-news-posts" id="user-news-posts">${newsPosts.map(renderUserNewsPost).join("")}</div>
-      ${renderPost("Jólaföndur", "Stína", "Hlakka svo til að hitta ykkur á jólaföndrun! 🎄✨<br>Er einhver búin að ákveða hvað hún ætlar að föndra?", photos.largeOutdoor)}
-      ${renderPost("Jólaganga", "Jónína", "Mig langar að fara í göngutúr um helgina! 🌿<br>Er einhver til í að koma með? Við gætum endað á notalegu kaffihúsi ☕", photos.largeOutdoor)}
     </div>`;
 }
 
@@ -236,17 +234,6 @@ function renderUserNewsPost(post) {
 function renderUserNewsPosts() {
   const postList = screen.querySelector("#user-news-posts");
   if (postList) postList.innerHTML = newsPosts.map(renderUserNewsPost).join("");
-}
-
-function renderPost(title, author, message, image) {
-  return `<article class="content-card post-card" data-searchable>
-    <div>
-      <h2 class="panel-heading">${icon(icons.news)}${title}</h2>
-      <div class="post-author">${avatar(photos.portrait, author)}<span>${author}<small>2 klst. síðan</small></span></div>
-      <p>${message}</p>
-    </div>
-    <img class="post-photo" src="${asset(image)}" alt="Vinahópur saman úti">
-  </article>`;
 }
 
 function renderMeetings() {
