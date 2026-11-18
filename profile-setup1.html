@@ -1036,7 +1036,10 @@
 
     function showPolicyModal() {
       document.getElementById('policyModal').classList.add('active');
-      document.getElementById('policyCheckbox').checked = false;
+      
+      // If policy was already accepted, keep the checkbox checked
+      const policyAccepted = document.getElementById('policyAccepted').value === 'true';
+      document.getElementById('policyCheckbox').checked = policyAccepted;
       updatePolicyButtonState();
     }
 
