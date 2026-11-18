@@ -214,8 +214,10 @@
       transition: all 0.2s ease;
     }
 
-    .button-primary:hover {
-      background: #d4426d;
+    .button-primary:hover:not(:disabled) {
+      background: #d63d7a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(229, 81, 139, 0.3);
     }
 
     .button-primary:disabled {
