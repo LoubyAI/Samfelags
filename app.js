@@ -722,6 +722,12 @@ const renderers = {
 
 const isSetupView = ["login", "profile-setup", "photo-policy"].includes(current);
 document.body.classList.toggle("login-view", isSetupView);
+
+// Remove header and sidebar from DOM on login pages
+if (current === "login") {
+  document.querySelector(".topbar")?.remove();
+  document.querySelector(".sidebar")?.remove();
+}
 document.title = `${pageInfo[current].title} - New Friends`;
 document.getElementById("page-heading").innerHTML =
   `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
