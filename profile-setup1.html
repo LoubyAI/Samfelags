@@ -1,0 +1,873 @@
+﻿<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Prófíluppsetning - New Friends</title>
+  <link rel="stylesheet" href="app.css?v=41">
+  <style>
+    /* Profile setup form styles */
+    .profile-setup-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .setup-form-wrapper {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .setup-step-indicator {
+      text-align: center;
+      color: #e5518b;
+      font-size: 12px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e5518b;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f5f5f5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title svg {
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      appearance: none;
+      background-color: white;
+      height: 44px;
+      line-height: 1.2;
+    }
+
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #e5518b;
+      box-shadow: 0 0 0 3px rgba(229, 81, 139, 0.1);
+    }
+
+    .form-group small {
+      display: block;
+      color: #999;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .info-box {
+      background: #fff5f8;
+      border-left: 3px solid #e5518b;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .info-box svg {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      stroke: #e5518b;
+    }
+
+    .info-box strong {
+      color: #e5518b;
+    }
+
+    .policy-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #e5518b;
+      font-size: 12px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .policy-link:hover {
+      background-color: #f0d4e1;
+      color: #d63d7a;
+      border: 1px solid #e5518b;
+      transform: translateY(-1px);
+    }
+
+    .policy-link svg {
+      flex-shrink: 0;
+      width: 12px;
+      height: 12px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      flex: 1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .button-primary {
+      background: #e5518b;
+      color: white;
+    }
+
+    .button-primary:hover:not(:disabled) {
+      background: #d63d7a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(229, 81, 139, 0.3);
+    }
+
+    .button-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .button-secondary {
+      background: #f0f0f0;
+      color: #333;
+      flex: 0;
+    }
+
+    .button-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    /* Policy Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      display: none;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #e5518b 0%, #d63d7a 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 32px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .modal-intro {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .policy-section {
+      margin-bottom: 32px;
+    }
+
+    .policy-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e5518b;
+      margin-bottom: 10px;
+    }
+
+    .policy-section > p {
+      color: #666;
+      margin-bottom: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .policy-item {
+      margin-bottom: 20px;
+      padding-left: 16px;
+      border-left: 3px solid #e5518b;
+    }
+
+    .policy-item strong {
+      display: block;
+      color: #333;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .policy-item p {
+      color: #666;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .policy-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .policy-list li {
+      color: #666;
+      padding: 8px 0 8px 24px;
+      position: relative;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .policy-list li:before {
+      content: "•";
+      position: absolute;
+      left: 8px;
+      color: #e5518b;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .modal-footer {
+      padding: 16px 32px 32px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .checkbox-label input {
+      margin-top: 4px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      accent-color: #e5518b;
+      flex-shrink: 0;
+    }
+
+    .checkbox-label span {
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode .setup-form-wrapper {
+      background: #1a1a1a;
+    }
+
+    body.dark-mode .section-title {
+      color: #e5518b;
+      border-bottom-color: #333;
+    }
+
+    body.dark-mode .form-group label {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .form-group input,
+    body.dark-mode .form-group select {
+      background: #282528;
+      color: #e0e0e0;
+      border-color: #3a3a3a;
+    }
+
+    body.dark-mode .form-group input::placeholder {
+      color: #666;
+    }
+
+    body.dark-mode .form-group input:focus,
+    body.dark-mode .form-group select:focus {
+      border-color: #e5518b;
+      box-shadow: 0 0 0 3px rgba(229, 81, 139, 0.1);
+    }
+
+    body.dark-mode .form-group small {
+      color: #888;
+    }
+
+    body.dark-mode .info-box {
+      background: #242424;
+      color: #b0b0b0;
+      border-left-color: #e5518b;
+    }
+
+    body.dark-mode .info-box strong {
+      color: #e5518b;
+    }
+
+    body.dark-mode .info-box svg {
+      stroke: #e5518b;
+    }
+
+    body.dark-mode .policy-link {
+      color: #e5518b;
+    }
+
+    body.dark-mode .policy-link:hover {
+      background-color: #282528;
+      color: #ff6b9d;
+      border-color: #e5518b;
+    }
+
+    body.dark-mode .modal-content {
+      background: #1a1a1a;
+    }
+
+    body.dark-mode .modal-header {
+      background: linear-gradient(135deg, #e5518b 0%, #d63d7a 100%);
+    }
+
+    body.dark-mode .modal-body {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .modal-intro {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .policy-section h3 {
+      color: #e5518b;
+    }
+
+    body.dark-mode .policy-section > p {
+      color: #b0b0b0;
+    }
+
+    body.dark-mode .policy-item {
+      border-left-color: #e5518b;
+    }
+
+    body.dark-mode .policy-item strong {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .policy-item p {
+      color: #b0b0b0;
+    }
+
+    body.dark-mode .policy-list li {
+      color: #b0b0b0;
+    }
+
+    body.dark-mode .policy-list li:before {
+      color: #e5518b;
+    }
+
+    body.dark-mode .modal-footer {
+      border-top-color: #333;
+    }
+
+    body.dark-mode .checkbox-label {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .checkbox-label input {
+      accent-color: #e5518b;
+    }
+
+    body.dark-mode .button-secondary {
+      background: #333;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .button-secondary:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body class="profile-setup-view">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Aðalvalmynd">
+      <div class="brand" aria-label="New Friends heim">
+        <span>New Friends</span>
+        <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="">
+      </div>
+
+      <nav class="side-nav">
+        <a href="app.html?view=home" data-view="home">
+          <img src="img/figma/8283c379-bc9c-48f5-9ef1-003d6c9de541.svg" alt="">
+          <span>Heim</span>
+        </a>
+        <a href="app.html?view=news" data-view="news">
+          <img src="img/figma/ce1e3756-44ea-48cd-8856-83b3ab98779e.svg" alt="">
+          <span>Hvað er að frétta?</span>
+        </a>
+        <a href="app.html?view=meetings" data-view="meetings">
+          <img src="img/figma/c94539bf-dd02-4721-8efc-b860d62e3666.svg" alt="">
+          <span>Hittingarspjall</span>
+        </a>
+        <a href="app.html?view=calendar-month" data-view="calendar">
+          <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
+          <span>Viðburðir &amp; dagatal</span>
+        </a>
+        <a href="app.html?view=messages" data-view="messages">
+          <img src="img/figma/b1c194ed-af27-4d13-a13a-3b35bfaf1df1.svg" alt="">
+          <span>Skilaboð</span>
+        </a>
+        <a href="app.html?view=profile" data-view="profile">
+          <img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt="">
+          <span>Prófíll</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <label class="theme-switch">
+          <span class="theme-name">
+            <img src="img/figma/35461c58-b2ea-46f8-940b-201b6aa8e1f1.svg" alt="">
+            Night mode
+          </span>
+          <input id="theme-toggle" type="checkbox" aria-label="Night mode">
+          <span class="switch-track" aria-hidden="true"></span>
+        </label>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="page-heading" id="page-heading"></div>
+        <label class="global-search">
+          <img src="img/figma/9a437b7b-4188-42a7-bb23-12738529b77e.svg" alt="">
+          <input id="global-search" type="search" placeholder="Leita..." aria-label="Leita">
+        </label>
+        <div class="notification-control">
+          <button class="icon-button notification-button" type="button" aria-label="Tilkynningar" aria-expanded="false" aria-controls="notifications-dropdown" data-action="notifications">
+            <img src="img/figma/29dfd07d-c609-4ff3-93e4-71e7708d5487.svg" alt="">
+            <span class="notification-count" aria-hidden="true">4</span>
+          </button>
+          <div class="notifications-dropdown" id="notifications-dropdown" role="region" aria-label="Tilkynningar" hidden></div>
+        </div>
+        <details class="profile-dropdown">
+          <summary aria-label="Opna prófílvalmynd">
+            <img class="top-avatar" src="img/figma/920ad6a3-93ee-456a-99c8-5db2593f3ee1.png" alt="Prófílmynd">
+            <span class="profile-chevron">
+              <img class="chevron-icon" src="img/figma/277a8d39-1495-42f4-b0e0-08e3dfcb2f50.svg" alt="">
+            </span>
+          </summary>
+          <div class="dropdown-menu">
+            <a href="app.html?view=profile">Prófíll</a>
+            <a href="app.html?view=login" data-action="sign-out">Skrá út</a>
+          </div>
+        </details>
+      </header>
+
+      <main class="app-main" id="screen" tabindex="-1">
+        <div class="profile-setup-container">
+          <div class="setup-form-wrapper">
+            <div class="setup-step-indicator">SKREF 1 AF 2: PERSÓNUUPPLÝSINGAR</div>
+
+            <form id="setupForm" data-form="profile-setup">
+              <input type="hidden" id="policyAccepted" value="false">
+
+              <div class="form-section">
+                <div class="section-title">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e5518b" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  Persónuupplýsingar
+                </div>
+                
+                <div class="form-group">
+                  <label for="displayName">Fullt nafn *</label>
+                  <input 
+                    type="text" 
+                    id="displayName" 
+                    name="displayName"
+                    placeholder="Dæmi: Rósa M. Einarsdóttir"
+                    oninput="updateFormButtonState()"
+                    required
+                  >
+                  <small>Þitt alvöru nafn í opinberum skrám (Birtist eingöngu samþykktu vinum og áhugamálahólpum þínum). Millinöfn má skammstafa í einn staf með punkti.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="nickname">Gælunafn (valfrjálst)</label>
+                  <input 
+                    type="text" 
+                    id="nickname" 
+                    name="nickname"
+                    placeholder="Dæmi: Rósa"
+                    oninput="updateFormButtonState()"
+                  >
+                  <small>Birtist almenningi á þinni prófílsíðu.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="birthday">Fæðingardagur *</label>
+                  <input 
+                    type="text" 
+                    id="birthday" 
+                    name="birthday"
+                    placeholder="DD.MM.YYYY"
+                    oninput="updateFormButtonState()"
+                    required
+                  >
+                  <small>Þinn afmælisdagur (Birtist eingöngu samþykktu vinum og áhugamálahópum þínum).</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="city">Borg / Sveitarfélag</label>
+                  <select 
+                    id="city" 
+                    name="city"
+                  >
+                    <option value="">-- Veldu borg/sveitarfélag --</option>
+                    <option value="Reykjavík">Reykjavík</option>
+                    <option value="Akureyri">Akureyri</option>
+                    <option value="Hafnarfjörður">Hafnarfjörður</option>
+                    <option value="Kópavogur">Kópavogur</option>
+                    <option value="Mosfellsbær">Mosfellsbær</option>
+                    <option value="Garðabær">Garðabær</option>
+                    <option value="Hveragerði">Hveragerði</option>
+                    <option value="Borgarnes">Borgarnes</option>
+                    <option value="Selfoss">Selfoss</option>
+                    <option value="Hvolsvöllur">Hvolsvöllur</option>
+                    <option value="Vík">Vík</option>
+                    <option value="Ísafjörður">Ísafjörður</option>
+                    <option value="Stykkishólmur">Stykkishólmur</option>
+                    <option value="Húsavík">Húsavík</option>
+                    <option value="Mývatn">Mývatn</option>
+                    <option value="Egilsstaðir">Egilsstaðir</option>
+                    <option value="Akranes">Akranes</option>
+                    <option value="Vestmannaeyjar">Vestmannaeyjar</option>
+                    <option value="Dalvík">Dalvík</option>
+                    <option value="Ólafsfjörður">Ólafsfjörður</option>
+                    <option value="Seyðisfjörður">Seyðisfjörður</option>
+                    <option value="Höfn">Höfn</option>
+                  </select>
+                  <small>Hjálpar okkur að tengja þig við fólk nálægt þér.</small>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e5518b" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <div>
+                  <strong>Persónuvernd:</strong> Fæðingardagur og nafn þitt eru geymd á okkar tryggðu netþjónum og notuð eingöngu til að staðfesta aldur og auðkenna þig. Almenningur getur ekki séð nákvæman aldur þinn - aðeins aldursflokk.
+                </div>
+              </div>
+
+              <div style="text-align: center;">
+                <a href="#" class="policy-link" onclick="showPolicyModal(); return false;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#e5518b" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                  </svg>
+                  Skoðaðu reglur New Friends
+                </a>
+              </div>
+
+              <div class="button-group">
+                <button type="button" class="button button-primary" id="continueButton" onclick="proceedToNextStep()" disabled>Halda áfram →</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+
+      <!-- Policy Modal -->
+      <div id="policyModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Reglur New Friends</h2>
+          </div>
+          <div class="modal-body">
+            <p class="modal-intro"><strong>Við treystum á þér að vera heiðarleg/ur</strong></p>
+            
+            <div class="policy-section">
+              <h3>Samkomulag um nafn og fæðingardag</h3>
+              <p>Með því að setja upp prófílinn þinn á New Friends samþykkir þú að:</p>
+              
+              <div class="policy-item">
+                <strong>Nota alvöru skráð nafn.</strong>
+                <p>Nota þitt alvöru, fullt nafn sem skráð er í opinberum skrám. Þetta hjálpar vinum þínum og áhugamálahópunum þínum að vita hver þú ert og tryggir samfélag sem byggist á trausti.</p>
+              </div>
+
+              <div class="policy-item">
+                <strong>Nota rétta fæðingardag.</strong>
+                <p>Skrá skal rétta fæðingardag, nauðsynlegt fyrir öryggi og fyrir þá sem vilja skrá sig í áhugamálahópa sem hafa sambærilegan aldursbil. Aldur mun ekki birtast nema samþykktu vinum og fyrir þá sem eru skráðir í sömu áhugamálahópa og þú.</p>
+              </div>
+            </div>
+
+            <div class="policy-section">
+              <h3>Afleiðingar brota</h3>
+              <p>Ef nafn þitt eða fæðingardagur fylgja ekki þessum reglum, verður prófílinn þinn <strong>eytt</strong>.</p>
+              
+              <ul class="policy-list">
+                <li>Notendur geta tilkynnt fölsk prófíl.</li>
+                <li>Tilkynntar prófíl eru skoðuð af New Friends teyminu.</li>
+                <li>Fölsk nöfn eða aldur leiða til tafarlauss lokunnar á aðgangi.</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="modal-footer">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                id="policyCheckbox"
+                onchange="updatePolicyButtonState()"
+              >
+              <span>Ég samþykki að nota alvöru nafn og rétta fæðingardag.</span>
+            </label>
+            <div class="modal-actions">
+              <button 
+                type="button" 
+                class="button button-secondary" 
+                onclick="closePolicyModal()"
+              >
+                Hafna
+              </button>
+              <button 
+                type="button" 
+                class="button button-primary" 
+                id="acceptPolicyButton"
+                onclick="acceptPolicyAndClose()"
+                disabled
+              >
+                Samþykkja
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="firebase-config.js?v=2"></script>
+  <script src="owner-config.js?v=2"></script>
+  <script src="firebase-auth.js?v=2"></script>
+  <script src="firebase-firestore.js?v=2"></script>
+  <script src="firebase-profile.js?v=5"></script>
+  <script>
+    document.getElementById('page-heading').innerHTML = `<img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt=""><span>Prófíluppsetning</span>`;
+    
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.checked = localStorage.getItem("darkMode") === "on";
+    document.body.classList.toggle("dark-mode", themeToggle.checked);
+    themeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode", themeToggle.checked);
+      localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
+    });
+
+    // Load saved form data
+    function loadSavedData() {
+      const saved = localStorage.getItem('profileData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        document.getElementById('displayName').value = data.displayName || '';
+        document.getElementById('nickname').value = data.nickname || '';
+        document.getElementById('birthday').value = data.birthday || '';
+        document.getElementById('city').value = data.city || '';
+      }
+      updateFormButtonState();
+    }
+
+    // Update button state based on form validation
+    function updateFormButtonState() {
+      const policyAccepted = document.getElementById('policyAccepted').value === 'true';
+      const displayName = document.getElementById('displayName').value.trim();
+      const birthday = document.getElementById('birthday').value.trim();
+      
+      const words = displayName.split(/\s+/).filter(word => word.length > 0);
+      const validNameParts = words.filter(word => 
+        word.length >= 2 || 
+        /^[a-záéíóúýþæö]\.$/i.test(word)
+      );
+      const isFullName = validNameParts.length >= 2;
+      
+      let isValidAge = false;
+      if (birthday) {
+        const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+        const match = birthday.match(dateRegex);
+        if (match) {
+          const day = parseInt(match[1]);
+          const month = parseInt(match[2]);
+          const year = parseInt(match[3]);
+          
+          const birthDate = new Date(year, month - 1, day);
+          const today = new Date();
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+          
+          isValidAge = age >= 15;
+        }
+      }
+      
+      const isComplete = policyAccepted && isFullName && isValidAge;
+      document.getElementById('continueButton').disabled = !isComplete;
+    }
+
+    function showPolicyModal() {
+      document.getElementById('policyModal').classList.add('active');
+      document.getElementById('policyCheckbox').checked = false;
+      updatePolicyButtonState();
+    }
+
+    function closePolicyModal() {
+      document.getElementById('policyModal').classList.remove('active');
+    }
+
+    function updatePolicyButtonState() {
+      const checked = document.getElementById('policyCheckbox').checked;
+      document.getElementById('acceptPolicyButton').disabled = !checked;
+    }
+
+    function acceptPolicyAndClose() {
+      document.getElementById('policyAccepted').value = 'true';
+      updateFormButtonState();
+      closePolicyModal();
+    }
+
+    function proceedToNextStep() {
+      if (document.getElementById('policyAccepted').value !== 'true') {
+        alert('⚠️ Vinsamlegast samþykktu reglur New Friends áður en þú heldur áfram');
+        showPolicyModal();
+        return;
+      }
+
+      const displayName = document.getElementById('displayName').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      const birthday = document.getElementById('birthday').value.trim();
+      const city = document.getElementById('city').value;
+
+      if (!displayName) {
+        alert('⚠️ Vinsamlegast sláðu inn fullt nafn');
+        return;
+      }
+
+      if (!birthday) {
+        alert('⚠️ Vinsamlegast veldu fæðingardag');
+        return;
+      }
+
+      localStorage.setItem('profileData', JSON.stringify({
+        displayName: displayName,
+        nickname: nickname,
+        birthday: birthday,
+        city: city
+      }));
+
+      window.location.href = 'profile-setup2.html';
+    }
+
+    document.getElementById('policyModal').addEventListener('click', function(event) {
+      if (event.target === this) {
+        closePolicyModal();
+      }
+    });
+
+    loadSavedData();
+  </script>
+</body>
+</html>
