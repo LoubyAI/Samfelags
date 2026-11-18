@@ -1162,8 +1162,10 @@ h3,
 }
 
 .meeting-compose .composer-actions .button-primary {
-  width: 160px;
+  min-width: 160px;
+  flex-shrink: 0;
   margin-left: auto;
+  white-space: nowrap;
 }
 
 .poll-column {
