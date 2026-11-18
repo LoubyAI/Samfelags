@@ -1132,6 +1132,11 @@ h3,
   gap: 12px;
 }
 
+.composer-form[data-form="post"] .button-primary {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .composer-form input,
 .composer-form textarea,
 .message-search {
@@ -1162,10 +1167,8 @@ h3,
 }
 
 .meeting-compose .composer-actions .button-primary {
-  min-width: 160px;
-  flex-shrink: 0;
+  width: 160px;
   margin-left: auto;
-  white-space: nowrap;
 }
 
 .poll-column {
