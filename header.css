@@ -1,0 +1,23 @@
+/* Header height configuration - 64px */
+
+.brand {
+  min-height: 64px;
+}
+
+.topbar {
+  height: 64px;
+}
+
+.app-main {
+  min-height: calc(100vh - 64px);
+}
+
+@media (max-width: 1024px) {
+  .brand {
+    min-height: 64px;
+  }
+
+  .app-main {
+    min-height: calc(100vh - 64px);
+  }
+}
