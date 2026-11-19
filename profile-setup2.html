@@ -887,15 +887,23 @@
         }
 
         // Try to save profile
-        if (window.firebaseFirestore && window.firebaseFirestore.saveUserProfile) {
-          await window.firebaseFirestore.saveUserProfile(profileData);
-        } else {
-          console.warn("Firebase Firestore not available, saving to localStorage only");
-          localStorage.setItem('profileData', JSON.stringify(profileData));
+        try {
+          if (window.firebaseFirestore && window.firebaseFirestore.saveUserProfile) {
+            await Promise.race([
+              window.firebaseFirestore.saveUserProfile(profileData),
+              new Promise((_, reject) => setTimeout(() => reject(new Error("Save timeout")), 5000))
+            ]);
+          } else {
+            console.warn("Firebase Firestore not available, saving to localStorage only");
+            localStorage.setItem('profileData', JSON.stringify(profileData));
+          }
+        } catch (saveError) {
+          console.warn("Could not save to Firestore, but proceeding to profile anyway", saveError);
+          // Don't throw - we still want to proceed to profile
         }
         
-        // Redirect to home
-        window.location.replace("app.html?view=home");
+        // Redirect to profile
+        window.location.replace("app.html?view=profile");
       } catch (error) {
         console.error("Photo submission failed", error);
         alert("Ekki tókst að vista myndirnar. Reyndu aftur.");
