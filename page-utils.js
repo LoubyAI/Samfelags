@@ -7,12 +7,19 @@ function setupPageDefaults(pageName) {
   if (themeToggle) {
     const isDarkMode = localStorage.getItem("darkMode") === "on";
     
-    // Set checked state directly without triggering change event
+    // Set checked state
     themeToggle.checked = isDarkMode;
+    
+    // Ensure body has the correct dark-mode class
+    if (isDarkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
     
     console.log(`${pageName}: Initial dark mode:`, isDarkMode);
     
-    // Only attach listener if not already attached (store flag on element)
+    // Only attach listener if not already attached
     if (!themeToggle._darkModeListenerAttached) {
       themeToggle._darkModeListenerAttached = true;
       
