@@ -1601,7 +1601,8 @@ async function handleDeleteAccount() {
     await import("./firebase-auth.js?v=2");
     await import("./firebase-firestore.js?v=1");
     
-    const { auth, authSdk } = await getFirebaseAuthClient();
+    // Get auth client through the exposed method
+    const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
     const user = authSdk.currentUser;
     
     if (!user) {

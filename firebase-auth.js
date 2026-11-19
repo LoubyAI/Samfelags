@@ -39,6 +39,10 @@ async function getFirebaseAuthClient() {
 }
 
 window.firebaseAuth = {
+  async getAuthClient() {
+    return getFirebaseAuthClient();
+  },
+
   async signInWithGoogle() {
     const { auth, authSdk } = await getFirebaseAuthClient();
     const provider = new authSdk.GoogleAuthProvider();
