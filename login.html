@@ -70,6 +70,23 @@
   <script src="firebase-config.js"></script>
   <script src="firebase-auth.js"></script>
   <script>
+    // Helper to redirect while respecting current environment (file:// or https://)
+    function redirectTo(path) {
+      const currentUrl = window.location.href;
+      let targetUrl;
+      
+      // If we're on a file:// URL, build the full file path
+      if (currentUrl.startsWith('file://')) {
+        const baseDir = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+        targetUrl = baseDir + path;
+      } else {
+        // On http(s), use relative path (will stay on same domain)
+        targetUrl = path;
+      }
+      
+      window.location.href = targetUrl;
+    }
+
     // Handle login form
     const loginForm = document.querySelector('[data-form="login"]');
     const signupForm = document.querySelector('[data-form="signup"]');
@@ -112,7 +129,7 @@
           const user = result.user;
           showAuthMessage('Tekið! Endalaust...');
           setTimeout(() => {
-            window.location.href = 'app.html?view=home';
+            redirectTo('app.html?view=home');
           }, 500);
         } catch (error) {
           console.error('Google sign-in failed:', error);
@@ -147,7 +164,7 @@
           }
           showAuthMessage('Tekið! Endalaust...');
           setTimeout(() => {
-            window.location.href = isSignup ? 'profile-setup1.html' : 'app.html?view=home';
+            redirectTo(isSignup ? 'profile-setup1.html' : 'app.html?view=home');
           }, 500);
         } catch (error) {
           console.error('Auth error:', error);
