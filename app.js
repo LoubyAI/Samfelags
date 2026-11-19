@@ -670,7 +670,7 @@ function renderPhotoPolicy() {
 
 async function renderLogin() {
   try {
-    const response = await fetch('login.html');
+    const response = await fetch('index.html');
     const html = await response.text();
     
     // Extract the body content (everything between <body> tags)
@@ -682,16 +682,16 @@ async function renderLogin() {
     
     return bodyContent;
   } catch (error) {
-    console.error('Failed to load login.html:', error);
+    console.error('Failed to load index.html:', error);
     return '<p>Mistók að hlaða innskráningarsíðu</p>';
   }
 }
 
 const view = new URLSearchParams(window.location.search).get("view") || "home";
 
-// If login view is requested, redirect to login.html instead
+// If login view is requested, redirect to index.html instead
 if (view === "login") {
-  redirectTo("login.html");
+  redirectTo("index.html");
 }
 
 // Check if user needs to be redirected to login (unless already on a setup view)
@@ -700,8 +700,8 @@ if (!setupViews.includes(view)) {
   // For app views (home, news, profile, etc), check if user is authenticated
   const auth = window.firebaseAuth?.getAuthClient();
   if (auth && !auth.currentUser) {
-    // User is not logged in, redirect to login.html
-    redirectTo("login.html");
+    // User is not logged in, redirect to index.html
+    redirectTo("index.html");
   }
 }
 
