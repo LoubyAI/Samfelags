@@ -513,6 +513,30 @@
               <button class="delete-account-btn" data-action="delete-account">Eyða aðgangi</button>
               <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
             </div>`;
+          
+          // Setup delete account button
+          contentElement.querySelector('[data-action="delete-account"]')?.addEventListener("click", async () => {
+            if (!confirm("Ertu viss um að þú vilt eyða reikningnum? Þetta getur ekki verið afturkallt.")) {
+              return;
+            }
+            
+            try {
+              const { auth, authSdk } = await getFirebaseAuthClient();
+              const uid = auth.currentUser.uid;
+              
+              // Delete user profile from Firestore
+              await window.firebaseFirestore.deleteUserProfile(uid);
+              
+              // Delete the user account from Firebase Auth
+              await authSdk.deleteUser(auth.currentUser);
+              
+              alert("Reikningur eyðst");
+              window.location.href = "index.html";
+            } catch (error) {
+              console.error("Error deleting account:", error);
+              alert("Villa við eyðingu reiknings: " + error.message);
+            }
+          });
         }
       } catch (error) {
         console.error("profile.html: Error loading profile:", error);
