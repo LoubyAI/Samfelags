@@ -1645,9 +1645,35 @@ async function handleDeleteAccount() {
     const userEmail = user.email;
     console.log("Deleting account for user:", userId, userEmail);
 
+    // Always require password confirmation for security
+    console.log("Requesting password confirmation...");
+    const password = prompt("Sláðu inn lykilorðið þitt til að staðfesta eyðingu aðgangs:");
+    
+    if (!password) {
+      showToast("Eyðingu aðgangs aflýst");
+      console.log("User cancelled password entry");
+      return;
+    }
+
     let deleteSucceeded = false;
     
-    // Try to delete Firestore profile
+    // Re-authenticate with password first (always required)
+    try {
+      console.log("Re-authenticating with email:", userEmail);
+      const credential = authSdk.EmailAuthProvider.credential(userEmail, password);
+      await authSdk.reauthenticateWithCredential(user, credential);
+      console.log("✓ Re-authentication successful");
+    } catch (reauthError) {
+      console.error("✗ Re-authentication failed:", reauthError.code, reauthError.message);
+      if (reauthError.code === "auth/wrong-password") {
+        showToast("Rangt lykilorð");
+      } else {
+        showToast("Villa: " + reauthError.message);
+      }
+      return;
+    }
+    
+    // Now that user is re-authenticated, delete Firestore profile
     try {
       console.log("Deleting Firestore profile...");
       await window.firebaseFirestore.deleteUserProfile(userId);
@@ -1657,47 +1683,38 @@ async function handleDeleteAccount() {
       // Continue with auth deletion even if Firestore fails
     }
     
-    // Try to delete from Firebase Auth
+    // Delete from Firebase Auth
     try {
-      console.log("Attempting Firebase Auth deletion...");
+      console.log("Deleting Firebase Auth account...");
       await user.delete();
       deleteSucceeded = true;
       console.log("✓ Firebase Auth account deleted successfully");
     } catch (authError) {
       console.error("✗ Auth deletion error:", authError.code, authError.message);
+      showToast("Villa: " + authError.message);
+      return;
+    }
+    
+    if (deleteSucceeded) {
+      console.log("=== Account deletion successful ===");
+      showToast("Aðgangur og öll gögn eytt!");
       
-      if (authError.code === "auth/requires-recent-login") {
-        console.log("Re-authentication required");
-        showToast("Þú verður að skrá þig inn aftur");
-        
-        const password = prompt("Sláðu inn lykilorðið þitt:");
-        if (!password) {
-          showToast("Eyðingu aðgangs aflýst");
-          console.log("User cancelled password entry");
-          return;
-        }
-        
-        try {
-          console.log("Re-authenticating with email:", userEmail);
-          const credential = authSdk.EmailAuthProvider.credential(userEmail, password);
-          await authSdk.reauthenticateWithCredential(user, credential);
-          console.log("✓ Re-authentication successful");
-          
-          console.log("Retrying Firebase deletion...");
-          await user.delete();
-          deleteSucceeded = true;
-          console.log("✓ Firebase Auth account deleted after re-auth");
-        } catch (reauthError) {
-          console.error("✗ Re-authentication failed:", reauthError.code, reauthError.message);
-          if (reauthError.code === "auth/wrong-password") {
-            showToast("Rangt lykilorð");
-          } else {
-            showToast("Villa: " + reauthError.message);
-          }
-          return;
-        }
-      } else {
-        showToast("Villa: " + authError.message);
+      try {
+        await authSdk.signOut(auth);
+        console.log("Signed out");
+      } catch (e) {
+        console.log("Sign out error (expected after deletion):", e.message);
+      }
+      
+      setTimeout(() => {
+        console.log("Redirecting to login...");
+        window.location.href = "app.html?view=login";
+      }, 1500);
+    }
+  } catch (error) {
+    console.error("=== Unexpected error ===", error);
+    showToast("Villa: " + (error.message || error));
+  }
         console.error("Cannot continue without solving:", authError.code);
         return;
       }
