@@ -821,11 +821,21 @@
         return false;
       }
       
+      // Abbreviations only allowed if 3+ words
+      if (words.length < 3) {
+        const hasAbbreviation = words.some(word => /\./.test(word));
+        if (hasAbbreviation) {
+          errorDiv.textContent = '⚠️ Stafröðun (t.d. M.) er aðeins leyfð ef nafnið hefur 3+ orð';
+          errorDiv.style.display = 'block';
+          return false;
+        }
+      }
+      
       // Validate each word
       const allWordsValid = words.every(word => {
-        // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
+        // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.") - only valid if 3+ words
         if (word.length === 2 && /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word)) {
-          return true; // Valid abbreviation
+          return words.length >= 3; // Only valid for 3+ word names
         }
         
         // Any word with dots that's not Capital+dot: invalid
@@ -844,7 +854,7 @@
       });
       
       if (!allWordsValid) {
-        errorDiv.textContent = '⚠️ Hvert orð verður að hafa að minnsta kosti 2 stafi og byrja á stórum staf. Stafröðun má skammstafa sem stóri stafur + punkti (t.d. M.).';
+        errorDiv.textContent = '⚠️ Hvert orð verður að hafa að minnsta kosti 2 stafi og byrja á stórum staf. Stafröðun má skammstafa sem stóri stafur + punkti (t.d. M.) - aðeins fyrir nöfn með 3+ orð.';
         errorDiv.style.display = 'block';
         return false;
       }
