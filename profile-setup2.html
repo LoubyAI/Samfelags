@@ -722,6 +722,23 @@
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
   <script>
+    // Helper to redirect while respecting current environment (file:// or https://)
+    function redirectTo(path) {
+      const currentUrl = window.location.href;
+      let targetUrl;
+      
+      // If we're on a file:// URL, build the full file path
+      if (currentUrl.startsWith('file://')) {
+        const baseDir = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+        targetUrl = baseDir + path;
+      } else {
+        // On http(s), use relative path (will stay on same domain)
+        targetUrl = path;
+      }
+      
+      window.location.href = targetUrl;
+    }
+
     // Set page heading
     document.getElementById('page-heading').innerHTML = `<img src="img/figma/d98296f8-1f07-442f-a577-ca93d33bbf45.svg" alt=""><span>Myndir</span>`;
     
@@ -886,7 +903,7 @@
         }
         
         // Redirect to profile
-        window.location.replace("app.html?view=profile");
+        redirectTo("app.html?view=profile");
       } catch (error) {
         console.error("Photo submission failed", error);
         alert("Ekki tókst að vista myndirnar. Reyndu aftur.");
