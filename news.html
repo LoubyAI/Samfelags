@@ -40,8 +40,8 @@
     }
   </style>
   <script>
-    // Apply dark mode immediately before page renders to avoid flash
-    if (localStorage.getItem("darkMode") === "on") {
+    // Apply dark mode immediately before page renders to avoid flash (default is ON)
+    if (localStorage.getItem("darkMode") !== "off") {
       document.documentElement.classList.add("dark-mode");
       document.body.classList.add("dark-mode");
     }
@@ -145,27 +145,8 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
+  <script src="dark-mode.js?v=1"></script>
   <script>
-    // Setup dark mode toggle
-    function setupDarkMode() {
-      const themeToggle = document.getElementById("theme-toggle");
-      if (themeToggle) {
-        const isDarkMode = localStorage.getItem("darkMode") === "on";
-        themeToggle.checked = isDarkMode;
-        if (isDarkMode) {
-          document.body.classList.add("dark-mode");
-        } else {
-          document.body.classList.remove("dark-mode");
-        }
-        
-        themeToggle.addEventListener("change", (event) => {
-          const isNowDark = event.target.checked;
-          document.body.classList.toggle("dark-mode", isNowDark);
-          localStorage.setItem("darkMode", isNowDark ? "on" : "off");
-        });
-      }
-    }
-
     // Setup sign out
     function setupSignOut() {
       document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
@@ -235,7 +216,6 @@
         postsContainer.innerHTML = newsPosts.map(renderNewsPost).join("");
         
         // Setup UI
-        setupDarkMode();
         setupSignOut();
         
         // Setup form submission
