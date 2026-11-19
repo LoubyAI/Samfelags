@@ -1604,10 +1604,29 @@ async function handleDeleteAccount() {
     // Get auth client
     const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
     
-    // Get current user - try both methods to be safe
-    let user = auth.currentUser;
-    if (!user && authSdk.currentUser) {
+    showToast("Eyða aðgangi...");
+    
+    // Wait for auth to initialize and get current user
+    let user = null;
+    
+    // Try to get user from current auth instance
+    if (auth && auth.currentUser) {
+      user = auth.currentUser;
+    }
+    
+    // Fallback: check if SDK has currentUser
+    if (!user && authSdk && authSdk.currentUser) {
       user = authSdk.currentUser;
+    }
+    
+    // Last resort: wait for auth state to load
+    if (!user) {
+      user = await new Promise((resolve) => {
+        const unsubscribe = authSdk.onAuthStateChanged(auth, (currentUser) => {
+          unsubscribe();
+          resolve(currentUser);
+        });
+      });
     }
     
     if (!user) {
@@ -1615,17 +1634,19 @@ async function handleDeleteAccount() {
       return;
     }
 
-    showToast("Eyða aðgangi...");
+    const userId = user.uid;
+    console.log("Deleting account for user:", userId);
 
     try {
       // Delete user profile from Firestore
-      await window.firebaseFirestore.deleteUserProfile(user.uid);
+      await window.firebaseFirestore.deleteUserProfile(userId);
     } catch (firestoreError) {
       console.warn("Firestore delete failed (may not exist):", firestoreError);
       // Continue with auth deletion even if Firestore fails
     }
     
-    // Delete user from Firebase Auth - use the method that works
+    // Delete user from Firebase Auth
+    console.log("Calling deleteUser...");
     await authSdk.deleteUser(user);
     
     showToast("Aðgangur eytt");
@@ -1641,7 +1662,7 @@ async function handleDeleteAccount() {
         window.location.href = "app.html?view=login";
       }, 500);
     } else {
-      showToast("Ekki tókst að eyða aðgangnum: " + (error.message || error));
+      showToast("Ekki tókst: " + (error.message || error));
     }
   }
 }
