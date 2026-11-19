@@ -594,7 +594,7 @@ async function renderProfile() {
           <section class="profile-panel">
             <h2>Prófíllinn minn</h2>
             <nav aria-label="Prófílvalmynd">
-              <a href="#profile">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
+              <a href="profileinfo.html">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
               <a href="#settings">${icon(icons.profileSettings, "")}Stillingar</a>
               <a href="#photos">${icon(icons.profilePhotos, "")}Myndir</a>
               <a href="#friends">${icon(icons.profileConnections, "")}Tengslabönd</a>
@@ -621,7 +621,7 @@ async function renderProfile() {
         <section class="profile-panel">
           <h2>Prófíllinn minn</h2>
           <nav aria-label="Prófílvalmynd">
-            <a href="#profile">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
+            <a href="profileinfo.html">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
             <a href="#settings">${icon(icons.profileSettings, "")}Stillingar</a>
             <a href="#photos">${icon(icons.profilePhotos, "")}Myndir</a>
             <a href="#friends">${icon(icons.profileConnections, "")}Tengslabönd</a>
