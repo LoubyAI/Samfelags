@@ -37,8 +37,8 @@
             <label for="login-password-confirm" data-auth-signup hidden>Staðfestu lykilorð</label>
             <input id="login-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Sláðu inn lykilorðið aftur" data-auth-signup hidden>
             
-            <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
-            <button class="button button-primary login-submit" type="submit">Skrá inn</button>
+            <button class="login-forgot" type="button" data-action="forgot-password" data-auth-login>Gleymt lykilorði?</button>
+            <button class="button button-primary login-submit" type="submit" data-auth-login-text>Skrá inn</button>
           </form>
           
           <p class="auth-message" data-auth-message role="alert" aria-live="assertive" hidden></p>
@@ -57,7 +57,7 @@
           
           <p class="login-signup">
             <span data-auth-toggle-prompt>Ný í New Friends?</span>
-            <button type="button" data-action="toggle-auth-mode">Búðu til aðgang</button>
+            <button type="button" data-action="toggle-auth-mode" data-auth-toggle-button>Búðu til aðgang</button>
           </p>
         </div>
       </section>
@@ -107,14 +107,40 @@
     if (toggleButton) {
       toggleButton.addEventListener('click', (e) => {
         e.preventDefault();
-        const isSignup = loginForm.dataset.form === 'login';
-        loginForm.dataset.form = isSignup ? 'signup' : 'login';
+        const isCurrentlyLogin = loginForm.dataset.form === 'login';
+        loginForm.dataset.form = isCurrentlyLogin ? 'signup' : 'login';
+        
+        // Show/hide signup-only fields
         document.querySelectorAll('[data-auth-signup]').forEach(el => {
-          el.hidden = !isSignup;
-          if (el.matches('input')) el.required = isSignup;
+          el.hidden = !isCurrentlyLogin;
+          if (el.matches('input')) el.required = isCurrentlyLogin;
         });
-        document.querySelector('[data-auth-title]').textContent = isSignup ? 'Búðu til aðgang' : 'Velkomin aftur!';
-        document.querySelector('[data-auth-subtitle]').textContent = isSignup ? 'Sláðu inn netfangið þitt og lykilorð' : 'Skráðu þig inn til að halda áfram.';
+        
+        // Show/hide login-only elements
+        document.querySelectorAll('[data-auth-login]').forEach(el => {
+          el.hidden = !isCurrentlyLogin;
+        });
+        
+        // Update title and subtitle
+        document.querySelector('[data-auth-title]').textContent = isCurrentlyLogin ? 'Búðu til aðgang' : 'Velkomin aftur!';
+        document.querySelector('[data-auth-subtitle]').textContent = isCurrentlyLogin ? 'Sláðu inn netfangið þitt og lykilorð' : 'Skráðu þig inn til að halda áfram.';
+        
+        // Update toggle button text and prompt
+        const togglePrompt = document.querySelector('[data-auth-toggle-prompt]');
+        if (isCurrentlyLogin) {
+          togglePrompt.textContent = 'Ertu með aðgang?';
+          toggleButton.textContent = 'Skrá inn';
+        } else {
+          togglePrompt.textContent = 'Ný í New Friends?';
+          toggleButton.textContent = 'Búðu til aðgang';
+        }
+        
+        // Update submit button text
+        const submitButton = document.querySelector('[data-auth-login-text]');
+        if (submitButton) {
+          submitButton.textContent = isCurrentlyLogin ? 'Búðu til aðgang' : 'Skrá inn';
+        }
+        
         hideAuthMessage();
       });
     }
@@ -154,11 +180,10 @@
         const isSignup = loginForm.dataset.form === 'signup';
         const email = loginForm.querySelector('[name="email"]').value;
         const password = loginForm.querySelector('[name="password"]').value;
-        const displayName = loginForm.querySelector('[name="displayName"]')?.value;
 
         try {
           if (isSignup) {
-            await window.firebaseAuth.createAccount(email, password, displayName);
+            await window.firebaseAuth.createAccount(email, password);
           } else {
             await window.firebaseAuth.signInWithEmail(email, password);
           }
