@@ -811,16 +811,10 @@
         errorDiv.style.display = 'block';
         return false;
       }
-
-      if (displayName.length < 2) {
-        errorDiv.textContent = '⚠️ Nafn verður að hafa að minnsta kosti 2 stafi';
-        errorDiv.style.display = 'block';
-        return false;
-      }
       
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
       
-      // Validate each word - words must start with capital letter
+      // Validate each word
       const allWordsValid = words.every(word => {
         // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
         if (word.length === 2 && /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word)) {
@@ -832,13 +826,18 @@
           return false;
         }
         
+        // Words must have at least 2 characters
+        if (word.length < 2) {
+          return false;
+        }
+        
         // Words must start with capital letter
         const startsWithCapital = /^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
         return startsWithCapital;
       });
       
       if (!allWordsValid) {
-        errorDiv.textContent = '⚠️ Hvert orð verður að byrja á stórum staf. Stafröðun má skammstafa sem stóri stafur + punkti (t.d. M.).';
+        errorDiv.textContent = '⚠️ Hvert orð verður að hafa að minnsta kosti 2 stafi og byrja á stórum staf. Stafröðun má skammstafa sem stóri stafur + punkti (t.d. M.).';
         errorDiv.style.display = 'block';
         return false;
       }
