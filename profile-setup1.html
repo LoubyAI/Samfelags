@@ -820,13 +820,8 @@
       
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
       
-      // Validate each word - must start with capital letter
+      // Validate each word - words must start with capital letter
       const allWordsValid = words.every(word => {
-        // Single letters must have dot (e.g., "M.")
-        if (word.length === 1) {
-          return false; // Single letter without dot is not valid
-        }
-        
         // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
         if (word.length === 2 && /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word)) {
           return true; // Valid abbreviation
@@ -839,7 +834,7 @@
         
         // Words must start with capital letter
         const startsWithCapital = /^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
-        return startsWithCapital && word.length >= 2;
+        return startsWithCapital;
       });
       
       if (!allWordsValid) {
@@ -1091,16 +1086,19 @@
 
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
       
-      // Validate each word
+      // Validate each word - words must start with capital letter
       const hasInvalidWord = words.some(word => {
-        if (word.length === 1) return true; // Single letters must be used with dot
-        if (word.length === 2) {
-          const isValidInitial = /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word);
-          if (isValidInitial) return false; // Valid abbreviation
-          // Otherwise check if it starts with capital
-          return !/^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
+        // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
+        if (word.length === 2 && /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word)) {
+          return false; // Valid abbreviation
         }
-        // Words of 3+ characters must start with capital
+        
+        // Any word with dots that's not Capital+dot: invalid
+        if (word.includes('.')) {
+          return true;
+        }
+        
+        // Words must start with capital letter
         return !/^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
       });
 
