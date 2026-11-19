@@ -7,6 +7,38 @@
   <title>Prófíll - New Friends</title>
   <link rel="stylesheet" href="app.css?v=39">
   <style>
+    body.dark-mode {
+      color-scheme: dark;
+      --ink: #f7f4f6;
+      --muted: #d3ccd1;
+      --line: #777;
+      --soft: #302830;
+      --light: #3a3a3a;
+      --white: #1d1b1d;
+    }
+
+    body.dark-mode img[src$=".svg"] {
+      filter: brightness(0) invert(1);
+    }
+
+    body.dark-mode .brand img[src$=".svg"],
+    body.dark-mode .login-brand img[src$=".svg"] {
+      filter: none;
+    }
+
+    body.dark-mode .global-search,
+    body.dark-mode .composer-form input,
+    body.dark-mode .composer-form textarea,
+    body.dark-mode .meeting-editor-field input,
+    body.dark-mode .meeting-editor-field textarea,
+    body.dark-mode .message-search {
+      background: #282528;
+    }
+
+    body.dark-mode .switch-track::before {
+      background: var(--ink);
+    }
+
     .profile-layout {
       display: grid;
       grid-template-columns: 240px 1fr;
@@ -377,6 +409,9 @@
   <script src="firebase-profile.js?v=5"></script>
   <script src="page-utils.js?v=1"></script>
   <script>
+    // Setup page defaults immediately
+    setupPageDefaults("profile.html");
+    
     // Load profile content
     (async () => {
       try {
@@ -420,8 +455,6 @@
               <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
             </div>`;
         }
-        
-        setupPageDefaults("profile.html");
       } catch (error) {
         console.error("profile.html: Error loading profile:", error);
         document.getElementById("profile-content").innerHTML = `<p>Villa við hleðslu prófíls: ${error.message}</p>`;

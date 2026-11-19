@@ -6,7 +6,11 @@ function setupPageDefaults(pageName) {
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {
     const isDarkMode = localStorage.getItem("darkMode") === "on";
-    themeToggle.checked = isDarkMode;
+    // Only update toggle state if it doesn't match current state
+    if (themeToggle.checked !== isDarkMode) {
+      themeToggle.checked = isDarkMode;
+    }
+    // Ensure body classes match localStorage (head script already did this, but verify)
     if (isDarkMode) {
       document.body.classList.add("dark-mode");
     } else {
@@ -14,8 +18,12 @@ function setupPageDefaults(pageName) {
     }
     console.log(`${pageName}: Initial dark mode:`, isDarkMode);
     
-    themeToggle.addEventListener("change", () => {
-      const isNowDark = themeToggle.checked;
+    // Remove any existing listener (if re-added on page reload in SPA)
+    const newToggle = themeToggle.cloneNode(true);
+    themeToggle.parentNode.replaceChild(newToggle, themeToggle);
+    
+    newToggle.addEventListener("change", () => {
+      const isNowDark = newToggle.checked;
       document.body.classList.toggle("dark-mode", isNowDark);
       localStorage.setItem("darkMode", isNowDark ? "on" : "off");
       console.log(`${pageName}: Dark mode toggled to:`, isNowDark);
