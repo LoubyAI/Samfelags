@@ -5,13 +5,23 @@ function setupPageDefaults(pageName) {
   // Setup theme toggle
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {
-    themeToggle.checked = localStorage.getItem("darkMode") === "on";
-    document.body.classList.toggle("dark-mode", themeToggle.checked);
+    const isDarkMode = localStorage.getItem("darkMode") === "on";
+    themeToggle.checked = isDarkMode;
+    if (isDarkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+    console.log(`${pageName}: Initial dark mode:`, isDarkMode);
+    
     themeToggle.addEventListener("change", () => {
-      document.body.classList.toggle("dark-mode", themeToggle.checked);
-      localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
-      console.log(`${pageName}: Dark mode toggled`, themeToggle.checked);
+      const isNowDark = themeToggle.checked;
+      document.body.classList.toggle("dark-mode", isNowDark);
+      localStorage.setItem("darkMode", isNowDark ? "on" : "off");
+      console.log(`${pageName}: Dark mode toggled to:`, isNowDark);
     });
+  } else {
+    console.warn(`${pageName}: Theme toggle element not found`);
   }
   
   // Setup sign out
