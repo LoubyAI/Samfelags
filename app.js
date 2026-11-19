@@ -1680,7 +1680,7 @@ async function handleDeleteAccount() {
         try {
           console.log("Re-authenticating with email:", userEmail);
           const credential = authSdk.EmailAuthProvider.credential(userEmail, password);
-          await user.reauthenticateWithCredential(credential);
+          await authSdk.reauthenticateWithCredential(user, credential);
           console.log("✓ Re-authentication successful");
           
           console.log("Retrying Firebase deletion...");
