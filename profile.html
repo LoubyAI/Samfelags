@@ -515,8 +515,13 @@
               <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
             </div>`;
           
+          console.log("Profile content HTML set, looking for delete button...");
+          
           // Setup delete account button
-          contentElement.querySelector('[data-action="delete-account"]')?.addEventListener("click", async () => {
+          const deleteBtn = contentElement.querySelector('[data-action="delete-account"]');
+          console.log("Delete button found:", deleteBtn);
+          
+          deleteBtn?.addEventListener("click", async () => {
             if (!confirm("Ertu viss um að þú vilt eyða reikningnum? Þetta getur ekki verið afturkallt.")) {
               return;
             }
