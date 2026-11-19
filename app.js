@@ -1708,7 +1708,7 @@ async function handleFirebaseSignOut() {
   try {
     await import("./firebase-auth.js?v=2");
     await window.firebaseAuth.signOut();
-    redirectTo("app.html?view=login");
+    redirectTo("index.html");
   } catch (error) {
     console.error("Firebase sign-out failed", error);
     showToast("Ekki tókst að skrá út");
@@ -1835,7 +1835,7 @@ async function handleDeleteAccount() {
       
       setTimeout(() => {
         console.log("Redirecting to login...");
-        redirectTo("app.html?view=login");
+        redirectTo("index.html");
       }, 1500);
     }
   } catch (error) {
@@ -1860,7 +1860,7 @@ async function handleDeleteAccount() {
       
       setTimeout(() => {
         console.log("Redirecting to login...");
-        redirectTo("app.html?view=login");
+        redirectTo("index.html");
       }, 1500);
     } else {
       console.error("=== Account deletion FAILED ===");
