@@ -1606,64 +1606,64 @@ async function handleDeleteAccount() {
     
     showToast("Eyða aðgangi...");
     
-    // Wait for auth to initialize and get current user
-    let user = null;
-    
-    // Try to get user from current auth instance
-    if (auth && auth.currentUser) {
-      user = auth.currentUser;
-    }
-    
-    // Fallback: check if SDK has currentUser
-    if (!user && authSdk && authSdk.currentUser) {
-      user = authSdk.currentUser;
-    }
-    
-    // Last resort: wait for auth state to load
-    if (!user) {
-      user = await new Promise((resolve) => {
-        const unsubscribe = authSdk.onAuthStateChanged(auth, (currentUser) => {
-          unsubscribe();
-          resolve(currentUser);
-        });
-      });
-    }
+    // Get current user
+    const user = auth.currentUser;
     
     if (!user) {
       showToast("Engin notandi innskráð");
+      console.error("No user logged in - cannot delete account");
       return;
     }
 
     const userId = user.uid;
     console.log("Deleting account for user:", userId);
 
+    // Delete user profile from Firestore first
     try {
-      // Delete user profile from Firestore
+      console.log("Deleting Firestore profile...");
       await window.firebaseFirestore.deleteUserProfile(userId);
+      console.log("Firestore profile deleted");
     } catch (firestoreError) {
-      console.warn("Firestore delete failed (may not exist):", firestoreError);
+      console.warn("Firestore delete failed:", firestoreError.message);
       // Continue with auth deletion even if Firestore fails
     }
     
-    // Delete user from Firebase Auth
-    console.log("Calling deleteUser...");
-    await authSdk.deleteUser(user);
+    // Delete user from Firebase Auth using the client SDK method
+    try {
+      console.log("Deleting Firebase Auth account...");
+      await user.delete();
+      console.log("Firebase Auth account deleted successfully");
+    } catch (authError) {
+      console.error("Auth deletion error:", authError.code, authError.message);
+      // Check if re-authentication is needed
+      if (authError.code === "auth/requires-recent-login") {
+        showToast("Þú verður að skrá þig inn aftur til að eyða aðgangnum");
+        await authSdk.signOut(auth);
+        setTimeout(() => {
+          window.location.href = "app.html?view=login";
+        }, 1000);
+        return;
+      }
+      throw authError;
+    }
     
     showToast("Aðgangur eytt");
-    // Force a hard redirect
+    console.log("Account deletion complete, redirecting to login...");
+    
+    // Sign out and redirect
+    try {
+      await authSdk.signOut(auth);
+    } catch (signOutError) {
+      console.warn("Sign out error (account already deleted):", signOutError);
+    }
+    
+    // Force redirect to login
     setTimeout(() => {
       window.location.href = "app.html?view=login";
-    }, 500);
+    }, 1000);
   } catch (error) {
     console.error("Failed to delete account", error);
-    if (error.code === "auth/requires-recent-login") {
-      showToast("Þú verður að skrá þig inn aftur til að eyða aðgangnum");
-      setTimeout(() => {
-        window.location.href = "app.html?view=login";
-      }, 500);
-    } else {
-      showToast("Ekki tókst: " + (error.message || error));
-    }
+    showToast("Ekki tókst: " + (error.message || error));
   }
 }
 
