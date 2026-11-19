@@ -105,7 +105,7 @@
           const user = result.user;
           showAuthMessage('Tekið! Endalaust...');
           setTimeout(() => {
-            redirectTo('app.html?view=home');
+            redirectTo('home.html');
           }, 500);
         } catch (error) {
           console.error('Google sign-in failed:', error);
@@ -134,7 +134,7 @@
           await window.firebaseAuth.signInWithEmail(email, password);
           showAuthMessage('Tekið! Endalaust...');
           setTimeout(() => {
-            redirectTo('app.html?view=home');
+            redirectTo('home.html');
           }, 500);
         } catch (error) {
           console.error('Auth error:', error);
