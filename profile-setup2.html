@@ -856,24 +856,6 @@
       submitButton.disabled = true;
 
       try {
-        const { auth, authSdk } = await getFirebaseAuthClient();
-        
-        // Wait for auth state with timeout
-        const user = await Promise.race([
-          new Promise((resolve) => {
-            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
-              unsubscribe();
-              resolve(user);
-            });
-          }),
-          new Promise((resolve) => setTimeout(() => resolve(null), 3000)) // 3 second timeout
-        ]);
-        
-        // If no user found after check, still try to save - user might be in process of auth
-        if (!user) {
-          console.warn("User not detected in auth check, but attempting to save profile anyway");
-        }
-
         const photoPrivate = form.elements.photoPrivate?.files?.[0];
         const photoPublic = form.elements.photoPublic?.files?.[0];
         
@@ -900,6 +882,7 @@
         } catch (saveError) {
           console.warn("Could not save to Firestore, but proceeding to profile anyway", saveError);
           // Don't throw - we still want to proceed to profile
+          localStorage.setItem('profileData', JSON.stringify(profileData));
         }
         
         // Redirect to profile
