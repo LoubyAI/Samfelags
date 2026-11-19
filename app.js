@@ -1610,12 +1610,34 @@ async function handleDeleteAccount() {
     const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
     console.log("Got auth client");
     
-    const user = auth.currentUser;
-    console.log("Current user:", user ? user.uid : "none");
+    // Try to get current user, but wait if not ready yet
+    let user = auth.currentUser;
+    console.log("Current user (immediate):", user ? user.uid : "none");
+    
+    if (!user) {
+      console.log("No current user, waiting for auth state to load...");
+      // Wait for auth state to initialize
+      user = await new Promise((resolve) => {
+        const unsubscribe = authSdk.onAuthStateChanged(auth, (currentUser) => {
+          console.log("Auth state changed, user:", currentUser ? currentUser.uid : "none");
+          unsubscribe();
+          resolve(currentUser);
+        });
+        
+        // Timeout after 3 seconds
+        setTimeout(() => {
+          console.log("Auth state wait timeout");
+          unsubscribe();
+          resolve(null);
+        }, 3000);
+      });
+    }
+    
+    console.log("Current user (after wait):", user ? user.uid : "none");
     
     if (!user) {
       showToast("Engin notandi innskráð");
-      console.error("No user logged in");
+      console.error("No user logged in after waiting");
       return;
     }
 
