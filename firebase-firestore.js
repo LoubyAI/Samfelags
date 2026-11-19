@@ -1,6 +1,21 @@
 const firestoreVersion = "13.3.0";
 let firestoreClientPromise;
 
+async function getFirebaseAuthClient() {
+  if (!window.firebaseConfig?.apiKey) {
+    throw new Error("Firebase config is missing");
+  }
+
+  const appSdk = await import(`https://www.gstatic.com/firebasejs/${firestoreVersion}/firebase-app.js`);
+  const authSdk = await import(`https://www.gstatic.com/firebasejs/${firestoreVersion}/firebase-auth.js`);
+  
+  const app = appSdk.initializeApp(window.firebaseConfig);
+  const auth = authSdk.getAuth(app);
+  auth.languageCode = "is";
+  
+  return { auth, authSdk };
+}
+
 async function getFirestoreClient() {
   if (!window.firebaseConfig?.projectId) {
     const error = new Error("Firebase config is missing projectId");
@@ -42,11 +57,13 @@ async function getFirestoreClient() {
 }
 
 async function getCurrentUser() {
-  const { auth } = await window.firebaseAuth.getAuth?.() || {};
-  if (!auth) {
-    throw new Error("Auth client not available");
+  try {
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    return authSdk.currentUser || null;
+  } catch (error) {
+    console.warn("Could not get current user", error);
+    return null;
   }
-  return auth.currentUser;
 }
 
 window.firebaseFirestore = {
