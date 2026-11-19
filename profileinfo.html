@@ -698,15 +698,11 @@
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
   <script>
-    async function getFirebaseAuthClient() {
-      return window.firebaseAuth.getAuthClient();
-    }
-
     function setupSignOut() {
       document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
         event.preventDefault();
         try {
-          const { auth, authSdk } = await getFirebaseAuthClient();
+          const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
           await authSdk.signOut(auth);
           window.location.href = "index.html";
         } catch (error) {
@@ -719,7 +715,7 @@
     // Setup page and load profile content
     (async () => {
       try {
-        const { auth, authSdk } = await getFirebaseAuthClient();
+        const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
         
         if (!auth.currentUser) {
           await new Promise((resolve) => {
