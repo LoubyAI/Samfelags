@@ -36,7 +36,13 @@ async function getFirestoreClient() {
       import(`https://www.gstatic.com/firebasejs/${firestoreVersion}/firebase-app.js`),
       import(`https://www.gstatic.com/firebasejs/${firestoreVersion}/firebase-firestore.js`),
     ]).then(([appSdk, firestoreSdk]) => {
-      const app = appSdk.initializeApp(window.firebaseConfig);
+      let app;
+      try {
+        app = appSdk.getApp();
+      } catch (error) {
+        // App doesn't exist yet, initialize it
+        app = appSdk.initializeApp(window.firebaseConfig);
+      }
       const db = firestoreSdk.getFirestore(app);
       
       // Enable offline persistence for better UX

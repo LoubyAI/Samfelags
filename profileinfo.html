@@ -529,24 +529,42 @@
             try {
               const { auth, authSdk } = await getFirebaseAuthClient();
               const user = auth.currentUser;
+              
+              if (!user) {
+                console.error("No authenticated user found");
+                alert("Villa: Engin notandi skráður inn");
+                return;
+              }
+              
               const uid = user.uid;
+              console.log("Attempting to delete account for user:", uid, "email:", user.email);
               
               // Re-authenticate the user with their password
+              console.log("Re-authenticating user...");
               const credential = authSdk.EmailAuthProvider.credential(user.email, password);
               await authSdk.reauthenticateWithCredential(user, credential);
+              console.log("Re-authentication successful, auth token refreshed");
               
               // Delete user profile from Firestore
+              console.log("Deleting Firestore user document...");
               await window.firebaseFirestore.deleteUserProfile(uid);
+              console.log("User profile deleted from Firestore");
               
               // Delete the user account from Firebase Auth
+              console.log("Deleting Firebase Auth user...");
               await authSdk.deleteUser(user);
+              console.log("User account deleted from Firebase Auth");
               
               alert("Reikningur eyðst");
               window.location.href = "index.html";
             } catch (error) {
               console.error("Error deleting account:", error);
+              console.error("Error code:", error.code);
+              console.error("Error message:", error.message);
               if (error.code === "auth/wrong-password") {
                 alert("Rangt lykilorð. Ekki var hægt að eyða reikningnum.");
+              } else if (error.code === "permission-denied") {
+                alert("Endalaus! Villar í Firestore heimildum. Hafðu samband við kerfisstjóra.");
               } else {
                 alert("Villa við eyðingu reiknings: " + error.message);
               }
@@ -578,24 +596,42 @@
           
           try {
             const user = auth.currentUser;
+            
+            if (!user) {
+              console.error("No authenticated user found");
+              alert("Villa: Engin notandi skráður inn");
+              return;
+            }
+            
             const uid = user.uid;
+            console.log("Attempting to delete account for user:", uid, "email:", user.email);
             
             // Re-authenticate the user with their password
+            console.log("Re-authenticating user...");
             const credential = authSdk.EmailAuthProvider.credential(user.email, password);
             await authSdk.reauthenticateWithCredential(user, credential);
+            console.log("Re-authentication successful, auth token refreshed");
             
             // Delete user profile from Firestore
+            console.log("Deleting Firestore user document...");
             await window.firebaseFirestore.deleteUserProfile(uid);
+            console.log("User profile deleted from Firestore");
             
             // Delete the user account from Firebase Auth
+            console.log("Deleting Firebase Auth user...");
             await authSdk.deleteUser(user);
+            console.log("User account deleted from Firebase Auth");
             
             alert("Reikningur eyðst");
             window.location.href = "index.html";
           } catch (error) {
             console.error("Error deleting account:", error);
+            console.error("Error code:", error.code);
+            console.error("Error message:", error.message);
             if (error.code === "auth/wrong-password") {
               alert("Rangt lykilorð. Ekki var hægt að eyða reikningnum.");
+            } else if (error.code === "permission-denied") {
+              alert("Endalaus! Villar í Firestore heimildum. Hafðu samband við kerfisstjóra.");
             } else {
               alert("Villa við eyðingu reiknings: " + error.message);
             }

@@ -102,8 +102,8 @@ service cloud.firestore {
       // Users can read all public profiles
       allow read: if isAuthenticated();
       
-      // Users can only update their own profile
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      // Users can update and delete their own profile
+      allow write, delete: if isAuthenticated() && request.auth.uid == userId;
     }
     
     // ========== MESSAGES ==========
