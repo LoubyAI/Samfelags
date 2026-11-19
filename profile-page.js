@@ -6,12 +6,27 @@
   try {
     console.log("Profile page: Starting initialization...");
     
-    // Check if user is authenticated
-    const { auth } = await getFirebaseAuthClient();
-    console.log("Profile page: Auth client loaded, currentUser:", auth.currentUser?.email);
+    // Wait for Firebase auth to be ready with proper state restoration
+    console.log("Profile page: Waiting for Firebase to initialize...");
+    
+    let attempts = 0;
+    let { auth } = await getFirebaseAuthClient();
+    
+    // Give Firebase time to restore auth state from storage
+    while (!auth.currentUser && attempts < 10) {
+      console.log("Profile page: Waiting for auth state to restore... attempt", attempts + 1);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Reinitialize to get latest state
+      const freshAuth = await getFirebaseAuthClient();
+      auth = freshAuth.auth;
+      attempts++;
+    }
+    
+    console.log("Profile page: Auth state after wait - currentUser:", auth.currentUser?.email);
     
     if (!auth.currentUser) {
-      console.log("Profile page: User not authenticated, redirecting to login");
+      console.log("Profile page: User not authenticated after waiting, redirecting to login");
       window.location.href = "index.html";
       return;
     }
