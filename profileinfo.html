@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Prófílupplýsingar - New Friends</title>
+  <link rel="stylesheet" href="app.css?v=39">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body.dark-mode {
+      color-scheme: dark;
+      --ink: #f7f4f6;
+      --muted: #d3ccd1;
+      --line: #777;
+      --soft: #302830;
+      --light: #3a3a3a;
+      --white: #1d1b1d;
+    }
+
+    body.dark-mode img[src$=".svg"] {
+      filter: brightness(0) invert(1);
+    }
+
+    body.dark-mode .brand img[src$=".svg"],
+    body.dark-mode .login-brand img[src$=".svg"] {
+      filter: none;
+    }
+
+    body.dark-mode .global-search,
+    body.dark-mode .composer-form input,
+    body.dark-mode .composer-form textarea,
+    body.dark-mode .meeting-editor-field input,
+    body.dark-mode .meeting-editor-field textarea,
+    body.dark-mode .message-search {
+      background: #282528;
+    }
+
+    body.dark-mode .switch-track::before {
+      background: var(--ink);
+    }
+
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .profile-panel {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .profile-panel h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .profile-panel nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .profile-panel nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #0f0f0f;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .profile-panel nav a:hover {
+      background: #f8f2f7;
+    }
+
+    .profile-panel nav a.active {
+      background: #f8f2f7;
+      font-weight: 600;
+    }
+
+    .profile-panel nav a img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 4px solid #e5518b;
+    }
+
+    .profile-header h2 {
+      margin: 0 0 4px 0;
+      font-size: 24px;
+    }
+
+    .profile-header .nickname {
+      margin: 0 0 12px 0;
+      color: #e5518b;
+      font-weight: 600;
+    }
+
+    .profile-header .profile-age {
+      margin: 0;
+      color: #4f4f4f;
+      font-size: 14px;
+    }
+
+    .profile-info {
+      text-align: left;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 16px;
+    }
+
+    .profile-info p {
+      margin: 0 0 12px 0;
+      line-height: 1.6;
+    }
+
+    .profile-bio {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f8f2f7;
+      border-radius: 6px;
+    }
+
+    .profile-welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 300px;
+    }
+
+    .profile-welcome img {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+
+    .profile-welcome h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+    }
+
+    .profile-welcome p {
+      margin: 0 0 20px 0;
+      color: #4f4f4f;
+    }
+
+    .settings-section {
+      margin-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 20px;
+    }
+
+    .settings-section h3 {
+      color: #e5518b;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+    }
+
+    .delete-account-btn {
+      background: #e5518b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .delete-account-btn:hover {
+      background: #d1446f;
+    }
+
+    .delete-account-warning {
+      display: block;
+      color: #999;
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    body.dark-mode .profile-panel {
+      background: var(--light);
+      color: var(--ink);
+    }
+
+    body.dark-mode .profile-panel h2 {
+      color: var(--ink);
+    }
+
+    body.dark-mode .profile-panel nav a {
+      color: var(--ink);
+    }
+
+    body.dark-mode .profile-panel nav a:hover {
+      background: rgba(229, 81, 139, 0.1);
+    }
+
+    body.dark-mode .profile-panel nav a.active {
+      background: rgba(229, 81, 139, 0.1);
+    }
+
+    body.dark-mode .profile-header h2 {
+      color: var(--ink);
+    }
+
+    body.dark-mode .profile-header .nickname {
+      color: #e5518b;
+    }
+
+    body.dark-mode .profile-header .profile-age {
+      color: var(--muted);
+    }
+
+    body.dark-mode .profile-info {
+      border-top-color: var(--line);
+    }
+
+    body.dark-mode .profile-info p {
+      color: var(--ink);
+    }
+
+    body.dark-mode .profile-bio {
+      background: rgba(229, 81, 139, 0.1);
+    }
+
+    body.dark-mode .profile-welcome h1 {
+      color: var(--ink);
+    }
+
+    body.dark-mode .profile-welcome p {
+      color: var(--muted);
+    }
+
+    body.dark-mode .settings-section {
+      border-top-color: var(--line);
+    }
+
+    body.dark-mode .settings-section h3 {
+      color: #e5518b;
+    }
+
+    body.dark-mode .delete-account-warning {
+      color: var(--muted);
+    }
+
+    @media (max-width: 768px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script>
+    // Apply dark mode immediately before page renders to avoid flash (default is ON)
+    if (localStorage.getItem("darkMode") !== "off") {
+      document.documentElement.classList.add("dark-mode");
+      document.body.classList.add("dark-mode");
+    }
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Aðalvalmynd">
+      <a class="brand" href="home.html" aria-label="New Friends heim">
+        <span>New Friends</span>
+        <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="">
+      </a>
+
+      <nav class="side-nav">
+        <a href="home.html" data-view="home">
+          <img src="img/figma/8283c379-bc9c-48f5-9ef1-003d6c9de541.svg" alt="">
+          <span>Heim</span>
+        </a>
+        <a href="news.html" data-view="news">
+          <img src="img/figma/ce1e3756-44ea-48cd-8856-83b3ab98779e.svg" alt="">
+          <span>Hvað er að frétta?</span>
+        </a>
+        <a href="meetingchat.html" data-view="meetings">
+          <img src="img/figma/c94539bf-dd02-4721-8efc-b860d62e3666.svg" alt="">
+          <span>Hittingarspjall</span>
+        </a>
+        <a href="eventcalendar.html" data-view="calendar">
+          <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
+          <span>Viðburðir &amp; dagatal</span>
+        </a>
+        <a href="chat.html" data-view="messages">
+          <img src="img/figma/b1c194ed-af27-4d13-a13a-3b35bfaf1df1.svg" alt="">
+          <span>Skilaboð</span>
+        </a>
+        <a href="profile.html" data-view="profile">
+          <img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt="">
+          <span>Prófíll</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <label class="theme-switch">
+          <span class="theme-name">
+            <img src="img/figma/35461c58-b2ea-46f8-940b-201b6aa8e1f1.svg" alt="">
+            Night mode
+          </span>
+          <input id="theme-toggle" type="checkbox" aria-label="Night mode">
+          <span class="switch-track" aria-hidden="true"></span>
+        </label>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="page-heading" id="page-heading">
+          <img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt="">
+          <span>Prófílupplýsingar</span>
+        </div>
+        <label class="global-search">
+          <img src="img/figma/9a437b7b-4188-42a7-bb23-12738529b77e.svg" alt="">
+          <input id="global-search" type="search" placeholder="Leita..." aria-label="Leita">
+        </label>
+        <div class="notification-control">
+          <button class="icon-button notification-button" type="button" aria-label="Tilkynningar" aria-expanded="false" aria-controls="notifications-dropdown" data-action="notifications">
+            <img src="img/figma/29dfd07d-c609-4ff3-93e4-71e7708d5487.svg" alt="">
+            <span class="notification-count" aria-hidden="true">4</span>
+          </button>
+          <div class="notifications-dropdown" id="notifications-dropdown" role="region" aria-label="Tilkynningar" hidden></div>
+        </div>
+        <details class="profile-dropdown">
+          <summary aria-label="Opna prófílvalmynd">
+            <img class="top-avatar" src="img/figma/920ad6a3-93ee-456a-99c8-5db2593f3ee1.png" alt="Prófílmynd">
+            <span class="profile-chevron">
+              <img class="chevron-icon" src="img/figma/277a8d39-1495-42f4-b0e0-08e3dfcb2f50.svg" alt="">
+            </span>
+          </summary>
+          <div class="dropdown-menu">
+            <a href="profile.html">Prófíll</a>
+            <a href="#" data-action="sign-out">Skrá út</a>
+          </div>
+        </details>
+      </header>
+
+      <main class="app-main" id="screen" tabindex="-1">
+        <div class="profile-layout">
+          <section class="profile-panel">
+            <h2>Prófíllinn minn</h2>
+            <nav aria-label="Prófílvalmynd">
+              <a href="profileinfo.html" data-tab="profile" class="active">
+                <img src="img/figma/46166371-541f-41e6-b9eb-d2806d455e69.svg" alt="">
+                <span>Prófílupplýsingar</span>
+              </a>
+              <a href="profile.html" data-tab="settings">
+                <img src="img/figma/64440be3-91d1-4ff2-ac55-0e2c6ef0270a.svg" alt="">
+                <span>Stillingar</span>
+              </a>
+              <a href="profile.html" data-tab="photos">
+                <img src="img/figma/6de23b7c-892e-4dd3-aa88-ffd3c33cacdc.svg" alt="">
+                <span>Myndir</span>
+              </a>
+              <a href="profile.html" data-tab="friends">
+                <img src="img/figma/600507bb-4e1d-4c45-976a-c8711ed17fbe.svg" alt="">
+                <span>Tengslabönd</span>
+              </a>
+            </nav>
+          </section>
+
+          <section class="profile-panel" id="profile-content">
+            <!-- Profile content will load here via JavaScript, or show placeholder -->
+            <div class="profile-welcome">
+              <img src="img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png" alt="Endalaus">
+              <h1>Endalaus</h1>
+              <p>Hleð prófílsgögnum...</p>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="firebase-config.js?v=2"></script>
+  <script src="owner-config.js?v=2"></script>
+  <script src="firebase-auth.js?v=2"></script>
+  <script src="firebase-firestore.js?v=2"></script>
+  <script src="firebase-profile.js?v=5"></script>
+  <script>
+    // Setup dark mode toggle
+    function setupDarkMode() {
+      const darkModeOn = localStorage.getItem("darkMode") === "on";
+      document.body.classList.toggle("dark-mode", darkModeOn);
+      
+      const themeToggle = document.getElementById("theme-toggle");
+      if (themeToggle) {
+        themeToggle.checked = darkModeOn;
+        
+        themeToggle.addEventListener("change", (event) => {
+          const isNowDark = event.target.checked;
+          document.body.classList.toggle("dark-mode", isNowDark);
+          localStorage.setItem("darkMode", isNowDark ? "on" : "off");
+        });
+      }
+    }
+
+    function setupSignOut() {
+      document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          const { auth, authSdk } = await getFirebaseAuthClient();
+          await authSdk.signOut(auth);
+          window.location.href = "index.html";
+        } catch (error) {
+          console.error("Sign out error:", error);
+          window.location.href = "index.html";
+        }
+      });
+    }
+
+    async function getFirebaseAuthClient() {
+      return window.firebaseAuth.getAuthClient();
+    }
+
+    // Setup page and load profile content
+    (async () => {
+      try {
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        
+        if (!auth.currentUser) {
+          await new Promise((resolve) => {
+            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+              unsubscribe();
+              resolve(user);
+            });
+            setTimeout(() => {
+              unsubscribe();
+              resolve(null);
+            }, 3000);
+          });
+        }
+        
+        if (!auth.currentUser) {
+          window.location.href = "index.html";
+          return;
+        }
+        
+        // Setup UI
+        setupDarkMode();
+        setupSignOut();
+        
+        console.log("profileinfo.html: User authenticated, loading profile...");
+        
+        // Load profile data
+        const profileData = await window.firebaseFirestore.getUserProfile(auth.currentUser.uid);
+        console.log("Profile data loaded:", profileData);
+        
+        const contentElement = document.getElementById("profile-content");
+        if (!profileData) {
+          console.log("No profile data - showing welcome message");
+          contentElement.innerHTML = `
+            <div class="profile-welcome">
+              <img src="img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png" alt="Endalaus">
+              <h1>Endalaus</h1>
+              <p>Byrjaðu að fylla prófílinn!</p>
+              <button class="button button-primary" type="button">Byrjaðu</button>
+            </div>`;
+        } else {
+          console.log("Profile data exists, rendering profile");
+          const displayName = profileData.displayName || "Endalaus";
+          const photoUrl = profileData.photoPrivateUrl || "img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png";
+          const bio = profileData.bio || "";
+          const interests = profileData.interests || [];
+          
+          console.log("Photo URL:", photoUrl);
+          
+          contentElement.innerHTML = `
+            <div class="profile-header">
+              <img src="${photoUrl}" alt="${displayName}" class="profile-photo">
+              <h2>${displayName}</h2>
+              <p class="nickname">${profileData.nickname || displayName}</p>
+              <p class="profile-age">${profileData.age ? profileData.age + ' ára' : ''}</p>
+            </div>
+            <div class="profile-info">
+              <div class="profile-bio">${bio}</div>
+              ${interests.length > 0 ? `<p><strong>Áhugamál:</strong> ${interests.join(", ")}</p>` : ""}
+            </div>
+            <div class="settings-section">
+              <h3>Aðgangur</h3>
+              <button class="delete-account-btn" data-action="delete-account">Eyða aðgangi</button>
+              <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
+            </div>`;
+          
+          console.log("Profile content HTML set, looking for delete button...");
+          
+          // Setup delete account button
+          const deleteBtn = contentElement.querySelector('[data-action="delete-account"]');
+          console.log("Delete button found:", deleteBtn);
+          
+          deleteBtn?.addEventListener("click", async () => {
+            if (!confirm("Ertu viss um að þú vilt eyða reikningnum? Þetta getur ekki verið afturkallt.")) {
+              return;
+            }
+            
+            const password = prompt("Sláðu inn lykilorðið þitt til að staðfesta:");
+            if (!password) {
+              return;
+            }
+            
+            try {
+              const { auth, authSdk } = await getFirebaseAuthClient();
+              const user = auth.currentUser;
+              const uid = user.uid;
+              
+              // Re-authenticate the user with their password
+              const credential = authSdk.EmailAuthProvider.credential(user.email, password);
+              await authSdk.reauthenticateWithCredential(user, credential);
+              
+              // Delete user profile from Firestore
+              await window.firebaseFirestore.deleteUserProfile(uid);
+              
+              // Delete the user account from Firebase Auth
+              await authSdk.deleteUser(user);
+              
+              alert("Reikningur eyðst");
+              window.location.href = "index.html";
+            } catch (error) {
+              console.error("Error deleting account:", error);
+              if (error.code === "auth/wrong-password") {
+                alert("Rangt lykilorð. Ekki var hægt að eyða reikningnum.");
+              } else {
+                alert("Villa við eyðingu reiknings: " + error.message);
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error("profileinfo.html: Error loading profile:", error);
+        // Show delete button even if profile loading fails
+        document.getElementById("profile-content").innerHTML = `
+          <div class="settings-section">
+            <h3>Aðgangur</h3>
+            <button class="delete-account-btn" data-action="delete-account">Eyða aðgangi</button>
+            <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
+            <p style="color: #999; font-size: 12px; margin-top: 12px;">Villa við hleðslu prófíls: ${error.message}</p>
+          </div>`;
+        
+        // Setup delete account button even on error
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        document.querySelector('[data-action="delete-account"]')?.addEventListener("click", async () => {
+          if (!confirm("Ertu viss um að þú vilt eyða reikningnum? Þetta getur ekki verið afturkallt.")) {
+            return;
+          }
+          
+          const password = prompt("Sláðu inn lykilorðið þitt til að staðfesta:");
+          if (!password) {
+            return;
+          }
+          
+          try {
+            const user = auth.currentUser;
+            const uid = user.uid;
+            
+            // Re-authenticate the user with their password
+            const credential = authSdk.EmailAuthProvider.credential(user.email, password);
+            await authSdk.reauthenticateWithCredential(user, credential);
+            
+            // Delete user profile from Firestore
+            await window.firebaseFirestore.deleteUserProfile(uid);
+            
+            // Delete the user account from Firebase Auth
+            await authSdk.deleteUser(user);
+            
+            alert("Reikningur eyðst");
+            window.location.href = "index.html";
+          } catch (error) {
+            console.error("Error deleting account:", error);
+            if (error.code === "auth/wrong-password") {
+              alert("Rangt lykilorð. Ekki var hægt að eyða reikningnum.");
+            } else {
+              alert("Villa við eyðingu reiknings: " + error.message);
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
