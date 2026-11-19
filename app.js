@@ -1,5 +1,19 @@
 const asset = (file) => `img/figma/${file}`;
 
+// Helper to redirect while respecting current environment (file:// or https://)
+function redirectTo(path) {
+  const currentUrl = window.location.href;
+  // If we're on a file:// URL, stay on file://
+  if (currentUrl.startsWith('file://')) {
+    // Extract the directory and redirect there
+    const baseDir = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+    redirectTo(baseDir + path);
+  } else {
+    // On http(s), use relative path (will stay on same domain)
+    redirectTo(path);
+  }
+}
+
 const icons = {
   home: "8283c379-bc9c-48f5-9ef1-003d6c9de541.svg",
   news: "ce1e3756-44ea-48cd-8856-83b3ab98779e.svg",
@@ -66,7 +80,7 @@ function goToHomeIfAllowed(event) {
   const setupViews = ["login", "profile-setup", "photo-policy"];
   const current = new URLSearchParams(window.location.search).get("view") || "home";
   if (!setupViews.includes(current)) {
-    window.location.href = "app.html?view=home";
+    redirectTo("app.html?view=home");
   }
 }
 
@@ -1255,7 +1269,7 @@ async function handleGoogleSignIn(button) {
       showAuthMessage("Welkomin aftur!");
     }
     
-    window.location.replace(isComplete ? "app.html?view=home" : "profile-setup1.html");
+    redirectTo(isComplete ? "app.html?view=home" : "profile-setup1.html");
   } catch (error) {
     const form = screen.querySelector('[data-form="login"], [data-form="signup"]');
     const isSignupMode = form && form.dataset.form === "signup";
@@ -1340,14 +1354,14 @@ async function handleEmailAuth(form) {
         email,
         password,
       );
-      window.location.replace("profile-setup1.html");
+      redirectTo("profile-setup1.html");
     } else {
       await window.firebaseAuth.signInWithEmail(email, password);
       await import("./firebase-firestore.js?v=1");
       const { auth, authSdk } = await getFirebaseAuthClient();
       const user = authSdk.currentUser;
       const isComplete = await window.firebaseFirestore.hasCompletedProfile(user.uid);
-      window.location.replace(isComplete ? "app.html?view=home" : "profile-setup1.html");
+      redirectTo(isComplete ? "app.html?view=home" : "profile-setup1.html");
     }
   } catch (error) {
     const message = getEmailAuthErrorMessage(error, signingUp);
@@ -1448,9 +1462,9 @@ async function handleProfileSetupSubmit(form) {
 
     // Owner goes straight to home, other users go to photo policy page
     if (isOwner) {
-      window.location.replace("app.html?view=home");
+      redirectTo("app.html?view=home");
     } else {
-      window.location.replace("profile-setup2.html");
+      redirectTo("profile-setup2.html");
     }
   } catch (error) {
     console.error("Profile setup failed", error);
@@ -1518,7 +1532,7 @@ async function handlePhotoPolicySubmit(form) {
     }
 
     // Always redirect to profile after submission
-    window.location.replace("app.html?view=profile");
+    redirectTo("app.html?view=profile");
   } catch (error) {
     console.error("Photo policy submission failed", error);
     showToast("Ekki tókst að vista myndirnar. Reyndu aftur.");
@@ -1581,7 +1595,7 @@ async function handleFirebaseSignOut() {
   try {
     await import("./firebase-auth.js?v=2");
     await window.firebaseAuth.signOut();
-    window.location.replace("app.html?view=login");
+    redirectTo("app.html?view=login");
   } catch (error) {
     console.error("Firebase sign-out failed", error);
     showToast("Ekki tókst að skrá út");
@@ -1708,7 +1722,7 @@ async function handleDeleteAccount() {
       
       setTimeout(() => {
         console.log("Redirecting to login...");
-        window.location.href = "app.html?view=login";
+        redirectTo("app.html?view=login";
       }, 1500);
     }
   } catch (error) {
@@ -1733,7 +1747,7 @@ async function handleDeleteAccount() {
       
       setTimeout(() => {
         console.log("Redirecting to login...");
-        window.location.href = "app.html?view=login";
+        redirectTo("app.html?view=login";
       }, 1500);
     } else {
       console.error("=== Account deletion FAILED ===");
@@ -1756,5 +1770,5 @@ function showToast(message) {
 }
 
 function skipToHome() {
-  window.location.replace("app.html?view=home");
+  redirectTo("app.html?view=home");
 }
