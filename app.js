@@ -3,15 +3,18 @@ const asset = (file) => `img/figma/${file}`;
 // Helper to redirect while respecting current environment (file:// or https://)
 function redirectTo(path) {
   const currentUrl = window.location.href;
-  // If we're on a file:// URL, stay on file://
+  let targetUrl;
+  
+  // If we're on a file:// URL, build the full file path
   if (currentUrl.startsWith('file://')) {
-    // Extract the directory and redirect there
     const baseDir = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-    redirectTo(baseDir + path);
+    targetUrl = baseDir + path;
   } else {
     // On http(s), use relative path (will stay on same domain)
-    redirectTo(path);
+    targetUrl = path;
   }
+  
+  window.location.href = targetUrl;
 }
 
 const icons = {
