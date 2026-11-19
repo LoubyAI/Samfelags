@@ -145,8 +145,42 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
-  <script src="page-utils.js?v=1"></script>
   <script>
+    // Setup dark mode toggle
+    function setupDarkMode() {
+      const themeToggle = document.getElementById("theme-toggle");
+      if (themeToggle) {
+        const isDarkMode = localStorage.getItem("darkMode") === "on";
+        themeToggle.checked = isDarkMode;
+        if (isDarkMode) {
+          document.body.classList.add("dark-mode");
+        } else {
+          document.body.classList.remove("dark-mode");
+        }
+        
+        themeToggle.addEventListener("change", (event) => {
+          const isNowDark = event.target.checked;
+          document.body.classList.toggle("dark-mode", isNowDark);
+          localStorage.setItem("darkMode", isNowDark ? "on" : "off");
+        });
+      }
+    }
+
+    // Setup sign out
+    function setupSignOut() {
+      document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          const { auth, authSdk } = await getFirebaseAuthClient();
+          await authSdk.signOut(auth);
+          window.location.href = "index.html";
+        } catch (error) {
+          console.error("Sign out error:", error);
+          window.location.href = "index.html";
+        }
+      });
+    }
+
     const NEWS_POSTS_STORAGE_KEY = "new-friends-news-posts";
     
     function loadNewsPosts() {
@@ -175,15 +209,34 @@
     // Load news page with proper auth state management
     (async () => {
       try {
-        const auth = await checkAuthAndWait("news.html");
-        if (!auth) return;
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        
+        if (!auth.currentUser) {
+          await new Promise((resolve) => {
+            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+              unsubscribe();
+              resolve(user);
+            });
+            setTimeout(() => {
+              unsubscribe();
+              resolve(null);
+            }, 2000);
+          });
+        }
+        
+        if (!auth.currentUser) {
+          window.location.href = "index.html";
+          return;
+        }
         
         // Load and display posts
         const newsPosts = loadNewsPosts();
         const postsContainer = document.getElementById("user-news-posts");
         postsContainer.innerHTML = newsPosts.map(renderNewsPost).join("");
         
-        setupPageDefaults("news.html");
+        // Setup UI
+        setupDarkMode();
+        setupSignOut();
         
         // Setup form submission
         document.querySelector('[data-form="post"]')?.addEventListener("submit", (event) => {
