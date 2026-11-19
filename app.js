@@ -1597,12 +1597,21 @@ async function handleDeleteAccount() {
     return;
   }
 
+  if (!confirm("Allt gögn þín munu vera endalaust eytt. Ertu alveg viss?")) {
+    return;
+  }
+
   try {
+    console.log("=== Starting account deletion ===");
+    
     await import("./firebase-auth.js?v=2");
     await import("./firebase-firestore.js?v=1");
     
     const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
+    console.log("Got auth client");
+    
     const user = auth.currentUser;
+    console.log("Current user:", user ? user.uid : "none");
     
     if (!user) {
       showToast("Engin notandi innskráð");
@@ -1611,86 +1620,89 @@ async function handleDeleteAccount() {
     }
 
     const userId = user.uid;
-    console.log("Deleting account for user:", userId);
+    const userEmail = user.email;
+    console.log("Deleting account for user:", userId, userEmail);
 
-    // First, try to delete - if it fails due to recent login, ask for password
     let deleteSucceeded = false;
     
+    // Try to delete Firestore profile
     try {
-      // Try to delete user profile from Firestore
       console.log("Deleting Firestore profile...");
       await window.firebaseFirestore.deleteUserProfile(userId);
-      console.log("Firestore profile deleted");
+      console.log("✓ Firestore profile deleted");
     } catch (firestoreError) {
-      console.warn("Firestore delete failed:", firestoreError.message);
+      console.warn("✗ Firestore delete failed:", firestoreError);
+      // Continue with auth deletion even if Firestore fails
     }
     
+    // Try to delete from Firebase Auth
     try {
-      // Try to delete from Firebase Auth
       console.log("Attempting Firebase Auth deletion...");
       await user.delete();
       deleteSucceeded = true;
-      console.log("Firebase Auth account deleted successfully");
+      console.log("✓ Firebase Auth account deleted successfully");
     } catch (authError) {
-      console.error("Auth deletion error:", authError.code, authError.message);
+      console.error("✗ Auth deletion error:", authError.code, authError.message);
       
       if (authError.code === "auth/requires-recent-login") {
-        console.log("Re-authentication required, prompting for password...");
-        // Need to re-authenticate - prompt for password
-        const password = prompt("Sláðu inn lykilorðið þitt til að staðfesta eyðingu aðgangs:");
+        console.log("Re-authentication required");
+        showToast("Þú verður að skrá þig inn aftur");
         
+        const password = prompt("Sláðu inn lykilorðið þitt:");
         if (!password) {
           showToast("Eyðingu aðgangs aflýst");
+          console.log("User cancelled password entry");
           return;
         }
         
         try {
-          // Re-authenticate the user
-          console.log("Re-authenticating user...");
-          const credential = authSdk.EmailAuthProvider.credential(user.email, password);
+          console.log("Re-authenticating with email:", userEmail);
+          const credential = authSdk.EmailAuthProvider.credential(userEmail, password);
           await user.reauthenticateWithCredential(credential);
-          console.log("Re-authentication successful, retrying deletion...");
+          console.log("✓ Re-authentication successful");
           
-          // Now try deletion again
+          console.log("Retrying Firebase deletion...");
           await user.delete();
           deleteSucceeded = true;
-          console.log("Firebase Auth account deleted after re-auth");
+          console.log("✓ Firebase Auth account deleted after re-auth");
         } catch (reauthError) {
-          console.error("Re-authentication failed:", reauthError.code, reauthError.message);
+          console.error("✗ Re-authentication failed:", reauthError.code, reauthError.message);
           if (reauthError.code === "auth/wrong-password") {
             showToast("Rangt lykilorð");
-          } else if (reauthError.code === "auth/user-mismatch") {
-            showToast("Notandaójafnvægi");
           } else {
-            showToast("Staðfesting misheppnuð: " + reauthError.message);
+            showToast("Villa: " + reauthError.message);
           }
           return;
         }
       } else {
-        showToast("Villa við eyðingu: " + authError.message);
+        showToast("Villa: " + authError.message);
+        console.error("Cannot continue without solving:", authError.code);
         return;
       }
     }
     
     if (deleteSucceeded) {
-      showToast("Aðgangur og öll gögn eytt");
-      console.log("Account and all data deleted successfully, redirecting...");
+      console.log("=== Account deletion successful ===");
+      showToast("Aðgangur eytt!");
       
-      // Sign out (this may fail since user is deleted, but try anyway)
       try {
         await authSdk.signOut(auth);
+        console.log("Signed out");
       } catch (e) {
-        console.log("Sign out after deletion:", e.message);
+        console.log("Sign out error (expected after deletion):", e.message);
       }
       
-      // Redirect to login
       setTimeout(() => {
+        console.log("Redirecting to login...");
         window.location.href = "app.html?view=login";
       }, 1500);
+    } else {
+      console.error("=== Account deletion FAILED ===");
+      showToast("Eyðingu misheppnuð");
     }
   } catch (error) {
-    console.error("Unexpected error during account deletion:", error);
-    showToast("Óvænt villa: " + (error.message || error));
+    console.error("=== Unexpected error ===", error);
+    showToast("Villa: " + (error.message || error));
   }
 }
 
