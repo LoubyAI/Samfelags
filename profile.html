@@ -266,7 +266,7 @@
           </summary>
           <div class="dropdown-menu">
             <a href="profile.html">Prófíll</a>
-            <a href="app.html?view=login" data-action="sign-out">Skrá út</a>
+            <a href="#" data-action="sign-out">Skrá út</a>
           </div>
         </details>
       </header>
@@ -313,35 +313,13 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
-  <script src="app.js?v=25"></script>
+  <script src="page-utils.js?v=1"></script>
   <script>
     // Load profile content
     (async () => {
       try {
-        console.log("profile.html: Loading profile...");
-        
-        // Get auth and wait for it to initialize
-        const { auth, authSdk } = await getFirebaseAuthClient();
-        
-        if (!auth.currentUser) {
-          console.log("profile.html: No user, waiting for auth state...");
-          await new Promise((resolve) => {
-            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
-              unsubscribe();
-              resolve(user);
-            });
-            setTimeout(() => {
-              unsubscribe();
-              resolve(null);
-            }, 2000);
-          });
-        }
-        
-        if (!auth.currentUser) {
-          console.log("profile.html: User not authenticated, redirecting to login");
-          window.location.href = "index.html";
-          return;
-        }
+        const auth = await checkAuthAndWait("profile.html");
+        if (!auth) return;
         
         console.log("profile.html: User authenticated, loading profile...");
         
@@ -380,6 +358,8 @@
               <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
             </div>`;
         }
+        
+        setupPageDefaults("profile.html");
       } catch (error) {
         console.error("profile.html: Error loading profile:", error);
         document.getElementById("profile-content").innerHTML = `<p>Villa við hleðslu prófíls: ${error.message}</p>`;
