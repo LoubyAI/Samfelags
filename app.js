@@ -1722,7 +1722,7 @@ async function handleDeleteAccount() {
       
       setTimeout(() => {
         console.log("Redirecting to login...");
-        redirectTo("app.html?view=login";
+        redirectTo("app.html?view=login");
       }, 1500);
     }
   } catch (error) {
@@ -1747,7 +1747,7 @@ async function handleDeleteAccount() {
       
       setTimeout(() => {
         console.log("Redirecting to login...");
-        redirectTo("app.html?view=login";
+        redirectTo("app.html?view=login");
       }, 1500);
     } else {
       console.error("=== Account deletion FAILED ===");
