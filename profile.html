@@ -313,6 +313,78 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
-  <script src="profile-page.js?v=2"></script>
+  <script src="app.js?v=25"></script>
+  <script>
+    // Load profile content
+    (async () => {
+      try {
+        console.log("profile.html: Loading profile...");
+        
+        // Get auth and wait for it to initialize
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        
+        if (!auth.currentUser) {
+          console.log("profile.html: No user, waiting for auth state...");
+          await new Promise((resolve) => {
+            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+              unsubscribe();
+              resolve(user);
+            });
+            setTimeout(() => {
+              unsubscribe();
+              resolve(null);
+            }, 2000);
+          });
+        }
+        
+        if (!auth.currentUser) {
+          console.log("profile.html: User not authenticated, redirecting to login");
+          window.location.href = "index.html";
+          return;
+        }
+        
+        console.log("profile.html: User authenticated, loading profile...");
+        
+        // Load profile data
+        const profileData = await window.firebaseFirestore.getUserProfile(auth.currentUser.uid);
+        
+        const contentElement = document.getElementById("profile-content");
+        if (!profileData) {
+          contentElement.innerHTML = `
+            <div class="profile-welcome">
+              <img src="img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png" alt="Endalaus">
+              <h1>Endalaus</h1>
+              <p>Byrjaðu að fylla prófílinn!</p>
+              <button class="button button-primary" type="button">Byrjaðu</button>
+            </div>`;
+        } else {
+          const displayName = profileData.displayName || "Endalaus";
+          const photoUrl = profileData.photoPrivateUrl || "img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png";
+          const bio = profileData.bio || "";
+          const interests = profileData.interests || [];
+          
+          contentElement.innerHTML = `
+            <div class="profile-header">
+              <img src="${photoUrl}" alt="${displayName}" class="profile-photo">
+              <h2>${displayName}</h2>
+              <p class="nickname">${profileData.nickname || displayName}</p>
+              <p class="profile-age">${profileData.age ? profileData.age + ' ára' : ''}</p>
+            </div>
+            <div class="profile-info">
+              <div class="profile-bio">${bio}</div>
+              ${interests.length > 0 ? `<p><strong>Áhugamál:</strong> ${interests.join(", ")}</p>` : ""}
+            </div>
+            <div class="settings-section">
+              <h3>Aðgangur</h3>
+              <button class="delete-account-btn" data-action="delete-account">Eyða aðgangi</button>
+              <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
+            </div>`;
+        }
+      } catch (error) {
+        console.error("profile.html: Error loading profile:", error);
+        document.getElementById("profile-content").innerHTML = `<p>Villa við hleðslu prófíls: ${error.message}</p>`;
+      }
+    })();
+  </script>
 </body>
 </html>
