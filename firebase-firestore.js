@@ -9,7 +9,15 @@ async function getFirebaseAuthClient() {
   const appSdk = await import(`https://www.gstatic.com/firebasejs/${firestoreVersion}/firebase-app.js`);
   const authSdk = await import(`https://www.gstatic.com/firebasejs/${firestoreVersion}/firebase-auth.js`);
   
-  const app = appSdk.initializeApp(window.firebaseConfig);
+  // Use getApp() to get the existing app, don't create a new one
+  let app;
+  try {
+    app = appSdk.getApp();
+  } catch (error) {
+    // App doesn't exist yet, initialize it
+    app = appSdk.initializeApp(window.firebaseConfig);
+  }
+  
   const auth = authSdk.getAuth(app);
   auth.languageCode = "is";
   

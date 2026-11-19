@@ -740,6 +740,9 @@ async function renderLogin() {
 }
 
 const view = new URLSearchParams(window.location.search).get("view") || "home";
+console.log("===== APP LOADING =====");
+console.log("Current view:", view);
+console.log("Current URL:", window.location.href);
 
 // If login view is requested, redirect to index.html instead
 if (view === "login") {
@@ -748,23 +751,50 @@ if (view === "login") {
 
 // Initialize app - wrap in async IIFE to handle async auth checks
 (async () => {
+  console.log("===== ASYNC INIT START =====");
   // Check if user needs to be redirected to login (unless already on a setup view)
   const setupViews = ["login", "profile-setup", "photo-policy"];
   if (!setupViews.includes(view)) {
+    console.log("View is NOT a setup view, checking auth...");
     // For app views (home, news, profile, etc), check if user is authenticated
     try {
-      const { auth } = await getFirebaseAuthClient();
+      console.log("Getting Firebase auth client...");
+      const { auth, authSdk } = await getFirebaseAuthClient();
+      console.log("Auth client retrieved. currentUser:", auth.currentUser?.email);
+      
+      // Wait for auth state to initialize if currentUser is null
+      if (!auth.currentUser) {
+        console.log("currentUser is null, waiting for auth state to initialize...");
+        const resolvedUser = await new Promise((resolve) => {
+          const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+            console.log("onAuthStateChanged fired, user:", user?.email);
+            unsubscribe();
+            resolve(user);
+          });
+          // Timeout after 2 seconds
+          setTimeout(() => {
+            console.log("Auth state wait timeout");
+            unsubscribe();
+            resolve(null);
+          }, 2000);
+        });
+        console.log("After waiting, auth.currentUser:", auth.currentUser?.email);
+      }
+      
       if (!auth.currentUser) {
         // User is not logged in, redirect to index.html
-        console.log("User not authenticated, redirecting to login");
+        console.log("USER NOT AUTHENTICATED - Redirecting to login");
         redirectTo("index.html");
         return;
       }
+      console.log("User authenticated:", auth.currentUser.email);
     } catch (error) {
       console.error("Error checking auth status:", error);
       redirectTo("index.html");
       return;
     }
+  } else {
+    console.log("View IS a setup view, skipping auth check");
   }
 
   const current = pageInfo[view] ? view : "home";
