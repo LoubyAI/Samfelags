@@ -872,14 +872,6 @@ document.querySelectorAll(".side-nav [data-view]").forEach((link) => {
   }
 });
 
-const themeToggle = document.getElementById("theme-toggle");
-themeToggle.checked = current !== "login" && localStorage.getItem("darkMode") === "on";
-document.body.classList.toggle("dark-mode", themeToggle.checked);
-themeToggle.addEventListener("change", () => {
-  document.body.classList.toggle("dark-mode", themeToggle.checked);
-  localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
-});
-
 const screen = document.getElementById("screen");
 const notificationButton = document.querySelector(".notification-button");
 const notificationDropdown = document.getElementById("notifications-dropdown");
