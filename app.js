@@ -1601,9 +1601,14 @@ async function handleDeleteAccount() {
     await import("./firebase-auth.js?v=2");
     await import("./firebase-firestore.js?v=1");
     
-    // Get auth client through the exposed method
+    // Get auth client
     const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
-    const user = authSdk.currentUser;
+    
+    // Get current user - try both methods to be safe
+    let user = auth.currentUser;
+    if (!user && authSdk.currentUser) {
+      user = authSdk.currentUser;
+    }
     
     if (!user) {
       showToast("Engin notandi innskráð");
@@ -1612,21 +1617,31 @@ async function handleDeleteAccount() {
 
     showToast("Eyða aðgangi...");
 
-    // Delete user profile from Firestore
-    await window.firebaseFirestore.deleteUserProfile(user.uid);
+    try {
+      // Delete user profile from Firestore
+      await window.firebaseFirestore.deleteUserProfile(user.uid);
+    } catch (firestoreError) {
+      console.warn("Firestore delete failed (may not exist):", firestoreError);
+      // Continue with auth deletion even if Firestore fails
+    }
     
-    // Delete user from Firebase Auth
-    await user.delete();
+    // Delete user from Firebase Auth - use the method that works
+    await authSdk.deleteUser(user);
     
     showToast("Aðgangur eytt");
-    window.location.replace("app.html?view=login");
+    // Force a hard redirect
+    setTimeout(() => {
+      window.location.href = "app.html?view=login";
+    }, 500);
   } catch (error) {
     console.error("Failed to delete account", error);
     if (error.code === "auth/requires-recent-login") {
       showToast("Þú verður að skrá þig inn aftur til að eyða aðgangnum");
-      window.location.replace("app.html?view=login");
+      setTimeout(() => {
+        window.location.href = "app.html?view=login";
+      }, 500);
     } else {
-      showToast("Ekki tókst að eyða aðgangnum: " + error.message);
+      showToast("Ekki tókst að eyða aðgangnum: " + (error.message || error));
     }
   }
 }
