@@ -6,28 +6,23 @@ function setupPageDefaults(pageName) {
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {
     const isDarkMode = localStorage.getItem("darkMode") === "on";
-    // Only update toggle state if it doesn't match current state
-    if (themeToggle.checked !== isDarkMode) {
-      themeToggle.checked = isDarkMode;
-    }
-    // Ensure body classes match localStorage (head script already did this, but verify)
-    if (isDarkMode) {
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
-    }
+    
+    // Set checked state directly without triggering change event
+    themeToggle.checked = isDarkMode;
+    
     console.log(`${pageName}: Initial dark mode:`, isDarkMode);
     
-    // Remove any existing listener (if re-added on page reload in SPA)
-    const newToggle = themeToggle.cloneNode(true);
-    themeToggle.parentNode.replaceChild(newToggle, themeToggle);
-    
-    newToggle.addEventListener("change", () => {
-      const isNowDark = newToggle.checked;
-      document.body.classList.toggle("dark-mode", isNowDark);
-      localStorage.setItem("darkMode", isNowDark ? "on" : "off");
-      console.log(`${pageName}: Dark mode toggled to:`, isNowDark);
-    });
+    // Only attach listener if not already attached (store flag on element)
+    if (!themeToggle._darkModeListenerAttached) {
+      themeToggle._darkModeListenerAttached = true;
+      
+      themeToggle.addEventListener("change", (event) => {
+        const isNowDark = event.target.checked;
+        document.body.classList.toggle("dark-mode", isNowDark);
+        localStorage.setItem("darkMode", isNowDark ? "on" : "off");
+        console.log(`${pageName}: Dark mode toggled to:`, isNowDark);
+      });
+    }
   } else {
     console.warn(`${pageName}: Theme toggle element not found`);
   }
