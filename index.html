@@ -25,8 +25,8 @@
       </section>
       <section class="login-panel">
         <div class="login-form-card">
-          <h2 data-auth-title>Velkomin aftur!</h2>
-          <p class="login-subtitle" data-auth-subtitle>Skráðu þig inn til að halda áfram.</p>
+          <h2>Velkomin aftur!</h2>
+          <p class="login-subtitle">Skráðu þig inn til að halda áfram.</p>
           <form class="login-form" data-form="login">
             <label for="login-email">Netfang</label>
             <input id="login-email" name="email" type="email" autocomplete="email" placeholder="Sláðu inn netfangið þitt" required>
@@ -34,11 +34,8 @@
             <label for="login-password">Lykilorð</label>
             <input id="login-password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="Sláðu inn lykilorðið þitt" required>
             
-            <label for="login-password-confirm" data-auth-signup hidden>Staðfestu lykilorð</label>
-            <input id="login-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Sláðu inn lykilorðið aftur" data-auth-signup hidden>
-            
-            <button class="login-forgot" type="button" data-action="forgot-password" data-auth-login>Gleymt lykilorði?</button>
-            <button class="button button-primary login-submit" type="submit" data-auth-login-text>Skrá inn</button>
+            <button class="login-forgot" type="button" data-action="forgot-password">Gleymt lykilorði?</button>
+            <button class="button button-primary login-submit" type="submit">Skrá inn</button>
           </form>
           
           <p class="auth-message" data-auth-message role="alert" aria-live="assertive" hidden></p>
@@ -56,8 +53,8 @@
           </button>
           
           <p class="login-signup">
-            <span data-auth-toggle-prompt>Ný í New Friends?</span>
-            <button type="button" data-action="toggle-auth-mode" data-auth-toggle-button>Búðu til aðgang</button>
+            <span>Ertu ný í New Friends?</span>
+            <a href="signup.html" class="signup-link">Búðu til aðgang</a>
           </p>
         </div>
       </section>
@@ -70,29 +67,23 @@
   <script src="firebase-config.js"></script>
   <script src="firebase-auth.js"></script>
   <script>
-    // Helper to redirect while respecting current environment (file:// or https://)
     function redirectTo(path) {
       const currentUrl = window.location.href;
       let targetUrl;
       
-      // If we're on a file:// URL, build the full file path
       if (currentUrl.startsWith('file://')) {
         const baseDir = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
         targetUrl = baseDir + path;
       } else {
-        // On http(s), use relative path (will stay on same domain)
         targetUrl = path;
       }
       
       window.location.href = targetUrl;
     }
 
-    // Handle login form
     const loginForm = document.querySelector('[data-form="login"]');
-    const signupForm = document.querySelector('[data-form="signup"]');
     const authMessage = document.querySelector('[data-auth-message]');
     const googleButton = document.querySelector('[data-action="google-login"]');
-    const toggleButton = document.querySelector('[data-action="toggle-auth-mode"]');
     const forgotButton = document.querySelector('[data-action="forgot-password"]');
 
     function showAuthMessage(message) {
@@ -102,47 +93,6 @@
 
     function hideAuthMessage() {
       authMessage.hidden = true;
-    }
-
-    if (toggleButton) {
-      toggleButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        const isCurrentlyLogin = loginForm.dataset.form === 'login';
-        loginForm.dataset.form = isCurrentlyLogin ? 'signup' : 'login';
-        
-        // Show/hide signup-only fields
-        document.querySelectorAll('[data-auth-signup]').forEach(el => {
-          el.hidden = !isCurrentlyLogin;
-          if (el.matches('input')) el.required = isCurrentlyLogin;
-        });
-        
-        // Show/hide login-only elements
-        document.querySelectorAll('[data-auth-login]').forEach(el => {
-          el.hidden = !isCurrentlyLogin;
-        });
-        
-        // Update title and subtitle
-        document.querySelector('[data-auth-title]').textContent = isCurrentlyLogin ? 'Búðu til aðgang' : 'Velkomin aftur!';
-        document.querySelector('[data-auth-subtitle]').textContent = isCurrentlyLogin ? 'Sláðu inn netfangið þitt og lykilorð' : 'Skráðu þig inn til að halda áfram.';
-        
-        // Update toggle button text and prompt
-        const togglePrompt = document.querySelector('[data-auth-toggle-prompt]');
-        if (isCurrentlyLogin) {
-          togglePrompt.textContent = 'Ertu með aðgang?';
-          toggleButton.textContent = 'Skrá inn';
-        } else {
-          togglePrompt.textContent = 'Ný í New Friends?';
-          toggleButton.textContent = 'Búðu til aðgang';
-        }
-        
-        // Update submit button text
-        const submitButton = document.querySelector('[data-auth-login-text]');
-        if (submitButton) {
-          submitButton.textContent = isCurrentlyLogin ? 'Búðu til aðgang' : 'Skrá inn';
-        }
-        
-        hideAuthMessage();
-      });
     }
 
     if (googleButton) {
@@ -177,23 +127,18 @@
       loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         hideAuthMessage();
-        const isSignup = loginForm.dataset.form === 'signup';
         const email = loginForm.querySelector('[name="email"]').value;
         const password = loginForm.querySelector('[name="password"]').value;
 
         try {
-          if (isSignup) {
-            await window.firebaseAuth.createAccount(email, password);
-          } else {
-            await window.firebaseAuth.signInWithEmail(email, password);
-          }
+          await window.firebaseAuth.signInWithEmail(email, password);
           showAuthMessage('Tekið! Endalaust...');
           setTimeout(() => {
-            redirectTo(isSignup ? 'profile-setup1.html' : 'app.html?view=home');
+            redirectTo('app.html?view=home');
           }, 500);
         } catch (error) {
           console.error('Auth error:', error);
-          showAuthMessage(error.message || (isSignup ? 'Ekki tókst að búa til aðgang' : 'Ekki tókst að skrá inn'));
+          showAuthMessage(error.message || 'Ekki tókst að skrá inn');
         }
       });
     }
