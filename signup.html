@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Búðu til aðgang - New Friends</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body class="login-view">
+  <section class="login-page" aria-label="Búa til aðgang">
+    <header class="login-header">
+      <div class="login-brand">
+        <span class="login-brand-name">New Friends</span>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e5518b'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E" alt="">
+        <span class="login-brand-tagline">Connect · Meet · Build Friendships</span>
+      </div>
+    </header>
+    <div class="login-layout">
+      <section class="login-welcome">
+        <div class="login-intro">
+          <h1>Ný vinátta byrjar hér</h1>
+          <p>Kynnstu konum, skipuleggðu hittinga og taktu þátt í skemmtilegum viðburðum.</p>
+        </div>
+        <img class="login-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300' fill='%23f0f0f0'%3E%3Crect width='400' height='300'/%3E%3C/svg%3E" alt="Vinahópur nýtur samveru">
+      </section>
+      <section class="login-panel">
+        <div class="login-form-card">
+          <h2>Búðu til aðgang</h2>
+          <p class="login-subtitle">Sláðu inn netfangið þitt og lykilorð</p>
+          <form class="login-form" data-form="signup">
+            <label for="signup-email">Netfang</label>
+            <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="Sláðu inn netfangið þitt" required>
+            
+            <label for="signup-password">Lykilorð</label>
+            <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="6" placeholder="Sláðu inn lykilorðið þitt" required>
+            
+            <label for="signup-password-confirm">Staðfestu lykilorð</label>
+            <input id="signup-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Sláðu inn lykilorðið aftur" required>
+            
+            <button class="button button-primary login-submit" type="submit">Búðu til aðgang</button>
+          </form>
+          
+          <p class="auth-message" data-auth-message role="alert" aria-live="assertive" hidden></p>
+          
+          <div class="login-divider"><span>eða</span></div>
+          
+          <button class="login-google" type="button" data-action="google-login">
+            <svg class="login-google-icon" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.27 5.47-4.79 7.16l7.73 6c4.51-4.17 7.1-10.32 7.1-17.63z"/>
+              <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.77-4.59l-7.98-6.19A23.93 23.93 0 0 0 0 24c0 3.86.92 7.5 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.82l-7.73-6c-2.14 1.43-4.88 2.27-8.18 2.27-6.26 0-11.57-4.22-13.47-9.9l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span>Halda áfram með Google</span>
+          </button>
+          
+          <p class="login-signup">
+            <span>Ertu með aðgang?</span>
+            <a href="index.html" class="signup-link">Skrá inn</a>
+          </p>
+        </div>
+      </section>
+    </div>
+    <footer class="login-footer">
+      <p>© 2026 New Friends</p>
+    </footer>
+  </section>
+  
+  <script src="firebase-config.js"></script>
+  <script src="firebase-auth.js"></script>
+  <script>
+    function redirectTo(path) {
+      const currentUrl = window.location.href;
+      let targetUrl;
+      
+      if (currentUrl.startsWith('file://')) {
+        const baseDir = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+        targetUrl = baseDir + path;
+      } else {
+        targetUrl = path;
+      }
+      
+      window.location.href = targetUrl;
+    }
+
+    const signupForm = document.querySelector('[data-form="signup"]');
+    const authMessage = document.querySelector('[data-auth-message]');
+    const googleButton = document.querySelector('[data-action="google-login"]');
+
+    function showAuthMessage(message) {
+      authMessage.textContent = message;
+      authMessage.hidden = false;
+    }
+
+    function hideAuthMessage() {
+      authMessage.hidden = true;
+    }
+
+    if (googleButton) {
+      googleButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        hideAuthMessage();
+        googleButton.disabled = true;
+        try {
+          const result = await window.firebaseAuth.signInWithGoogle();
+          const user = result.user;
+          showAuthMessage('Tekið! Endalaust...');
+          setTimeout(() => {
+            redirectTo('profile-setup1.html');
+          }, 500);
+        } catch (error) {
+          console.error('Google sign-in failed:', error);
+          if (error.code === 'auth/popup-closed-by-user') {
+            showAuthMessage('Innskráningu var hætt við');
+          } else if (error.code === 'auth/unauthorized-domain') {
+            showAuthMessage('Þetta lén þarf að vera heimilað í Firebase');
+          } else if (error.code === 'auth/operation-not-allowed') {
+            showAuthMessage('Virkjaðu Google-innskráningu í Firebase');
+          } else {
+            showAuthMessage('Ekki tókst að búa til aðgang með Google');
+          }
+          googleButton.disabled = false;
+        }
+      });
+    }
+
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideAuthMessage();
+        const email = signupForm.querySelector('[name="email"]').value;
+        const password = signupForm.querySelector('[name="password"]').value;
+        const passwordConfirm = signupForm.querySelector('[name="passwordConfirm"]').value;
+
+        if (password !== passwordConfirm) {
+          showAuthMessage('Lykilorðin passa ekki saman');
+          return;
+        }
+
+        try {
+          await window.firebaseAuth.createAccount(email, password);
+          showAuthMessage('Tekið! Endalaust...');
+          setTimeout(() => {
+            redirectTo('profile-setup1.html');
+          }, 500);
+        } catch (error) {
+          console.error('Auth error:', error);
+          showAuthMessage(error.message || 'Ekki tókst að búa til aðgang');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

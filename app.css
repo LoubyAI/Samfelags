@@ -125,7 +125,7 @@ h3,
 
 .login-page {
   display: grid;
-  grid-template-rows: clamp(64px, 8vh, 80px) minmax(0, 1fr) 44px;
+  grid-template-rows: clamp(64px, 8vh, 80px) 1fr 44px;
   place-items: stretch;
   min-height: 100vh;
   padding: 0 clamp(16px, 3vw, 40px);
@@ -145,7 +145,8 @@ h3,
   align-items: stretch;
   gap: 0;
   width: min(100%, 1440px);
-  min-height: clamp(520px, 78vh, 760px);
+  min-height: auto;
+  max-height: none;
   margin: 0 auto;
   padding: 0;
   border: 1px solid var(--white);
@@ -198,7 +199,7 @@ h3,
 .login-panel {
   display: grid;
   place-items: center;
-  padding: clamp(24px, 3vw, 48px);
+  padding: clamp(16px, 2vw, 32px);
   text-align: center;
 }
 
@@ -244,7 +245,7 @@ h3,
 .login-form-card {
   display: grid;
   justify-items: center;
-  gap: 15px;
+  gap: 10px;
   width: min(100%, 420px);
   line-height: 1.6;
 }
@@ -388,6 +389,11 @@ h3,
   background: transparent;
   color: var(--pink);
   cursor: pointer;
+  font-weight: 700;
+}
+
+.signup-link {
+  color: var(--pink);
   font-weight: 700;
 }
 
