@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Viðburðir &amp; dagatal - New Friends</title>
+  <link rel="stylesheet" href="app.css?v=39">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Aðalvalmynd">
+      <a class="brand" href="home.html" aria-label="New Friends heim">
+        <span>New Friends</span>
+        <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="">
+      </a>
+
+      <nav class="side-nav">
+        <a href="home.html" data-view="home">
+          <img src="img/figma/8283c379-bc9c-48f5-9ef1-003d6c9de541.svg" alt="">
+          <span>Heim</span>
+        </a>
+        <a href="news.html" data-view="news">
+          <img src="img/figma/ce1e3756-44ea-48cd-8856-83b3ab98779e.svg" alt="">
+          <span>Hvað er að frétta?</span>
+        </a>
+        <a href="meetingchat.html" data-view="meetings">
+          <img src="img/figma/c94539bf-dd02-4721-8efc-b860d62e3666.svg" alt="">
+          <span>Hittingarspjall</span>
+        </a>
+        <a href="eventcalendar.html" data-view="calendar" class="active">
+          <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
+          <span>Viðburðir &amp; dagatal</span>
+        </a>
+        <a href="chat.html" data-view="messages">
+          <img src="img/figma/b1c194ed-af27-4d13-a13a-3b35bfaf1df1.svg" alt="">
+          <span>Skilaboð</span>
+        </a>
+        <a href="profile.html" data-view="profile">
+          <img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt="">
+          <span>Prófíll</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <label class="theme-switch">
+          <span class="theme-name">
+            <img src="img/figma/35461c58-b2ea-46f8-940b-201b6aa8e1f1.svg" alt="">
+            Night mode
+          </span>
+          <input id="theme-toggle" type="checkbox" aria-label="Night mode">
+          <span class="switch-track" aria-hidden="true"></span>
+        </label>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="page-heading" id="page-heading">
+          <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
+          <span>Viðburðir &amp; dagatal</span>
+        </div>
+        <label class="global-search">
+          <img src="img/figma/9a437b7b-4188-42a7-bb23-12738529b77e.svg" alt="">
+          <input id="global-search" type="search" placeholder="Leita..." aria-label="Leita">
+        </label>
+        <div class="notification-control">
+          <button class="icon-button notification-button" type="button" aria-label="Tilkynningar" aria-expanded="false" aria-controls="notifications-dropdown" data-action="notifications">
+            <img src="img/figma/29dfd07d-c609-4ff3-93e4-71e7708d5487.svg" alt="">
+            <span class="notification-count" aria-hidden="true">4</span>
+          </button>
+          <div class="notifications-dropdown" id="notifications-dropdown" role="region" aria-label="Tilkynningar" hidden></div>
+        </div>
+        <details class="profile-dropdown">
+          <summary aria-label="Opna prófílvalmynd">
+            <img class="top-avatar" src="img/figma/920ad6a3-93ee-456a-99c8-5db2593f3ee1.png" alt="Prófílmynd">
+            <span class="profile-chevron">
+              <img class="chevron-icon" src="img/figma/277a8d39-1495-42f4-b0e0-08e3dfcb2f50.svg" alt="">
+            </span>
+          </summary>
+          <div class="dropdown-menu">
+            <a href="profile.html">Prófíll</a>
+            <a href="app.html?view=login" data-action="sign-out">Skrá út</a>
+          </div>
+        </details>
+      </header>
+
+      <main class="app-main" id="screen" tabindex="-1">
+        <div class="calendar-container">
+          <p style="text-align: center; color: #999; padding: 40px 20px;">Engin viðburðir ennþá</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="firebase-config.js?v=2"></script>
+  <script src="owner-config.js?v=2"></script>
+  <script src="firebase-auth.js?v=2"></script>
+  <script src="firebase-firestore.js?v=2"></script>
+  <script src="firebase-profile.js?v=5"></script>
+  <script>
+    // Load calendar page with proper auth state management
+    (async () => {
+      try {
+        console.log("eventcalendar.html: Loading...");
+        
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        
+        if (!auth.currentUser) {
+          console.log("eventcalendar.html: Waiting for auth state...");
+          await new Promise((resolve) => {
+            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
+              unsubscribe();
+              resolve(user);
+            });
+            setTimeout(() => {
+              unsubscribe();
+              resolve(null);
+            }, 2000);
+          });
+        }
+        
+        if (!auth.currentUser) {
+          console.log("eventcalendar.html: User not authenticated, redirecting to login");
+          window.location.href = "index.html";
+          return;
+        }
+        
+        console.log("eventcalendar.html: User authenticated");
+        
+        // Setup theme toggle
+        const themeToggle = document.getElementById("theme-toggle");
+        themeToggle.checked = localStorage.getItem("darkMode") === "on";
+        document.body.classList.toggle("dark-mode", themeToggle.checked);
+        themeToggle.addEventListener("change", () => {
+          document.body.classList.toggle("dark-mode", themeToggle.checked);
+          localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
+        });
+        
+        // Setup sign out
+        document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
+          event.preventDefault();
+          try {
+            const { auth, authSdk } = await getFirebaseAuthClient();
+            await authSdk.signOut(auth);
+            window.location.href = "index.html";
+          } catch (error) {
+            console.error("Sign out error:", error);
+            window.location.href = "index.html";
+          }
+        });
+        
+      } catch (error) {
+        console.error("eventcalendar.html: Error:", error);
+        window.location.href = "index.html";
+      }
+    })();
+  </script>
+</body>
+</html>
