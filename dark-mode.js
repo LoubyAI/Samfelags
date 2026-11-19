@@ -12,13 +12,19 @@
   const isDarkMode = darkModeValue !== "off";
   console.log("[dark-mode.js] localStorage.darkMode:", darkModeValue, "=> isDarkMode:", isDarkMode);
   
-  if (isDarkMode) {
-    console.log("[dark-mode.js] Applying dark-mode class to documentElement and body");
-    // Add classes immediately (before any rendering happens)
-    document.documentElement.classList.add("dark-mode");
-    document.body.classList.add("dark-mode");
+  // Only try to add classes if document.body exists
+  if (document.body) {
+    console.log("[dark-mode.js] document.body exists, applying classes");
+    if (isDarkMode) {
+      console.log("[dark-mode.js] Applying dark-mode class to documentElement and body");
+      // Add classes immediately (before any rendering happens)
+      document.documentElement.classList.add("dark-mode");
+      document.body.classList.add("dark-mode");
+    } else {
+      console.log("[dark-mode.js] NOT applying dark-mode (light mode active)");
+    }
   } else {
-    console.log("[dark-mode.js] NOT applying dark-mode (light mode active)");
+    console.log("[dark-mode.js] document.body does not exist yet, waiting for DOMContentLoaded");
   }
 
   // Setup toggle listener after DOM is ready
