@@ -520,21 +520,35 @@
               return;
             }
             
+            const password = prompt("Sláðu inn lykilorðið þitt til að staðfesta:");
+            if (!password) {
+              return;
+            }
+            
             try {
               const { auth, authSdk } = await getFirebaseAuthClient();
-              const uid = auth.currentUser.uid;
+              const user = auth.currentUser;
+              const uid = user.uid;
+              
+              // Re-authenticate the user with their password
+              const credential = authSdk.EmailAuthProvider.credential(user.email, password);
+              await authSdk.reauthenticateWithCredential(user, credential);
               
               // Delete user profile from Firestore
               await window.firebaseFirestore.deleteUserProfile(uid);
               
               // Delete the user account from Firebase Auth
-              await authSdk.deleteUser(auth.currentUser);
+              await authSdk.deleteUser(user);
               
               alert("Reikningur eyðst");
               window.location.href = "index.html";
             } catch (error) {
               console.error("Error deleting account:", error);
-              alert("Villa við eyðingu reiknings: " + error.message);
+              if (error.code === "auth/wrong-password") {
+                alert("Rangt lykilorð. Ekki var hægt að eyða reikningnum.");
+              } else {
+                alert("Villa við eyðingu reiknings: " + error.message);
+              }
             }
           });
         }
