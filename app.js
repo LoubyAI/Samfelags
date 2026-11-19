@@ -689,14 +689,19 @@ async function renderLogin() {
 
 const view = new URLSearchParams(window.location.search).get("view") || "home";
 
+// If login view is requested, redirect to login.html instead
+if (view === "login") {
+  redirectTo("login.html");
+}
+
 // Check if user needs to be redirected to login (unless already on a setup view)
 const setupViews = ["login", "profile-setup", "photo-policy"];
 if (!setupViews.includes(view)) {
   // For app views (home, news, profile, etc), check if user is authenticated
   const auth = window.firebaseAuth?.getAuthClient();
   if (auth && !auth.currentUser) {
-    // User is not logged in, redirect to login
-    redirectTo("app.html?view=login");
+    // User is not logged in, redirect to login.html
+    redirectTo("login.html");
   }
 }
 
