@@ -456,6 +456,7 @@
       try {
         const { auth, authSdk } = await getFirebaseAuthClient();
         
+        // Wait for auth state to be ready
         if (!auth.currentUser) {
           await new Promise((resolve) => {
             const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
@@ -465,14 +466,17 @@
             setTimeout(() => {
               unsubscribe();
               resolve(null);
-            }, 2000);
+            }, 3000);
           });
         }
         
         if (!auth.currentUser) {
+          console.log("No authenticated user, redirecting to login");
           window.location.href = "index.html";
           return;
         }
+        
+        console.log("Auth state confirmed, user:", auth.currentUser.email);
         
         // Setup UI
         setupDarkMode();
@@ -482,9 +486,11 @@
         
         // Load profile data
         const profileData = await window.firebaseFirestore.getUserProfile(auth.currentUser.uid);
+        console.log("Profile data loaded:", profileData);
         
         const contentElement = document.getElementById("profile-content");
         if (!profileData) {
+          console.log("No profile data - showing welcome message");
           contentElement.innerHTML = `
             <div class="profile-welcome">
               <img src="img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png" alt="Endalaus">
@@ -493,10 +499,13 @@
               <button class="button button-primary" type="button">Byrjaðu</button>
             </div>`;
         } else {
+          console.log("Profile data exists, rendering profile");
           const displayName = profileData.displayName || "Endalaus";
           const photoUrl = profileData.photoPrivateUrl || "img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png";
           const bio = profileData.bio || "";
           const interests = profileData.interests || [];
+          
+          console.log("Photo URL:", photoUrl);
           
           contentElement.innerHTML = `
             <div class="profile-header">
@@ -560,7 +569,52 @@
         }
       } catch (error) {
         console.error("profile.html: Error loading profile:", error);
-        document.getElementById("profile-content").innerHTML = `<p>Villa við hleðslu prófíls: ${error.message}</p>`;
+        // Show delete button even if profile loading fails
+        document.getElementById("profile-content").innerHTML = `
+          <div class="settings-section">
+            <h3>Aðgangur</h3>
+            <button class="delete-account-btn" data-action="delete-account">Eyða aðgangi</button>
+            <span class="delete-account-warning">Þetta getur ekki verið afturkallt</span>
+            <p style="color: #999; font-size: 12px; margin-top: 12px;">Villa við hleðslu prófíls: ${error.message}</p>
+          </div>`;
+        
+        // Setup delete account button even on error
+        const { auth, authSdk } = await getFirebaseAuthClient();
+        document.querySelector('[data-action="delete-account"]')?.addEventListener("click", async () => {
+          if (!confirm("Ertu viss um að þú vilt eyða reikningnum? Þetta getur ekki verið afturkallt.")) {
+            return;
+          }
+          
+          const password = prompt("Sláðu inn lykilorðið þitt til að staðfesta:");
+          if (!password) {
+            return;
+          }
+          
+          try {
+            const user = auth.currentUser;
+            const uid = user.uid;
+            
+            // Re-authenticate the user with their password
+            const credential = authSdk.EmailAuthProvider.credential(user.email, password);
+            await authSdk.reauthenticateWithCredential(user, credential);
+            
+            // Delete user profile from Firestore
+            await window.firebaseFirestore.deleteUserProfile(uid);
+            
+            // Delete the user account from Firebase Auth
+            await authSdk.deleteUser(user);
+            
+            alert("Reikningur eyðst");
+            window.location.href = "index.html";
+          } catch (error) {
+            console.error("Error deleting account:", error);
+            if (error.code === "auth/wrong-password") {
+              alert("Rangt lykilorð. Ekki var hægt að eyða reikningnum.");
+            } else {
+              alert("Villa við eyðingu reiknings: " + error.message);
+            }
+          }
+        });
       }
     })();
   </script>
