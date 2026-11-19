@@ -599,6 +599,7 @@
                     placeholder="Dæmi: Rósa M. Einarsdóttir"
                     oninput="updateFormButtonState()"
                     onblur="validateNameField()"
+                    maxlength="100"
                     required
                   >
                   <small>Þitt alvöru nafn í opinberum skrám (Birtist eingöngu samþykktu vinum og áhugamálahólpum þínum). Millinöfn má skammstafa í einn staf með punkti.</small>
@@ -810,26 +811,25 @@
         errorDiv.style.display = 'block';
         return false;
       }
-      
-      const words = displayName.split(/\s+/).filter(word => word.length > 0);
-      
-      if (words.length < 2) {
-        errorDiv.textContent = '⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð';
+
+      if (displayName.length < 2) {
+        errorDiv.textContent = '⚠️ Nafn verður að hafa að minnsta kosti 2 stafi';
         errorDiv.style.display = 'block';
         return false;
       }
       
-      // Validate each word
+      const words = displayName.split(/\s+/).filter(word => word.length > 0);
+      
+      // Validate each word - must start with capital letter
       const allWordsValid = words.every(word => {
-        // Single letters (even with dot) only allowed if 3+ words total
+        // Single letters must have dot (e.g., "M.")
         if (word.length === 1) {
-          return false; // Single letter must be Capital + dot format
+          return false; // Single letter without dot is not valid
         }
         
-        // If exactly 2 chars and matches Capital + dot pattern
+        // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
         if (word.length === 2 && /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word)) {
-          // Only valid if 3+ words total
-          return words.length >= 3;
+          return true; // Valid abbreviation
         }
         
         // Any word with dots that's not Capital+dot: invalid
@@ -837,21 +837,13 @@
           return false;
         }
         
-        // 2+ characters: must start with capital
-        if (word.length >= 2) {
-          const startsWithCapital = /^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
-          return startsWithCapital;
-        }
-        
-        return false;
+        // Words must start with capital letter
+        const startsWithCapital = /^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
+        return startsWithCapital && word.length >= 2;
       });
       
       if (!allWordsValid) {
-        if (words.length === 2) {
-          errorDiv.textContent = '⚠️ Båðir orðirnir verða að vera 2+ stafir og byrja á stórum staf. Engar punktir leyfðir.';
-        } else {
-          errorDiv.textContent = '⚠️ Hvert orð verður að vera 2+ stafir og byrja á stórum staf. Einn orðiðinn getur verið stóri stafur + punkti (t.d. M.).';
-        }
+        errorDiv.textContent = '⚠️ Hvert orð verður að byrja á stórum staf. Stafröðun má skammstafa sem stóri stafur + punkti (t.d. M.).';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -1091,25 +1083,29 @@
         return;
       }
 
-      const words = displayName.split(/\s+/).filter(word => word.length > 0);
-      if (words.length < 2) {
-        alert('⚠️ Fullt nafn verður að hafa að minnsta kosti tvö orð (t.d. Rósa Einarsdóttir eða Rósa M. Einarsdóttir)');
+      if (displayName.length < 2) {
+        alert('⚠️ Nafn verður að hafa að minnsta kosti 2 stafi');
         document.getElementById('displayName').focus();
         return;
       }
 
-      // Check if any single letter exists without a dot or is lowercase
+      const words = displayName.split(/\s+/).filter(word => word.length > 0);
+      
+      // Validate each word
       const hasInvalidWord = words.some(word => {
-        if (word.length === 1) return true;
+        if (word.length === 1) return true; // Single letters must be used with dot
         if (word.length === 2) {
           const isValidInitial = /^[A-ZÁÉÍÓÚÝÞÆÖ]\.$/.test(word);
-          return !isValidInitial;
+          if (isValidInitial) return false; // Valid abbreviation
+          // Otherwise check if it starts with capital
+          return !/^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
         }
-        return false;
+        // Words of 3+ characters must start with capital
+        return !/^[A-ZÁÉÍÓÚÝÞÆÖ]/.test(word);
       });
 
       if (hasInvalidWord) {
-        alert('⚠️ Hvert orð verður að vera orðið með 2+ stöfum, eða millinafn með stórum staf og punkti (t.d. M.). Dæmi: Rósa M. Einarsdóttir eða Rósa Einarsdóttir');
+        alert('⚠️ Hvert orð verður að byrja á stórum staf. Stafröðun má skammstafa sem stóri stafur + punkti (t.d. M.). Dæmi: Rósa Einarsdóttir eða Rósa M. Einarsdóttir');
         document.getElementById('displayName').focus();
         return;
       }
