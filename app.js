@@ -1515,8 +1515,8 @@ async function handlePhotoPolicySubmit(form) {
       // Don't throw - we still want to proceed to home
     }
 
-    // Always redirect to home after submission
-    window.location.replace("app.html?view=home");
+    // Always redirect to profile after submission
+    window.location.replace("app.html?view=profile");
   } catch (error) {
     console.error("Photo policy submission failed", error);
     showToast("Ekki tókst að vista myndirnar. Reyndu aftur.");
