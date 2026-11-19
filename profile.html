@@ -6,6 +6,192 @@
   <meta name="theme-color" content="#ffffff">
   <title>Prófíll - New Friends</title>
   <link rel="stylesheet" href="app.css?v=39">
+  <style>
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .profile-panel {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .profile-panel h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .profile-panel nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .profile-panel nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #0f0f0f;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .profile-panel nav a:hover {
+      background: #f8f2f7;
+    }
+
+    .profile-panel nav a img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 4px solid #e5518b;
+    }
+
+    .profile-header h2 {
+      margin: 0 0 4px 0;
+      font-size: 24px;
+    }
+
+    .profile-header .nickname {
+      margin: 0 0 12px 0;
+      color: #e5518b;
+      font-weight: 600;
+    }
+
+    .profile-header .profile-age {
+      margin: 0;
+      color: #4f4f4f;
+      font-size: 14px;
+    }
+
+    .profile-info {
+      text-align: left;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 16px;
+    }
+
+    .profile-info p {
+      margin: 0 0 12px 0;
+      line-height: 1.6;
+    }
+
+    .profile-bio {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f8f2f7;
+      border-radius: 6px;
+    }
+
+    .profile-welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 300px;
+    }
+
+    .profile-welcome img {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+
+    .profile-welcome h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+    }
+
+    .profile-welcome p {
+      margin: 0 0 20px 0;
+      color: #4f4f4f;
+    }
+
+    .settings-section {
+      margin-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 20px;
+    }
+
+    .settings-section h3 {
+      color: #e5518b;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+    }
+
+    .delete-account-btn {
+      background: #e5518b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .delete-account-btn:hover {
+      background: #d1446f;
+    }
+
+    .delete-account-warning {
+      display: block;
+      color: #999;
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+      }
+
+      .profile-panel nav {
+        flex-direction: row;
+        gap: 4px;
+      }
+
+      .profile-panel nav a {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 4px;
+        font-size: 12px;
+      }
+
+      .profile-panel nav a span {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="app-shell">
@@ -85,7 +271,40 @@
         </details>
       </header>
 
-      <main class="app-main" id="screen" tabindex="-1"></main>
+      <main class="app-main" id="screen" tabindex="-1">
+        <div class="profile-layout">
+          <section class="profile-panel">
+            <h2>Prófíllinn minn</h2>
+            <nav aria-label="Prófílvalmynd">
+              <a href="#profile" data-tab="profile">
+                <img src="img/figma/46166371-541f-41e6-b9eb-d2806d455e69.svg" alt="">
+                <span>Prófílupplýsingar</span>
+              </a>
+              <a href="#settings" data-tab="settings">
+                <img src="img/figma/64440be3-91d1-4ff2-ac55-0e2c6ef0270a.svg" alt="">
+                <span>Stillingar</span>
+              </a>
+              <a href="#photos" data-tab="photos">
+                <img src="img/figma/6de23b7c-892e-4dd3-aa88-ffd3c33cacdc.svg" alt="">
+                <span>Myndir</span>
+              </a>
+              <a href="#friends" data-tab="friends">
+                <img src="img/figma/600507bb-4e1d-4c45-976a-c8711ed17fbe.svg" alt="">
+                <span>Tengslabönd</span>
+              </a>
+            </nav>
+          </section>
+
+          <section class="profile-panel" id="profile-content">
+            <!-- Profile content will load here via JavaScript, or show placeholder -->
+            <div class="profile-welcome">
+              <img src="img/figma/5b0192a6-a345-4e38-857a-3b1c99641ecc.png" alt="Endalaus">
+              <h1>Endalaus</h1>
+              <p>Hleð prófílsgögnum...</p>
+            </div>
+          </section>
+        </div>
+      </main>
     </div>
   </div>
 
@@ -94,6 +313,6 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
-  <script src="profile-page.js?v=1"></script>
+  <script src="profile-page.js?v=2"></script>
 </body>
 </html>
