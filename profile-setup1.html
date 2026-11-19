@@ -814,6 +814,13 @@
       
       const words = displayName.split(/\s+/).filter(word => word.length > 0);
       
+      // Must have at least 2 words
+      if (words.length < 2) {
+        errorDiv.textContent = '⚠️ Nafnið verður að hafa að minnsta kosti 2 orð';
+        errorDiv.style.display = 'block';
+        return false;
+      }
+      
       // Validate each word
       const allWordsValid = words.every(word => {
         // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
