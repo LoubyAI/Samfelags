@@ -571,41 +571,7 @@ function renderProfile() {
         <p>Byrjaðu að fylla prófílinn!</p>
         <button class="button button-primary" type="button">${icon(icons.plus, "")}Byrjaðu</button>
       </section>
-    </div>
-    
-    <script>
-      document.querySelectorAll('.profile-panel nav a').forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const hash = new URL(link.href).hash.slice(1);
-          const content = document.getElementById('profile-content');
-          
-          if (hash === 'settings') {
-            content.innerHTML = \`
-              <div style="max-width: 400px;">
-                <h2 style="margin-top: 0;">Stillingar</h2>
-                <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
-                  <h3 style="color: #e5518b; font-size: 14px; font-weight: 600; margin-bottom: 12px;">Aðgangastjórnun</h3>
-                  <button class="button button-primary" type="button" data-action="delete-account" style="background: #e5518b; width: 100%; padding: 12px 24px; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; font-size: 14px;">
-                    Eyða aðgangi
-                  </button>
-                  <small style="display: block; color: #999; font-size: 12px; margin-top: 8px; line-height: 1.4;">
-                    Allt gögn þín verða eytt og ekki mögulegt að endurheimta
-                  </small>
-                </div>
-              </div>
-            \`;
-          } else {
-            content.innerHTML = \`
-              <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Luna A. Jónasdóttir">
-              <h1>Luna A. Jónasdóttir</h1>
-              <p>Byrjaðu að fylla prófílinn!</p>
-              <button class="button button-primary" type="button">\${icon(icons.plus, "")}Byrjaðu</button>
-            \`;
-          }
-        });
-      });
-    </script>`;
+    </div>`;
 }
 
 function renderPhotoPolicy() {
@@ -731,9 +697,45 @@ if (pageHeading) {
 const screenElement = document.getElementById("screen");
 const result = renderers[current]();
 if (result instanceof Promise) {
-  result.then(html => { screenElement.innerHTML = html; }).catch(err => console.error('Render error:', err));
+  result.then(html => { screenElement.innerHTML = html; attachProfileListeners(); }).catch(err => console.error('Render error:', err));
 } else {
   screenElement.innerHTML = result;
+  attachProfileListeners();
+}
+
+function attachProfileListeners() {
+  if (current !== "profile") return;
+  document.querySelectorAll('.profile-panel nav a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const hash = new URL(link.href).hash.slice(1);
+      const content = document.getElementById('profile-content');
+      
+      if (hash === 'settings') {
+        content.innerHTML = `
+          <div style="max-width: 400px;">
+            <h2 style="margin-top: 0;">Stillingar</h2>
+            <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px;">
+              <h3 style="color: #e5518b; font-size: 14px; font-weight: 600; margin-bottom: 12px;">Aðgangastjórnun</h3>
+              <button class="button button-primary" type="button" data-action="delete-account" style="background: #e5518b; width: 100%; padding: 12px 24px; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; font-size: 14px;">
+                Eyða aðgangi
+              </button>
+              <small style="display: block; color: #999; font-size: 12px; margin-top: 8px; line-height: 1.4;">
+                Allt gögn þín verða eytt og ekki mögulegt að endurheimta
+              </small>
+            </div>
+          </div>
+        `;
+      } else {
+        content.innerHTML = `
+          <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Luna A. Jónasdóttir">
+          <h1>Luna A. Jónasdóttir</h1>
+          <p>Byrjaðu að fylla prófílinn!</p>
+          <button class="button button-primary" type="button">${icon(icons.plus, "")}Byrjaðu</button>
+        `;
+      }
+    });
+  });
 }
 
 document.querySelectorAll(".side-nav [data-view]").forEach((link) => {
