@@ -30,6 +30,14 @@
   // Setup toggle listener after DOM is ready
   function setupToggle() {
     console.log("[dark-mode.js] setupToggle called");
+    
+    // Re-apply dark mode classes if document.body didn't exist earlier
+    if (!document.body.classList.contains("dark-mode") && isDarkMode) {
+      console.log("[dark-mode.js] Applying dark-mode class now that DOM is ready");
+      document.documentElement.classList.add("dark-mode");
+      document.body.classList.add("dark-mode");
+    }
+    
     const themeToggle = document.getElementById("theme-toggle");
     console.log("[dark-mode.js] themeToggle element found:", !!themeToggle, themeToggle);
     
