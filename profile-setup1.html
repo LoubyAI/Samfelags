@@ -1,12 +1,12 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="is">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#ffffff">
-  <title>PrÃ³fÃ­luppsetning - New Friends</title>
+  <title>Prófíluppsetning - New Friends</title>
   <link rel="stylesheet" href="app.css?v=41">
-  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="style.css">
   <style>
     /* Profile setup form styles */
     .profile-setup-container {
@@ -332,7 +332,7 @@
     }
 
     .policy-list li:before {
-      content: "â€¢";
+      content: "•";
       position: absolute;
       left: 8px;
       color: #e5518b;
@@ -501,7 +501,7 @@
 </head>
 <body class="profile-setup-view">
   <div class="app-shell">
-    <aside class="sidebar" aria-label="AÃ°alvalmynd">
+    <aside class="sidebar" aria-label="Ağalvalmynd">
       <div class="brand" aria-label="New Friends heim">
         <span>New Friends</span>
         <img src="img/figma/7a078870-1969-4ab2-adbd-8107c25f9c4e.svg" alt="">
@@ -514,7 +514,7 @@
         </a>
         <a href="news.html" data-view="news">
           <img src="img/figma/ce1e3756-44ea-48cd-8856-83b3ab98779e.svg" alt="">
-          <span>HvaÃ° er aÃ° frÃ©tta?</span>
+          <span>Hvağ er ağ frétta?</span>
         </a>
         <a href="meetingchat.html" data-view="meetings">
           <img src="img/figma/c94539bf-dd02-4721-8efc-b860d62e3666.svg" alt="">
@@ -522,15 +522,15 @@
         </a>
         <a href="eventcalendar.html" data-view="calendar">
           <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
-          <span>ViÃ°burÃ°ir &amp; dagatal</span>
+          <span>Viğburğir &amp; dagatal</span>
         </a>
         <a href="chat.html" data-view="messages">
           <img src="img/figma/b1c194ed-af27-4d13-a13a-3b35bfaf1df1.svg" alt="">
-          <span>SkilaboÃ°</span>
+          <span>Skilaboğ</span>
         </a>
         <a href="profile.html" data-view="profile">
           <img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt="">
-          <span>PrÃ³fÃ­ll</span>
+          <span>Prófíll</span>
         </a>
       </nav>
 
@@ -561,15 +561,15 @@
           <div class="notifications-dropdown" id="notifications-dropdown" role="region" aria-label="Tilkynningar" hidden></div>
         </div>
         <details class="profile-dropdown">
-          <summary aria-label="Opna prÃ³fÃ­lvalmynd">
-            <img class="top-avatar" src="img/figma/920ad6a3-93ee-456a-99c8-5db2593f3ee1.png" alt="PrÃ³fÃ­lmynd">
+          <summary aria-label="Opna prófílvalmynd">
+            <img class="top-avatar" src="img/figma/920ad6a3-93ee-456a-99c8-5db2593f3ee1.png" alt="Prófílmynd">
             <span class="profile-chevron">
               <img class="chevron-icon" src="img/figma/277a8d39-1495-42f4-b0e0-08e3dfcb2f50.svg" alt="">
             </span>
           </summary>
           <div class="dropdown-menu">
-            <a href="profile.html">PrÃ³fÃ­ll</a>
-            <a href="#" data-action="sign-out">SkrÃ¡ Ãºt</a>
+            <a href="profile.html">Prófíll</a>
+            <a href="#" data-action="sign-out">Skrá út</a>
           </div>
         </details>
       </header>
@@ -577,7 +577,7 @@
       <main class="app-main" id="screen" tabindex="-1">
         <div class="profile-setup-container">
           <div class="setup-form-wrapper">
-            <div class="setup-step-indicator">SKREF 1 AF 2: PERSÃ“NUUPPLÃSINGAR</div>
+            <div class="setup-step-indicator">SKREF 1 AF 2: PERSÓNUUPPLİSINGAR</div>
 
             <form id="setupForm" data-form="profile-setup">
               <input type="hidden" id="policyAccepted" value="false">
@@ -588,7 +588,7 @@
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
-                  PersÃ³nuupplÃ½singar
+                  Persónuupplısingar
                 </div>
                 
                 <div class="form-group">
@@ -597,32 +597,32 @@
                     type="text" 
                     id="displayName" 
                     name="displayName"
-                    placeholder="DÃ¦mi: RÃ³sa M. EinarsdÃ³ttir"
+                    placeholder="Dæmi: Rósa M. Einarsdóttir"
                     oninput="updateFormButtonState()"
                     onblur="validateNameField()"
                     maxlength="60"
                     required
                   >
-                  <small>Ãitt alvÃ¶ru nafn Ã­ opinberum skrÃ¡m (Birtist eingÃ¶ngu samÃ¾ykktu vinum og Ã¡hugamÃ¡lahÃ³lpum Ã¾Ã­num). MillinÃ¶fn mÃ¡ skammstafa Ã­ einn staf meÃ° punkti.</small>
+                  <small>Şitt alvöru nafn í opinberum skrám (Birtist eingöngu samşykktu vinum og áhugamálahólpum şínum). Millinöfn má skammstafa í einn staf meğ punkti.</small>
                   <div id="nameError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
 
                 <div class="form-group">
-                  <label for="nickname">GÃ¦lunafn (valfrjÃ¡lst)</label>
+                  <label for="nickname">Gælunafn (valfrjálst)</label>
                   <input 
                     type="text" 
                     id="nickname" 
                     name="nickname"
-                    placeholder="DÃ¦mi: RÃ³sa"
+                    placeholder="Dæmi: Rósa"
                     oninput="updateFormButtonState()"
                     onblur="validateNicknameField()"
                   >
-                  <small>Birtist almenningi Ã¡ Ã¾inni prÃ³fÃ­lsÃ­Ã°u.</small>
+                  <small>Birtist almenningi á şinni prófílsíğu.</small>
                   <div id="nicknameError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
 
                 <div class="form-group">
-                  <label for="birthday">FÃ¦Ã°ingardagur *</label>
+                  <label for="birthday">Fæğingardagur *</label>
                   <input 
                     type="text" 
                     id="birthday" 
@@ -633,43 +633,43 @@
                     maxlength="10"
                     required
                   >
-                  <small>Ãinn afmÃ¦lisdagur (Birtist eingÃ¶ngu samÃ¾ykktu vinum og Ã¡hugamÃ¡lahÃ³pum Ã¾Ã­num).</small>
+                  <small>Şinn afmælisdagur (Birtist eingöngu samşykktu vinum og áhugamálahópum şínum).</small>
                   <div id="birthdayError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
 
                 <div class="form-group">
-                  <label for="city">Borg / SveitarfÃ©lag *</label>
+                  <label for="city">Borg / Sveitarfélag *</label>
                   <select 
                     id="city" 
                     name="city"
                     oninput="updateFormButtonState()"
                     onchange="validateCityField()"
                   >
-                    <option value="">-- Veldu borg/sveitarfÃ©lag --</option>
-                    <option value="ReykjavÃ­k">ReykjavÃ­k</option>
+                    <option value="">-- Veldu borg/sveitarfélag --</option>
+                    <option value="Reykjavík">Reykjavík</option>
                     <option value="Akureyri">Akureyri</option>
-                    <option value="HafnarfjÃ¶rÃ°ur">HafnarfjÃ¶rÃ°ur</option>
-                    <option value="KÃ³pavogur">KÃ³pavogur</option>
-                    <option value="MosfellsbÃ¦r">MosfellsbÃ¦r</option>
-                    <option value="GarÃ°abÃ¦r">GarÃ°abÃ¦r</option>
-                    <option value="HveragerÃ°i">HveragerÃ°i</option>
+                    <option value="Hafnarfjörğur">Hafnarfjörğur</option>
+                    <option value="Kópavogur">Kópavogur</option>
+                    <option value="Mosfellsbær">Mosfellsbær</option>
+                    <option value="Garğabær">Garğabær</option>
+                    <option value="Hveragerği">Hveragerği</option>
                     <option value="Borgarnes">Borgarnes</option>
                     <option value="Selfoss">Selfoss</option>
-                    <option value="HvolsvÃ¶llur">HvolsvÃ¶llur</option>
-                    <option value="VÃ­k">VÃ­k</option>
-                    <option value="ÃsafjÃ¶rÃ°ur">ÃsafjÃ¶rÃ°ur</option>
-                    <option value="StykkishÃ³lmur">StykkishÃ³lmur</option>
-                    <option value="HÃºsavÃ­k">HÃºsavÃ­k</option>
-                    <option value="MÃ½vatn">MÃ½vatn</option>
-                    <option value="EgilsstaÃ°ir">EgilsstaÃ°ir</option>
+                    <option value="Hvolsvöllur">Hvolsvöllur</option>
+                    <option value="Vík">Vík</option>
+                    <option value="Ísafjörğur">Ísafjörğur</option>
+                    <option value="Stykkishólmur">Stykkishólmur</option>
+                    <option value="Húsavík">Húsavík</option>
+                    <option value="Mıvatn">Mıvatn</option>
+                    <option value="Egilsstağir">Egilsstağir</option>
                     <option value="Akranes">Akranes</option>
                     <option value="Vestmannaeyjar">Vestmannaeyjar</option>
-                    <option value="DalvÃ­k">DalvÃ­k</option>
-                    <option value="Ã“lafsfjÃ¶rÃ°ur">Ã“lafsfjÃ¶rÃ°ur</option>
-                    <option value="SeyÃ°isfjÃ¶rÃ°ur">SeyÃ°isfjÃ¶rÃ°ur</option>
-                    <option value="HÃ¶fn">HÃ¶fn</option>
+                    <option value="Dalvík">Dalvík</option>
+                    <option value="Ólafsfjörğur">Ólafsfjörğur</option>
+                    <option value="Seyğisfjörğur">Seyğisfjörğur</option>
+                    <option value="Höfn">Höfn</option>
                   </select>
-                  <small>HjÃ¡lpar okkur aÃ° tengja Ã¾ig viÃ° fÃ³lk nÃ¡lÃ¦gt Ã¾Ã©r.</small>
+                  <small>Hjálpar okkur ağ tengja şig viğ fólk nálægt şér.</small>
                   <div id="cityError" style="color: #d63d7a; font-size: 12px; margin-top: 4px; display: none;"></div>
                 </div>
               </div>
@@ -680,7 +680,7 @@
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
                 <div>
-                  <strong>PersÃ³nuvernd:</strong> FÃ¦Ã°ingardagur og nafn Ã¾itt eru geymd Ã¡ okkar tryggÃ°u netÃ¾jÃ³num og notuÃ° eingÃ¶ngu til aÃ° staÃ°festa aldur og auÃ°kenna Ã¾ig. Almenningur getur ekki sÃ©Ã° nÃ¡kvÃ¦man aldur Ã¾inn - aÃ°eins aldursflokk.
+                  <strong>Persónuvernd:</strong> Fæğingardagur og nafn şitt eru geymd á okkar tryggğu netşjónum og notuğ eingöngu til ağ stağfesta aldur og auğkenna şig. Almenningur getur ekki séğ nákvæman aldur şinn - ağeins aldursflokk.
                 </div>
               </div>
 
@@ -692,13 +692,13 @@
                     <line x1="12" y1="11" x2="12" y2="17"></line>
                     <line x1="9" y1="14" x2="15" y2="14"></line>
                   </svg>
-                  SkoÃ°aÃ°u reglur New Friends
+                  Skoğağu reglur New Friends
                 </a>
               </div>
               <div id="policyError" style="color: #d63d7a; font-size: 12px; margin-top: 12px; text-align: center; display: none; padding: 12px; background: rgba(214, 61, 122, 0.1); border: 2px solid #d63d7a; border-radius: 8px; box-shadow: 0 0 12px rgba(214, 61, 122, 0.3);"></div>
 
               <div class="button-group">
-                <button type="button" class="button button-primary" id="continueButton" onclick="proceedToNextStep()" disabled>Halda Ã¡fram â†’</button>
+                <button type="button" class="button button-primary" id="continueButton" onclick="proceedToNextStep()" disabled>Halda áfram ?</button>
               </div>
             </form>
           </div>
@@ -712,31 +712,31 @@
             <h2>Reglur New Friends</h2>
           </div>
           <div class="modal-body">
-            <p class="modal-intro"><strong>ViÃ° treystum Ã¡ Ã¾Ã©r aÃ° vera heiÃ°arleg/ur</strong></p>
+            <p class="modal-intro"><strong>Viğ treystum á şér ağ vera heiğarleg/ur</strong></p>
             
             <div class="policy-section">
-              <h3>Samkomulag um nafn og fÃ¦Ã°ingardag</h3>
-              <p>MeÃ° Ã¾vÃ­ aÃ° setja upp prÃ³fÃ­linn Ã¾inn Ã¡ New Friends samÃ¾ykkir Ã¾Ãº aÃ°:</p>
+              <h3>Samkomulag um nafn og fæğingardag</h3>
+              <p>Meğ şví ağ setja upp prófílinn şinn á New Friends samşykkir şú ağ:</p>
               
               <div class="policy-item">
-                <strong>Nota alvÃ¶ru skrÃ¡Ã° nafn.</strong>
-                <p>Nota Ã¾itt alvÃ¶ru, fullt nafn sem skrÃ¡Ã° er Ã­ opinberum skrÃ¡m. Ãetta hjÃ¡lpar vinum Ã¾Ã­num og Ã¡hugamÃ¡lahÃ³punum Ã¾Ã­num aÃ° vita hver Ã¾Ãº ert og tryggir samfÃ©lag sem byggist Ã¡ trausti.</p>
+                <strong>Nota alvöru skráğ nafn.</strong>
+                <p>Nota şitt alvöru, fullt nafn sem skráğ er í opinberum skrám. Şetta hjálpar vinum şínum og áhugamálahópunum şínum ağ vita hver şú ert og tryggir samfélag sem byggist á trausti.</p>
               </div>
 
               <div class="policy-item">
-                <strong>Nota rÃ©tta fÃ¦Ã°ingardag.</strong>
-                <p>SkrÃ¡ skal rÃ©tta fÃ¦Ã°ingardag, nauÃ°synlegt fyrir Ã¶ryggi og fyrir Ã¾Ã¡ sem vilja skrÃ¡ sig Ã­ Ã¡hugamÃ¡lahÃ³pa sem hafa sambÃ¦rilegan aldursbil. Aldur mun ekki birtast nema samÃ¾ykktu vinum og fyrir Ã¾Ã¡ sem eru skrÃ¡Ã°ir Ã­ sÃ¶mu Ã¡hugamÃ¡lahÃ³pa og Ã¾Ãº.</p>
+                <strong>Nota rétta fæğingardag.</strong>
+                <p>Skrá skal rétta fæğingardag, nauğsynlegt fyrir öryggi og fyrir şá sem vilja skrá sig í áhugamálahópa sem hafa sambærilegan aldursbil. Aldur mun ekki birtast nema samşykktu vinum og fyrir şá sem eru skráğir í sömu áhugamálahópa og şú.</p>
               </div>
             </div>
 
             <div class="policy-section">
-              <h3>AfleiÃ°ingar brota</h3>
-              <p>Ef nafn Ã¾itt eÃ°a fÃ¦Ã°ingardagur fylgja ekki Ã¾essum reglum, verÃ°ur prÃ³fÃ­linn Ã¾inn <strong>eytt</strong>.</p>
+              <h3>Afleiğingar brota</h3>
+              <p>Ef nafn şitt eğa fæğingardagur fylgja ekki şessum reglum, verğur prófílinn şinn <strong>eytt</strong>.</p>
               
               <ul class="policy-list">
-                <li>Notendur geta tilkynnt fÃ¶lsk prÃ³fÃ­l.</li>
-                <li>Tilkynntar prÃ³fÃ­l eru skoÃ°uÃ° af New Friends teyminu.</li>
-                <li>FÃ¶lsk nÃ¶fn eÃ°a aldur leiÃ°a til tafarlauss lokunnar Ã¡ aÃ°gangi.</li>
+                <li>Notendur geta tilkynnt fölsk prófíl.</li>
+                <li>Tilkynntar prófíl eru skoğuğ af New Friends teyminu.</li>
+                <li>Fölsk nöfn eğa aldur leiğa til tafarlauss lokunnar á ağgangi.</li>
               </ul>
             </div>
           </div>
@@ -748,7 +748,7 @@
                 id="policyCheckbox"
                 onchange="updatePolicyButtonState()"
               >
-              <span>Ã‰g samÃ¾ykki aÃ° nota alvÃ¶ru nafn og rÃ©tta fÃ¦Ã°ingardag.</span>
+              <span>Ég samşykki ağ nota alvöru nafn og rétta fæğingardag.</span>
             </label>
             <div class="modal-actions">
               <button 
@@ -765,7 +765,7 @@
                 onclick="acceptPolicyAndClose()"
                 disabled
               >
-                SamÃ¾ykkja
+                Samşykkja
               </button>
             </div>
           </div>
@@ -780,7 +780,7 @@
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
   <script>
-    document.getElementById('page-heading').innerHTML = `<img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt=""><span>PrÃ³fÃ­luppsetning</span>`;
+    document.getElementById('page-heading').innerHTML = `<img src="img/figma/483443d1-1765-449c-b15f-f7f55a144a74.svg" alt=""><span>Prófíluppsetning</span>`;
     
     const themeToggle = document.getElementById("theme-toggle");
     themeToggle.checked = localStorage.getItem("darkMode") === "on";
@@ -808,7 +808,7 @@
       const errorDiv = document.getElementById('nameError');
       
       if (!displayName) {
-        errorDiv.textContent = 'âš ï¸ Fullt nafn er Ã¡skiliÃ°';
+        errorDiv.textContent = '?? Fullt nafn er áskiliğ';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -817,7 +817,7 @@
       
       // Must have at least 2 words
       if (words.length < 2) {
-        errorDiv.textContent = 'âš ï¸ NafniÃ° verÃ°ur aÃ° hafa aÃ° minnsta kosti 2 orÃ°';
+        errorDiv.textContent = '?? Nafniğ verğur ağ hafa ağ minnsta kosti 2 orğ';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -826,7 +826,7 @@
       if (words.length < 3) {
         const hasAbbreviation = words.some(word => /\./.test(word));
         if (hasAbbreviation) {
-          errorDiv.textContent = 'âš ï¸ StafrÃ¶Ã°un (t.d. M.) er aÃ°eins leyfÃ° ef nafniÃ° hefur 3+ orÃ°';
+          errorDiv.textContent = '?? Stafröğun (t.d. M.) er ağeins leyfğ ef nafniğ hefur 3+ orğ';
           errorDiv.style.display = 'block';
           return false;
         }
@@ -835,7 +835,7 @@
       // Validate each word
       const allWordsValid = words.every(word => {
         // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.") - only valid if 3+ words
-        if (word.length === 2 && /^[A-ZÃÃ‰ÃÃ“ÃšÃÃÃ†Ã–]\.$/.test(word)) {
+        if (word.length === 2 && /^[A-ZÁÉÍÓÚİŞÆÖ]\.$/.test(word)) {
           return words.length >= 3; // Only valid for 3+ word names
         }
         
@@ -850,12 +850,12 @@
         }
         
         // Words must start with capital letter
-        const startsWithCapital = /^[A-ZÃÃ‰ÃÃ“ÃšÃÃÃ†Ã–]/.test(word);
+        const startsWithCapital = /^[A-ZÁÉÍÓÚİŞÆÖ]/.test(word);
         return startsWithCapital;
       });
       
       if (!allWordsValid) {
-        errorDiv.textContent = 'âš ï¸ Hvert orÃ° verÃ°ur aÃ° hafa aÃ° minnsta kosti 2 stafi og byrja Ã¡ stÃ³rum staf. StafrÃ¶Ã°un mÃ¡ skammstafa sem stÃ³ri stafur + punkti (t.d. M.) - aÃ°eins fyrir nÃ¶fn meÃ° 3+ orÃ°.';
+        errorDiv.textContent = '?? Hvert orğ verğur ağ hafa ağ minnsta kosti 2 stafi og byrja á stórum staf. Stafröğun má skammstafa sem stóri stafur + punkti (t.d. M.) - ağeins fyrir nöfn meğ 3+ orğ.';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -869,7 +869,7 @@
       const errorDiv = document.getElementById('birthdayError');
       
       if (!birthday) {
-        errorDiv.textContent = 'âš ï¸ FÃ¦Ã°ingardagur er Ã¡skilinn';
+        errorDiv.textContent = '?? Fæğingardagur er áskilinn';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -878,7 +878,7 @@
       const match = birthday.match(dateRegex);
       
       if (!match) {
-        errorDiv.textContent = 'âš ï¸ Ã“gildar dagsetning. SlÃ¡Ã°u inn Ã¡ sniÃ°inu DD.MM.YYYY';
+        errorDiv.textContent = '?? Ógildar dagsetning. Sláğu inn á sniğinu DD.MM.YYYY';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -896,7 +896,7 @@
       }
       
       if (age < 15) {
-        errorDiv.textContent = 'âš ï¸ ÃÃº verÃ°ur aÃ° vera aÃ° minnsta kosti 15 Ã¡ra gÃ¶mul/ur';
+        errorDiv.textContent = '?? Şú verğur ağ vera ağ minnsta kosti 15 ára gömul/ur';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -915,7 +915,7 @@
       }
       
       if (containsBadWords(nickname)) {
-        errorDiv.textContent = 'âš ï¸ GÃ¦lunafniÃ° inniheldur Ã³heimil orÃ°';
+        errorDiv.textContent = '?? Gælunafniğ inniheldur óheimil orğ';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -929,7 +929,7 @@
       const errorDiv = document.getElementById('cityError');
       
       if (!city) {
-        errorDiv.textContent = 'âš ï¸ Borg/sveitarfÃ©lag er Ã¡skiliÃ°';
+        errorDiv.textContent = '?? Borg/sveitarfélag er áskiliğ';
         errorDiv.style.display = 'block';
         return false;
       }
@@ -939,7 +939,7 @@
     }
 
     // Bad words list in Icelandic
-    const badWordsList = ['fokk', 'fokka', 'fokki', 'skÃ­t', 'skÃ­tandi', 'kvendiÃ°', 'kvendir', 'rassgat', 'rassgatir', 'klÃ¡mjÃ³', 'klÃ¡mjÃ³i', 'klÃ¡mhÃ¦ll', 'picka', 'pilli', 'stÃ¶ddi', 'stÃ¶dd', 'dauÃ°i'];
+    const badWordsList = ['fokk', 'fokka', 'fokki', 'skít', 'skítandi', 'kvendiğ', 'kvendir', 'rassgat', 'rassgatir', 'klámjó', 'klámjói', 'klámhæll', 'picka', 'pilli', 'stöddi', 'stödd', 'dauği'];
 
     function containsBadWords(text) {
       if (!text) return false;
@@ -985,7 +985,7 @@
           }
           
           // If exactly 2 chars and matches Capital + dot pattern
-          if (word.length === 2 && /^[A-ZÃÃ‰ÃÃ“ÃšÃÃÃ†Ã–]\.$/.test(word)) {
+          if (word.length === 2 && /^[A-ZÁÉÍÓÚİŞÆÖ]\.$/.test(word)) {
             // Only valid if 3+ words total
             return words.length >= 3;
           }
@@ -997,7 +997,7 @@
           if (word.length < 2) {
             return false; // Must be 2+ characters
           }
-          if (!/^[A-ZÃÃ‰ÃÃ“ÃšÃÃÃ†Ã–]/.test(word)) {
+          if (!/^[A-ZÁÉÍÓÚİŞÆÖ]/.test(word)) {
             return false; // Must start with capital
           }
           
@@ -1073,7 +1073,7 @@
       // Check policy acceptance and show error if not accepted
       if (document.getElementById('policyAccepted').value !== 'true') {
         const policyError = document.getElementById('policyError');
-        policyError.textContent = 'âš ï¸ ÃÃº verÃ°ur aÃ° samÃ¾ykkja reglur New Friends Ã¡Ã°ur en Ã¾Ãº heldur Ã¡fram';
+        policyError.textContent = '?? Şú verğur ağ samşykkja reglur New Friends áğur en şú heldur áfram';
         policyError.style.display = 'block';
         document.getElementById('continueButton').classList.add('glow-error');
         return;
@@ -1090,13 +1090,13 @@
 
       // Validate display name
       if (!displayName) {
-        alert('âš ï¸ Vinsamlegast slÃ¡Ã°u inn fullt nafn');
+        alert('?? Vinsamlegast sláğu inn fullt nafn');
         document.getElementById('displayName').focus();
         return;
       }
 
       if (displayName.length < 2) {
-        alert('âš ï¸ Nafn verÃ°ur aÃ° hafa aÃ° minnsta kosti 2 stafi');
+        alert('?? Nafn verğur ağ hafa ağ minnsta kosti 2 stafi');
         document.getElementById('displayName').focus();
         return;
       }
@@ -1106,7 +1106,7 @@
       // Validate each word - words must start with capital letter
       const hasInvalidWord = words.some(word => {
         // If exactly 2 chars and matches Capital + dot pattern (e.g., "M.")
-        if (word.length === 2 && /^[A-ZÃÃ‰ÃÃ“ÃšÃÃÃ†Ã–]\.$/.test(word)) {
+        if (word.length === 2 && /^[A-ZÁÉÍÓÚİŞÆÖ]\.$/.test(word)) {
           return false; // Valid abbreviation
         }
         
@@ -1116,18 +1116,18 @@
         }
         
         // Words must start with capital letter
-        return !/^[A-ZÃÃ‰ÃÃ“ÃšÃÃÃ†Ã–]/.test(word);
+        return !/^[A-ZÁÉÍÓÚİŞÆÖ]/.test(word);
       });
 
       if (hasInvalidWord) {
-        alert('âš ï¸ Hvert orÃ° verÃ°ur aÃ° byrja Ã¡ stÃ³rum staf. StafrÃ¶Ã°un mÃ¡ skammstafa sem stÃ³ri stafur + punkti (t.d. M.). DÃ¦mi: RÃ³sa EinarsdÃ³ttir eÃ°a RÃ³sa M. EinarsdÃ³ttir');
+        alert('?? Hvert orğ verğur ağ byrja á stórum staf. Stafröğun má skammstafa sem stóri stafur + punkti (t.d. M.). Dæmi: Rósa Einarsdóttir eğa Rósa M. Einarsdóttir');
         document.getElementById('displayName').focus();
         return;
       }
 
       // Validate birthday
       if (!birthday) {
-        alert('âš ï¸ Vinsamlegast slÃ¡Ã°u inn fÃ¦Ã°ingardag');
+        alert('?? Vinsamlegast sláğu inn fæğingardag');
         document.getElementById('birthday').focus();
         return;
       }
@@ -1135,7 +1135,7 @@
       const dateRegex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
       const match = birthday.match(dateRegex);
       if (!match) {
-        alert('âš ï¸ Ã“gildar dagsetning. SlÃ¡Ã°u inn Ã¡ sniÃ°inu DD.MM.YYYY');
+        alert('?? Ógildar dagsetning. Sláğu inn á sniğinu DD.MM.YYYY');
         document.getElementById('birthday').focus();
         return;
       }
@@ -1152,21 +1152,21 @@
       }
 
       if (age < 15) {
-        alert('âš ï¸ ÃÃº verÃ°ur aÃ° vera aÃ° minnsta kosti 15 Ã¡ra gÃ¶mul/ur');
+        alert('?? Şú verğur ağ vera ağ minnsta kosti 15 ára gömul/ur');
         document.getElementById('birthday').focus();
         return;
       }
 
       // Validate nickname if provided
       if (nickname && containsBadWords(nickname)) {
-        alert('âš ï¸ GÃ¦lunafniÃ° inniheldur Ã³heimil orÃ°');
+        alert('?? Gælunafniğ inniheldur óheimil orğ');
         document.getElementById('nickname').focus();
         return;
       }
 
       // Validate city
       if (!city) {
-        alert('âš ï¸ Vinsamlegast veldu borg eÃ°a sveitarfÃ©lag');
+        alert('?? Vinsamlegast veldu borg eğa sveitarfélag');
         document.getElementById('city').focus();
         return;
       }
