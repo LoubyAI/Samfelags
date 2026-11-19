@@ -572,15 +572,23 @@ function renderMessages() {
 
 async function renderProfile() {
   try {
+    console.log("renderProfile: Starting to load profile...");
+    
     // Load user profile from Firebase
     const { auth } = await getFirebaseAuthClient();
+    console.log("renderProfile: Got auth client, currentUser:", auth.currentUser?.email);
+    
     if (!auth.currentUser) {
+      console.log("renderProfile: No current user, showing loading message");
       return `<div style="padding: 20px;"><p>Endalaust hleðsla notandagagna...</p></div>`;
     }
 
+    console.log("renderProfile: Fetching profile data for user:", auth.currentUser.uid);
     const profileData = await window.firebaseFirestore.getUserProfile(auth.currentUser.uid);
+    console.log("renderProfile: Got profile data:", profileData);
     
     if (!profileData) {
+      console.log("renderProfile: No profile data found");
       return `
         <div class="profile-layout">
           <section class="profile-panel">
@@ -607,6 +615,7 @@ async function renderProfile() {
     const bio = profileData.bio || "";
     const interests = profileData.interests || [];
 
+    console.log("renderProfile: Rendering profile for", displayName);
     return `
       <div class="profile-layout">
         <section class="profile-panel">
@@ -629,6 +638,7 @@ async function renderProfile() {
       </div>`;
   } catch (error) {
     console.error("Error loading profile:", error);
+    console.error("Error stack:", error.stack);
     return `<div style="padding: 20px;"><p>Villa við hleðslu prófíls: ${error.message}</p></div>`;
   }
 }
@@ -736,48 +746,59 @@ if (view === "login") {
   redirectTo("index.html");
 }
 
-// Check if user needs to be redirected to login (unless already on a setup view)
-const setupViews = ["login", "profile-setup", "photo-policy"];
-if (!setupViews.includes(view)) {
-  // For app views (home, news, profile, etc), check if user is authenticated
-  const auth = window.firebaseAuth?.getAuthClient();
-  if (auth && !auth.currentUser) {
-    // User is not logged in, redirect to index.html
-    redirectTo("index.html");
+// Initialize app - wrap in async IIFE to handle async auth checks
+(async () => {
+  // Check if user needs to be redirected to login (unless already on a setup view)
+  const setupViews = ["login", "profile-setup", "photo-policy"];
+  if (!setupViews.includes(view)) {
+    // For app views (home, news, profile, etc), check if user is authenticated
+    try {
+      const { auth } = await getFirebaseAuthClient();
+      if (!auth.currentUser) {
+        // User is not logged in, redirect to index.html
+        console.log("User not authenticated, redirecting to login");
+        redirectTo("index.html");
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+      redirectTo("index.html");
+      return;
+    }
   }
-}
 
-const current = pageInfo[view] ? view : "home";
-const renderers = {
-  home: renderHome,
-  news: renderNews,
-  meetings: renderMeetings,
-  "calendar-day": () => renderCalendar("calendar-day"),
-  "calendar-week": () => renderCalendar("calendar-week"),
-  "calendar-month": () => renderCalendar("calendar-month"),
-  messages: renderMessages,
-  profile: renderProfile,
-  "profile-setup": () => window.firebaseProfile?.renderProfileSetup() || "<p>Loading profile setup...</p>",
-  "photo-policy": renderPhotoPolicy,
-  login: renderLogin,
-};
+  const current = pageInfo[view] ? view : "home";
+  const renderers = {
+    home: renderHome,
+    news: renderNews,
+    meetings: renderMeetings,
+    "calendar-day": () => renderCalendar("calendar-day"),
+    "calendar-week": () => renderCalendar("calendar-week"),
+    "calendar-month": () => renderCalendar("calendar-month"),
+    messages: renderMessages,
+    profile: renderProfile,
+    "profile-setup": () => window.firebaseProfile?.renderProfileSetup() || "<p>Loading profile setup...</p>",
+    "photo-policy": renderPhotoPolicy,
+    login: renderLogin,
+  };
 
-const isSetupView = ["login", "profile-setup", "photo-policy"].includes(current);
-document.body.classList.toggle("login-view", isSetupView);
-document.title = `${pageInfo[current].title} - New Friends`;
-const pageHeading = document.getElementById("page-heading");
-if (pageHeading) {
-  pageHeading.innerHTML = `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
-}
+  const isSetupView = ["login", "profile-setup", "photo-policy"].includes(current);
+  document.body.classList.toggle("login-view", isSetupView);
+  document.title = `${pageInfo[current].title} - New Friends`;
+  const pageHeading = document.getElementById("page-heading");
+  if (pageHeading) {
+    pageHeading.innerHTML = `${icon(pageInfo[current].icon, "")}<span>${pageInfo[current].title}</span>`;
+  }
 
-const screenElement = document.getElementById("screen");
-const result = renderers[current]();
-if (result instanceof Promise) {
-  result.then(html => { screenElement.innerHTML = html; attachProfileListeners(); }).catch(err => console.error('Render error:', err));
-} else {
-  screenElement.innerHTML = result;
-  attachProfileListeners();
-}
+  const screenElement = document.getElementById("screen");
+  const result = renderers[current]();
+  if (result instanceof Promise) {
+    result.then(html => { screenElement.innerHTML = html; attachProfileListeners(); }).catch(err => console.error('Render error:', err));
+  } else {
+    screenElement.innerHTML = result;
+    attachProfileListeners();
+  }
+})();
 
 function attachProfileListeners() {
   if (current !== "profile") return;
