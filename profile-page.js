@@ -180,7 +180,7 @@ async function handleDeleteAccount() {
   }
 
   try {
-    const { auth, authSdk } = await getFirebaseAuthClient();
+    const { auth, authSdk } = await window.firebaseAuth.getAuthClient();
     const user = auth.currentUser;
 
     if (!user) {
@@ -196,15 +196,11 @@ async function handleDeleteAccount() {
       return;
     }
 
-    // Re-authenticate
-    const credential = authSdk.EmailAuthProvider.credential(userEmail, password);
-    await authSdk.reauthenticateWithCredential(user, credential);
-
     // Delete user profile from Firestore
     await window.firebaseFirestore.deleteUserProfile(user.uid);
 
-    // Delete user account
-    await user.delete();
+    // Delete user account from Firebase Auth
+    await window.firebaseAuth.deleteAccount(userEmail, password);
 
     alert("Aðgangur eytt");
     window.location.href = "index.html";

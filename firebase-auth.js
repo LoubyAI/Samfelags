@@ -79,4 +79,20 @@ window.firebaseAuth = {
     const { auth, authSdk } = await getFirebaseAuthClient();
     await authSdk.signOut(auth);
   },
+
+  async deleteAccount(email, password) {
+    const { auth, authSdk } = await getFirebaseAuthClient();
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("No user signed in");
+    }
+
+    // Re-authenticate the user
+    const credential = authSdk.EmailAuthProvider.credential(email, password);
+    await authSdk.reauthenticateWithCredential(user, credential);
+
+    // Delete the Firebase Auth account
+    await authSdk.deleteUser(user);
+  },
 };
