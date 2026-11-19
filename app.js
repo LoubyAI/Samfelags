@@ -570,25 +570,67 @@ function renderMessages() {
     </div>`;
 }
 
-function renderProfile() {
-  return `
-    <div class="profile-layout">
-      <section class="profile-panel">
-        <h2>Prófíllinn minn</h2>
-        <nav aria-label="Prófílvalmynd">
-          <a href="#profile">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
-          <a href="#settings">${icon(icons.profileSettings, "")}Stillingar</a>
-          <a href="#photos">${icon(icons.profilePhotos, "")}Myndir</a>
-          <a href="#friends">${icon(icons.profileConnections, "")}Tengslabönd</a>
-        </nav>
-      </section>
-      <section class="profile-panel profile-welcome" id="profile-content">
-        <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Luna A. Jónasdóttir">
-        <h1>Luna A. Jónasdóttir</h1>
-        <p>Byrjaðu að fylla prófílinn!</p>
-        <button class="button button-primary" type="button">${icon(icons.plus, "")}Byrjaðu</button>
-      </section>
-    </div>`;
+async function renderProfile() {
+  try {
+    // Load user profile from Firebase
+    const { auth } = await getFirebaseAuthClient();
+    if (!auth.currentUser) {
+      return `<div style="padding: 20px;"><p>Endalaust hleðsla notandagagna...</p></div>`;
+    }
+
+    const profileData = await window.firebaseFirestore.getUserProfile(auth.currentUser.uid);
+    
+    if (!profileData) {
+      return `
+        <div class="profile-layout">
+          <section class="profile-panel">
+            <h2>Prófíllinn minn</h2>
+            <nav aria-label="Prófílvalmynd">
+              <a href="#profile">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
+              <a href="#settings">${icon(icons.profileSettings, "")}Stillingar</a>
+              <a href="#photos">${icon(icons.profilePhotos, "")}Myndir</a>
+              <a href="#friends">${icon(icons.profileConnections, "")}Tengslabönd</a>
+            </nav>
+          </section>
+          <section class="profile-panel profile-welcome" id="profile-content">
+            <img src="${asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png")}" alt="Endalaus">
+            <h1>Endalaus</h1>
+            <p>Byrjaðu að fylla prófílinn!</p>
+            <button class="button button-primary" type="button">${icon(icons.plus, "")}Byrjaðu</button>
+          </section>
+        </div>`;
+    }
+
+    const displayName = profileData.displayName || "Endalaus";
+    const nickname = profileData.nickname || displayName;
+    const photoUrl = profileData.photoPrivateUrl || asset("5b0192a6-a345-4e38-857a-3b1c99641ecc.png");
+    const bio = profileData.bio || "";
+    const interests = profileData.interests || [];
+
+    return `
+      <div class="profile-layout">
+        <section class="profile-panel">
+          <h2>Prófíllinn minn</h2>
+          <nav aria-label="Prófílvalmynd">
+            <a href="#profile">${icon(icons.profileInfo, "")}Prófílupplýsingar</a>
+            <a href="#settings">${icon(icons.profileSettings, "")}Stillingar</a>
+            <a href="#photos">${icon(icons.profilePhotos, "")}Myndir</a>
+            <a href="#friends">${icon(icons.profileConnections, "")}Tengslabönd</a>
+          </nav>
+        </section>
+        <section class="profile-panel profile-welcome" id="profile-content">
+          <img src="${photoUrl}" alt="${displayName}">
+          <h1>${nickname}</h1>
+          <p>${bio || "Engin lýsing ennþá"}</p>
+          <div style="margin-top: 16px; font-size: 12px; color: #999;">
+            ${interests.length > 0 ? `<p>Áhugamál: ${interests.join(", ")}</p>` : ""}
+          </div>
+        </section>
+      </div>`;
+  } catch (error) {
+    console.error("Error loading profile:", error);
+    return `<div style="padding: 20px;"><p>Villa við hleðslu prófíls: ${error.message}</p></div>`;
+  }
 }
 
 function renderPhotoPolicy() {
