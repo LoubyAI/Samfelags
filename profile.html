@@ -416,6 +416,10 @@
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
   <script>
+    async function getFirebaseAuthClient() {
+      return window.firebaseAuth.getAuthClient();
+    }
+
     // Setup sign out
     function setupSignOut() {
       document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {

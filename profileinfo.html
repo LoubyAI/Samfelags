@@ -640,6 +640,10 @@
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
   <script>
+    async function getFirebaseAuthClient() {
+      return window.firebaseAuth.getAuthClient();
+    }
+
     function setupSignOut() {
       document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
         event.preventDefault();
@@ -652,10 +656,6 @@
           window.location.href = "index.html";
         }
       });
-    }
-
-    async function getFirebaseAuthClient() {
-      return window.firebaseAuth.getAuthClient();
     }
 
     // Setup page and load profile content

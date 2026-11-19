@@ -2365,50 +2365,6 @@ h3,
   box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
 }
 
-body.dark-mode {
-  color-scheme: dark;
-  --ink: #f7f4f6;
-  --muted: #d3ccd1;
-  --line: #777;
-  --soft: #302830;
-  --light: #3a3a3a;
-  --white: #1d1b1d;
-}
-
-body.dark-mode .auth-message {
-  color: #ffdbe2;
-  border-color: #75414b;
-  background: #4d2931;
-}
-
-body.dark-mode .auth-message[data-state="success"] {
-  color: #d7f5df;
-  border-color: #3b6b47;
-  background: #203b28;
-}
-
-body.dark-mode img[src$=".svg"] {
-  filter: brightness(0) invert(1);
-}
-
-body.dark-mode .brand img[src$=".svg"],
-body.dark-mode .login-brand img[src$=".svg"] {
-  filter: none;
-}
-
-body.dark-mode .global-search,
-body.dark-mode .composer-form input,
-body.dark-mode .composer-form textarea,
-body.dark-mode .meeting-editor-field input,
-body.dark-mode .meeting-editor-field textarea,
-body.dark-mode .message-search {
-  background: #282528;
-}
-
-body.dark-mode .switch-track::before {
-  background: var(--ink);
-}
-
 @media (max-width: 1180px) {
   .home-grid {
     grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.9fr);
