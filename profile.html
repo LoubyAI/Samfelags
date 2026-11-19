@@ -49,13 +49,7 @@
       padding: 24px;
     }
   </style>
-  <script>
-    // Apply dark mode immediately before page renders to avoid flash (default is ON)
-    if (localStorage.getItem("darkMode") !== "off") {
-      document.documentElement.classList.add("dark-mode");
-      document.body.classList.add("dark-mode");
-    }
-  </script>
+  <script src="dark-mode.js"></script>
 </head>
 <body>
   <div class="app-shell">

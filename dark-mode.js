@@ -4,25 +4,24 @@
   if (window._darkModeInitialized) return;
   window._darkModeInitialized = true;
 
-  const themeToggle = document.getElementById("theme-toggle");
-  if (!themeToggle) return;
-
-  // Get dark mode state from localStorage, default to "on"
+  // Apply dark mode class immediately to avoid flash (before any rendering)
   const isDarkMode = localStorage.getItem("darkMode") !== "off";
-  
-  // Apply dark mode class
   if (isDarkMode) {
+    document.documentElement.classList.add("dark-mode");
     document.body.classList.add("dark-mode");
-  } else {
-    document.body.classList.remove("dark-mode");
   }
 
-  // Attach listener only once - only move toggle when user clicks it
-  themeToggle.addEventListener("change", (event) => {
-    const isNowDark = event.target.checked;
-    document.body.classList.toggle("dark-mode", isNowDark);
-    localStorage.setItem("darkMode", isNowDark ? "on" : "off");
-  });
+  // Setup toggle listener if toggle element exists
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle) {
+    themeToggle.checked = isDarkMode;
+    themeToggle.addEventListener("change", (event) => {
+      const isNowDark = event.target.checked;
+      document.documentElement.classList.toggle("dark-mode", isNowDark);
+      document.body.classList.toggle("dark-mode", isNowDark);
+      localStorage.setItem("darkMode", isNowDark ? "on" : "off");
+    });
+  }
 })();
 
 
