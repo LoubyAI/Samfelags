@@ -105,6 +105,7 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
+  <script src="page-utils.js?v=1"></script>
   <script>
     const NEWS_POSTS_STORAGE_KEY = "new-friends-news-posts";
     
@@ -134,45 +135,15 @@
     // Load news page with proper auth state management
     (async () => {
       try {
-        console.log("news.html: Loading...");
-        
-        const { auth, authSdk } = await getFirebaseAuthClient();
-        
-        if (!auth.currentUser) {
-          console.log("news.html: Waiting for auth state...");
-          await new Promise((resolve) => {
-            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
-              unsubscribe();
-              resolve(user);
-            });
-            setTimeout(() => {
-              unsubscribe();
-              resolve(null);
-            }, 2000);
-          });
-        }
-        
-        if (!auth.currentUser) {
-          console.log("news.html: User not authenticated, redirecting to login");
-          window.location.href = "index.html";
-          return;
-        }
-        
-        console.log("news.html: User authenticated");
+        const auth = await checkAuthAndWait("news.html");
+        if (!auth) return;
         
         // Load and display posts
         const newsPosts = loadNewsPosts();
         const postsContainer = document.getElementById("user-news-posts");
         postsContainer.innerHTML = newsPosts.map(renderNewsPost).join("");
         
-        // Setup theme toggle
-        const themeToggle = document.getElementById("theme-toggle");
-        themeToggle.checked = localStorage.getItem("darkMode") === "on";
-        document.body.classList.toggle("dark-mode", themeToggle.checked);
-        themeToggle.addEventListener("change", () => {
-          document.body.classList.toggle("dark-mode", themeToggle.checked);
-          localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
-        });
+        setupPageDefaults("news.html");
         
         // Setup form submission
         document.querySelector('[data-form="post"]')?.addEventListener("submit", (event) => {
@@ -193,20 +164,6 @@
           postsContainer.innerHTML = newsPosts.map(renderNewsPost).join("");
           form.reset();
         });
-        
-        // Setup sign out
-        document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
-          event.preventDefault();
-          try {
-            const { auth, authSdk } = await getFirebaseAuthClient();
-            await authSdk.signOut(auth);
-            window.location.href = "index.html";
-          } catch (error) {
-            console.error("Sign out error:", error);
-            window.location.href = "index.html";
-          }
-        });
-        
       } catch (error) {
         console.error("news.html: Error:", error);
         window.location.href = "index.html";

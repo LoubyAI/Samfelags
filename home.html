@@ -20,19 +20,19 @@
           <img src="img/figma/8283c379-bc9c-48f5-9ef1-003d6c9de541.svg" alt="">
           <span>Heim</span>
         </a>
-        <a href="app.html?view=news" data-view="news">
+        <a href="news.html" data-view="news">
           <img src="img/figma/ce1e3756-44ea-48cd-8856-83b3ab98779e.svg" alt="">
           <span>Hvað er að frétta?</span>
         </a>
-        <a href="app.html?view=meetings" data-view="meetings">
+        <a href="meetingchat.html" data-view="meetings">
           <img src="img/figma/c94539bf-dd02-4721-8efc-b860d62e3666.svg" alt="">
           <span>Hittingarspjall</span>
         </a>
-        <a href="app.html?view=calendar-month" data-view="calendar">
+        <a href="eventcalendar.html" data-view="calendar">
           <img src="img/figma/492e477f-7702-4065-ac34-585b6c460454.svg" alt="">
           <span>Viðburðir &amp; dagatal</span>
         </a>
-        <a href="app.html?view=messages" data-view="messages">
+        <a href="chat.html" data-view="messages">
           <img src="img/figma/b1c194ed-af27-4d13-a13a-3b35bfaf1df1.svg" alt="">
           <span>Skilaboð</span>
         </a>
@@ -163,59 +163,14 @@
   <script src="firebase-auth.js?v=2"></script>
   <script src="firebase-firestore.js?v=2"></script>
   <script src="firebase-profile.js?v=5"></script>
+  <script src="page-utils.js?v=1"></script>
   <script>
     // Load home page with proper auth state management
     (async () => {
       try {
-        console.log("home.html: Loading...");
-        
-        // Get auth and wait for it to initialize
-        const { auth, authSdk } = await getFirebaseAuthClient();
-        
-        if (!auth.currentUser) {
-          console.log("home.html: No user, waiting for auth state...");
-          await new Promise((resolve) => {
-            const unsubscribe = authSdk.onAuthStateChanged(auth, (user) => {
-              unsubscribe();
-              resolve(user);
-            });
-            setTimeout(() => {
-              unsubscribe();
-              resolve(null);
-            }, 2000);
-          });
-        }
-        
-        if (!auth.currentUser) {
-          console.log("home.html: User not authenticated, redirecting to login");
-          window.location.href = "index.html";
-          return;
-        }
-        
-        console.log("home.html: User authenticated:", auth.currentUser.email);
-        
-        // Setup theme toggle
-        const themeToggle = document.getElementById("theme-toggle");
-        themeToggle.checked = localStorage.getItem("darkMode") === "on";
-        document.body.classList.toggle("dark-mode", themeToggle.checked);
-        themeToggle.addEventListener("change", () => {
-          document.body.classList.toggle("dark-mode", themeToggle.checked);
-          localStorage.setItem("darkMode", themeToggle.checked ? "on" : "off");
-        });
-        
-        // Setup sign out
-        document.querySelector('[data-action="sign-out"]')?.addEventListener("click", async (event) => {
-          event.preventDefault();
-          try {
-            const { auth, authSdk } = await getFirebaseAuthClient();
-            await authSdk.signOut(auth);
-            window.location.href = "index.html";
-          } catch (error) {
-            console.error("Sign out error:", error);
-            window.location.href = "index.html";
-          }
-        });
-        
+        const auth = await checkAuthAndWait("home.html");
+        if (!auth) return;
+        setupPageDefaults("home.html");
       } catch (error) {
         console.error("home.html: Error:", error);
         window.location.href = "index.html";
